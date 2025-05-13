@@ -1,0 +1,21 @@
+name: Deploy to InfinityFree via FTP
+
+on:
+  push:
+    branches:
+      - main  # This runs the action when you push to the main branch
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ftpupload.net             # <-- From your InfinityFree FTP info
+          username: your-ftp-username       # <-- Replace this with your InfinityFree FTP username
+          password: ${{ secrets.FTP_PASSWORD }}  # <-- This will use the secret you added in Step 3
+          server-dir: /htdocs/              # <-- This is the folder where InfinityFree stores your site files
