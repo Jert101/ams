@@ -16,6 +16,6 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ftpupload.net             # <-- From your InfinityFree FTP info
-          username: your-ftp-username       # <-- Replace this with your InfinityFree FTP username
+          username: if0_38972693       # <-- Replace this with your InfinityFree FTP username
           password: ${{ secrets.FTP_PASSWORD }}  # <-- This will use the secret you added in Step 3
           server-dir: /htdocs/              # <-- This is the folder where InfinityFree stores your site files
