@@ -5,8 +5,8 @@ DirectoryIndex index.php
     RewriteBase /
     
     # Force HTTPS redirection
-    # RewriteCond %{HTTPS} off
-    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
     
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
