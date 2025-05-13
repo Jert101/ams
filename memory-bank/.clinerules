@@ -1,0 +1,56 @@
+# Cline Rules: AMS (Attendance Monitoring System)
+
+## Project Patterns
+
+### Coding Standards
+- Follow PSR-12 coding standards for PHP
+- Use camelCase for variables and methods
+- Use PascalCase for classes
+- Use snake_case for database columns
+- Add appropriate docblocks to all classes and methods
+
+### Architecture Patterns
+- Use Repository pattern for data access
+- Implement Service classes for business logic
+- Keep controllers thin, move logic to services
+- Use Form Requests for validation
+- Implement Policies for authorization
+- Separate QR code generation and scanning logic into dedicated services
+
+### Database Conventions
+- Table names should be plural (e.g., users, attendances, events)
+- Primary keys should be named 'id'
+- Foreign keys should follow the convention table_name_singular_id (e.g., user_id, event_id)
+- Use timestamps (created_at, updated_at) on all tables
+- Use soft deletes where appropriate (deleted_at)
+- Store QR code data efficiently (consider storing generation parameters rather than images)
+
+### File Organization
+- Group related models in subdirectories when appropriate
+- Keep blade templates organized by user role and feature
+- Organize Tailwind CSS classes consistently
+- Store JavaScript and CSS in resources/js and resources/css
+- Use Laravel's language files for all user-facing text
+
+### UI/UX Patterns
+- Use Tailwind CSS for all styling
+- Maintain consistent color scheme and component styling
+- Ensure mobile responsiveness for all interfaces
+- Use role-specific dashboards and navigation
+- Implement clear visual indicators for attendance status
+
+## User Preferences
+- Maintain comprehensive docblocks for all classes and methods
+- Update Memory Bank documentation after significant changes
+- Prioritize code readability over clever optimizations
+- Write tests for critical functionality
+- Follow the specified user role structure (Admin, Officers, Secretary, Members)
+
+## Known Challenges
+- Implementing efficient consecutive absence tracking algorithm
+- Ensuring reliable QR code scanning in various lighting conditions
+- Managing email notifications efficiently using PHPMailer
+- Securing QR codes against potential spoofing
+- Optimizing database queries for attendance reporting
+
+*This document will evolve as project patterns and preferences are discovered during development.*
