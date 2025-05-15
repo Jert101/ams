@@ -1,14 +1,13 @@
 // Firebase configuration
 // Replace these values with your actual Firebase project details from the Firebase Console
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  databaseURL: "https://your-project-id.firebaseio.com",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
+  apiKey: "AIzaSyD1Bv1juq5vO6o6JFokqFyJRh7ID3djgUE",
+    authDomain: "kofa-ams.firebaseapp.com",
+    projectId: "kofa-ams",
+    storageBucket: "kofa-ams.firebasestorage.app",
+    messagingSenderId: "658395081690",
+    appId: "1:658395081690:web:f15ef7128d58f3fc05aee3",
+    measurementId: "G-Q3B93PY9KP"
 };
 
 // Initialize Firebase
