@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Face-API.js Models Test</title>
+</head>
+<body>
+    <h1>Face-API.js Models Test</h1>
+    <p>If you can see this page, the models directory is accessible.</p>
+    <p>Models installed:</p>
+    <ul>
+        <li>Tiny Face Detector</li>
+        <li>Face Landmark 68</li>
+        <li>Face Recognition</li>
+        <li>Face Expression</li>
+    </ul>
+    <script>
+        // List the models
+        const models = [
+            '/models/tiny_face_detector/model.json',
+            '/models/face_landmark_68/model.json',
+            '/models/face_recognition/model.json',
+            '/models/face_expression/model.json'
+        ];
+        
+        // Check if models exist
+        async function checkModels() {
+            for (const model of models) {
+                try {
+                    const response = await fetch(model);
+                    const result = await response.json();
+                    console.log(`Model face_expression/model.weights.bin exists: `, result);
+                } catch (e) {
+                    console.error(`Error loading model face_expression/model.weights.bin: `, e);
+                }
+            }
+        }
+        
+        checkModels();
+    </script>
+</body>
+</html>

@@ -1,17 +1,17 @@
 <section class="space-y-6">
     <header>
-        <h2 class="text-lg font-medium text-[#B22234] dark:text-[#FFD700]">
+        <h2 class="text-lg font-medium text-[#B22234]">
             {{ __('Delete Account') }}
         </h2>
 
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        <p class="mt-1 text-sm text-gray-600">
             {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
         </p>
     </header>
 
     <button
         type="button"
-        class="px-4 py-2 bg-red-600 dark:bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white dark:text-white uppercase tracking-widest hover:bg-red-700 dark:hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
+        class="px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
         onclick="document.getElementById('delete-account-modal').classList.remove('hidden')"
     >
         {{ __('Delete Account') }}
@@ -24,16 +24,16 @@
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="document.getElementById('delete-account-modal').classList.add('hidden')"></div>
             
             <!-- Modal panel -->
-            <div class="relative inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
                     @csrf
                     @method('delete')
 
-                    <h2 class="text-lg font-medium text-[#B22234] dark:text-[#FFD700]">
+                    <h2 class="text-lg font-medium text-[#B22234]">
                         {{ __('Are you sure you want to delete your account?') }}
                     </h2>
 
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    <p class="mt-1 text-sm text-gray-600">
                         {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
                     </p>
 
@@ -43,7 +43,7 @@
                             id="password"
                             name="password"
                             type="password"
-                            class="mt-1 block w-3/4 rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-[#B22234] focus:ring focus:ring-[#B22234] focus:ring-opacity-50"
+                            class="mt-1 block w-3/4 rounded-md border-gray-300 focus:border-[#B22234] focus:ring focus:ring-[#B22234] focus:ring-opacity-50"
                             placeholder="{{ __('Password') }}"
                         />
 
@@ -53,11 +53,11 @@
                     </div>
 
                     <div class="mt-6 flex justify-end">
-                        <button type="button" class="px-4 py-2 bg-gray-300 dark:bg-gray-700 border border-transparent rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest hover:bg-gray-400 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150" onclick="document.getElementById('delete-account-modal').classList.add('hidden')">
+                        <button type="button" class="px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150" onclick="document.getElementById('delete-account-modal').classList.add('hidden')">
                             {{ __('Cancel') }}
                         </button>
 
-                        <button type="submit" class="ml-3 px-4 py-2 bg-red-600 dark:bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white dark:text-white uppercase tracking-widest hover:bg-red-700 dark:hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                        <button type="submit" class="ml-3 px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
                             {{ __('Delete Account') }}
                         </button>
                     </div>

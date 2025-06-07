@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
 
 class LoginRequest extends FormRequest
 {
@@ -27,7 +28,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -41,11 +42,35 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // Check if the input is an email or a numeric ID
+        $loginField = filter_var($this->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'user_id';
+        $loginValue = $this->input('email');
+        
+        // Find the user by either email or ID
+        $user = User::where($loginField, $loginValue)->first();
+        
+        if (!$user || !Auth::attempt([$loginField => $loginValue, 'password' => $this->input('password')], $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
+            ]);
+        }
+        
+        // Check if the user's account is approved
+        $user = Auth::user();
+        
+        if ($user->approval_status === 'pending') {
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'email' => 'Your account is pending approval by an administrator.',
+            ]);
+        }
+        
+        if ($user->approval_status === 'rejected') {
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'email' => 'Your account registration has been rejected. Please contact the administrator for more information.',
             ]);
         }
 

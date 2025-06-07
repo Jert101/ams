@@ -6,11 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\User;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AttendanceController extends Controller
 {
+    protected $mailService;
+    
+    public function __construct(MailService $mailService)
+    {
+        $this->mailService = $mailService;
+    }
+    
     /**
      * Display a listing of attendances for officers to manage.
      */
@@ -61,7 +70,7 @@ class AttendanceController extends Controller
         $attendance->update([
             'status' => $validated['status'],
             'remarks' => $validated['remarks'] ?? null,
-            'approved_by' => Auth::id(),
+            'approved_by' => Auth::user()->user_id,
             'approved_at' => now(),
         ]);
         
@@ -91,18 +100,18 @@ class AttendanceController extends Controller
                 
             if (!$existingAttendance) {
                 // Create new attendance record
-                Attendance::create([
+                $attendance = Attendance::create([
                     'user_id' => $userId,
                     'event_id' => $eventId,
                     'status' => 'present',
-                    'approved_by' => Auth::id(),
+                    'approved_by' => Auth::user()->user_id,
                     'approved_at' => now(),
                 ]);
             } else {
                 // Update existing record
                 $existingAttendance->update([
                     'status' => 'present',
-                    'approved_by' => Auth::id(),
+                    'approved_by' => Auth::user()->user_id,
                     'approved_at' => now(),
                 ]);
             }
@@ -134,18 +143,18 @@ class AttendanceController extends Controller
                 
             if (!$existingAttendance) {
                 // Create new attendance record
-                Attendance::create([
+                $attendance = Attendance::create([
                     'user_id' => $userId,
                     'event_id' => $eventId,
                     'status' => 'absent',
-                    'approved_by' => Auth::id(),
+                    'approved_by' => Auth::user()->user_id,
                     'approved_at' => now(),
                 ]);
             } else {
                 // Update existing record
                 $existingAttendance->update([
                     'status' => 'absent',
-                    'approved_by' => Auth::id(),
+                    'approved_by' => Auth::user()->user_id,
                     'approved_at' => now(),
                 ]);
             }
@@ -153,5 +162,76 @@ class AttendanceController extends Controller
         
         return redirect()->route('officer.attendances.index', ['event_id' => $eventId])
             ->with('success', count($userIds) . ' users marked as absent.');
+    }
+    
+    /**
+     * Display a listing of pending attendances for verification.
+     */
+    public function pending()
+    {
+        $pendingAttendances = Attendance::with(['user', 'event'])
+            ->where('status', 'pending')
+            ->latest()
+            ->paginate(10);
+            
+        return view('officer.attendances.pending', compact('pendingAttendances'));
+    }
+    
+    /**
+     * Show the form for verifying a pending attendance.
+     */
+    public function verify(Attendance $attendance)
+    {
+        if ($attendance->status !== 'pending') {
+            return redirect()->route('officer.attendances.pending')
+                ->with('error', 'This attendance record is not pending verification.');
+        }
+        
+        return view('officer.attendances.verify', compact('attendance'));
+    }
+    
+    /**
+     * Process the verification of a pending attendance.
+     */
+    public function processVerification(Request $request, Attendance $attendance)
+    {
+        if ($attendance->status !== 'pending') {
+            return redirect()->route('officer.attendances.pending')
+                ->with('error', 'This attendance record is not pending verification.');
+        }
+        
+        $validated = $request->validate([
+            'verification' => 'required|in:approve,reject',
+            'remarks' => 'nullable|string|max:255',
+        ]);
+        
+        $status = $validated['verification'] === 'approve' ? 'present' : 'absent';
+        
+        $attendance->update([
+            'status' => $status,
+            'remarks' => $validated['remarks'] ?? null,
+            'approved_by' => Auth::user()->user_id,
+            'approved_at' => now(),
+        ]);
+        
+        // Send email notification to the member
+        $user = $attendance->user;
+        $event = $attendance->event;
+        
+        $data = [
+            'event_name' => $event->name,
+            'event_date' => $event->date->format('F j, Y'),
+            'event_time' => $event->time->format('g:i A'),
+            'event_location' => $event->location ?? 'N/A',
+            'attendance_status' => $status,
+            'recorded_at' => now()->format('F j, Y g:i A'),
+            'verification_status' => $validated['verification'],
+            'remarks' => $validated['remarks'] ?? 'No remarks provided.'
+        ];
+        
+        $this->mailService->sendAttendanceConfirmation($user->email, $user->name, $data);
+        
+        return redirect()->route('officer.attendances.pending')
+            ->with('success', 'Attendance verification processed successfully.');
     }
 }

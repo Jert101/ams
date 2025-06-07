@@ -1,0 +1,133 @@
+/* Sidebar Enhancements for KofA AMS */
+
+:root {
+    --primary-color: #b91c1c; /* Red */
+    --secondary-color: #facc15; /* Golden Yellow */
+    --white-color: #ffffff; /* White */
+    --dark-primary: #991b1b; /* Darker Red */
+    --light-secondary: #fef3c7; /* Light Gold */
+    --officer-color: #0891b2; /* Cyan */
+    --secretary-color: #4f46e5; /* Indigo */
+    --member-color: #16a34a; /* Green */
+}
+
+/* Role-specific sidebar header styles - Used in sidebar.blade.php */
+.sidebar-header {
+    padding: 1rem;
+    color: white;
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+.role-admin .sidebar-header {
+    background-color: var(--primary-color);
+    background-image: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-primary) 100%);
+}
+
+.role-officer .sidebar-header {
+    background-color: var(--officer-color);
+    background-image: linear-gradient(135deg, var(--officer-color) 0%, #065d79 100%);
+}
+
+.role-secretary .sidebar-header {
+    background-color: var(--secretary-color);
+    background-image: linear-gradient(135deg, var(--secretary-color) 0%, #3730a3 100%);
+}
+
+.role-member .sidebar-header {
+    background-color: var(--member-color) !important;
+    background-image: linear-gradient(135deg, var(--member-color) 0%, #166534 100%) !important;
+}
+
+/* Role-specific sidebar link styles - Used in sidebar-link.blade.php */
+.role-admin .sidebar-link.active {
+    background-color: rgba(185, 28, 28, 0.1);
+    color: var(--primary-color);
+}
+
+.role-officer .sidebar-link.active {
+    background-color: rgba(8, 145, 178, 0.1);
+    color: var(--officer-color);
+}
+
+.role-secretary .sidebar-link.active {
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--secretary-color);
+}
+
+.role-member .sidebar-link.active {
+    background-color: rgba(22, 163, 74, 0.1);
+    color: var(--member-color);
+}
+
+/* Hover styles */
+.role-admin .sidebar-link:hover {
+    background-color: rgba(185, 28, 28, 0.05);
+    color: var(--primary-color);
+}
+
+.role-officer .sidebar-link:hover {
+    background-color: rgba(8, 145, 178, 0.05);
+    color: var(--officer-color);
+}
+
+.role-secretary .sidebar-link:hover {
+    background-color: rgba(79, 70, 229, 0.05);
+    color: var(--secretary-color);
+}
+
+.role-member .sidebar-link:hover {
+    background-color: rgba(22, 163, 74, 0.05);
+    color: var(--member-color);
+}
+
+/* Sidebar container styles */
+.sidebar-container {
+    position: fixed;
+    width: 280px;
+    height: 100vh;
+    background-color: white;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Main content styles */
+.admin-content {
+    margin-left: 280px;
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+/* Active link colors */
+.role-admin .active-link {
+    background-color: rgba(185, 28, 28, 0.1);
+    color: var(--primary-color) !important;
+}
+
+.role-officer .active-link {
+    background-color: rgba(8, 145, 178, 0.1);
+    color: var(--officer-color) !important;
+}
+
+.role-secretary .active-link {
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--secretary-color) !important;
+}
+
+.role-member .active-link {
+    background-color: rgba(22, 163, 74, 0.1);
+    color: var(--member-color) !important;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .sidebar-container {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    
+    .admin-content {
+        margin-left: 0;
+    }
+} 

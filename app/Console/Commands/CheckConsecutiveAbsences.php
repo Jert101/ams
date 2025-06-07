@@ -2,12 +2,15 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Attendance;
-use App\Models\Event;
-use App\Models\User;
-use App\Models\Notification;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Event;
+use App\Models\Attendance;
+use App\Models\Notification;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AbsenceWarningMail;
+use App\Mail\SeriousAbsenceWarningMail;
+use Carbon\Carbon;
 
 class CheckConsecutiveAbsences extends Command
 {
@@ -16,133 +19,143 @@ class CheckConsecutiveAbsences extends Command
      *
      * @var string
      */
-    protected $signature = 'absences:check';
+    protected $signature = 'absences:check-consecutive';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Check for members with consecutive absences';
+    protected $description = 'Check for users with consecutive Sunday absences and send notifications';
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
     public function handle()
     {
-        $this->info('Checking for consecutive absences...');
-
-        // Get events that happened in the last 1 month, ordered by date
-        $events = Event::where('date', '>=', now()->subMonth())
-            ->orderBy('date')
-            ->get();
-
-        $eventIds = $events->pluck('id')->toArray();
-
-        if (empty($eventIds)) {
-            $this->warn('No events found in the last month.');
-            return 0;
-        }
-
+        $this->info('Checking for consecutive Sunday absences...');
+        
+        // Get the recent Sundays (dates)
+        $recentSundayDates = Event::where(function ($query) {
+                $query->where('type', 'sunday')
+                    ->orWhere(function ($subQuery) {
+                        $subQuery->whereRaw("DAYOFWEEK(date) = 1") // 1 represents Sunday in MySQL
+                            ->orWhere('name', 'like', '%Sunday%');
+                    });
+            })
+            ->orderBy('date', 'desc')
+            ->distinct()
+            ->pluck('date')
+            ->take(5)
+            ->toArray();
+            
         // Get all members
         $members = User::whereHas('role', function ($query) {
-            $query->where('name', 'Member');
-        })->get();
-
-        $this->info('Processing ' . $members->count() . ' members...');
-
-        $notificationCount = 0;
-
-        foreach ($members as $member) {
-            // Get the member's attendance records for these events
-            $attendances = Attendance::where('user_id', $member->id)
-                ->whereIn('event_id', $eventIds)
-                ->orderBy('created_at')
-                ->get()
-                ->keyBy('event_id');
-
-            // Check for consecutive Sundays with absences
-            $consecutiveAbsences = $this->calculateConsecutiveAbsences($member, $events, $attendances);
-
-            // Create notifications for members with 3 or 4 consecutive absences
-            if ($consecutiveAbsences === 3) {
-                $this->createAbsenceNotification($member, $consecutiveAbsences, 'counseling');
-                $notificationCount++;
-            } elseif ($consecutiveAbsences === 4) {
-                $this->createAbsenceNotification($member, $consecutiveAbsences, 'warning');
-                $notificationCount++;
-            }
-        }
-
-        $this->info('Created ' . $notificationCount . ' notifications for members with consecutive absences.');
-        return 0;
-    }
-
-    /**
-     * Calculate the number of consecutive absences for a member.
-     *
-     * @param User $member
-     * @param Collection $events
-     * @param Collection $attendances
-     * @return int
-     */
-    private function calculateConsecutiveAbsences($member, $events, $attendances)
-    {
-        $consecutiveCount = 0;
-        $maxConsecutive = 0;
-
-        foreach ($events as $event) {
-            // Sunday is represented by 0 in PHP's date('w')
-            $isSunday = date('w', strtotime($event->date)) === '0';
-
-            if (!$isSunday) {
-                continue; // Skip non-Sunday events
-            }
-
-            $attendance = $attendances->get($event->id);
-
-            // If no attendance record exists or status is absent
-            if (!$attendance || $attendance->status === 'absent') {
-                $consecutiveCount++;
-                // Update the maximum consecutive count
-                $maxConsecutive = max($maxConsecutive, $consecutiveCount);
-            } else {
-                // Reset the consecutive count if present or excused
-                $consecutiveCount = 0;
-            }
-        }
-
-        return $maxConsecutive;
-    }
-
-    /**
-     * Create an absence notification for a member.
-     *
-     * @param User $member
-     * @param int $consecutiveAbsences
-     * @param string $type
-     * @return void
-     */
-    private function createAbsenceNotification($member, $consecutiveAbsences, $type)
-    {
-        $message = "You have been absent for {$consecutiveAbsences} consecutive Sundays. ";
+                $query->where('name', 'Member');
+            })->get();
+            
+        $this->info('Found ' . count($members) . ' members to check.');
         
-        if ($type === 'counseling') {
-            $message .= "Please note that you need to undergo counseling as per organization rules.";
-        } else {
-            $message .= "This is a serious matter that requires your immediate attention.";
+        $notificationCount = 0;
+        
+        // Check each member for consecutive Sunday absences
+        foreach ($members as $member) {
+            $sundayAbsenceCount = 0;
+            $consecutiveSundays = [];
+            
+            foreach ($recentSundayDates as $date) {
+                // Get all events for this Sunday
+                $sundayEvents = Event::where('date', $date)->pluck('id')->toArray();
+                
+                if (empty($sundayEvents)) {
+                    continue;
+                }
+                
+                // Check if member attended any of the masses on this Sunday
+                $attendedCount = Attendance::where('user_id', $member->id)
+                    ->whereIn('event_id', $sundayEvents)
+                    ->where('status', 'present')
+                    ->count();
+                
+                // If they didn't attend any masses on this Sunday, count as absent
+                if ($attendedCount === 0) {
+                    $sundayAbsenceCount++;
+                    $consecutiveSundays[] = $date;
+                } else {
+                    // Break the consecutive chain if they attended a mass
+                    break;
+                }
+            }
+            
+            // Only process if they have 3 or more consecutive absences
+            if ($sundayAbsenceCount >= 3) {
+                // Check if we've already sent a notification for this number of absences
+                $existingNotification = Notification::where('user_id', $member->id)
+                    ->where('type', 'absence_warning')
+                    ->where('consecutive_absences', $sundayAbsenceCount)
+                    ->where('created_at', '>=', Carbon::now()->subDays(7)) // Only check the last week
+                    ->exists();
+                    
+                if (!$existingNotification) {
+                    // Create a notification record
+                    $notification = new Notification();
+                    $notification->user_id = $member->id;
+                    $notification->type = 'absence_warning';
+                    $notification->consecutive_absences = $sundayAbsenceCount;
+                    
+                    if ($sundayAbsenceCount == 3) {
+                        $notification->message = "Dear {$member->name}, we've noticed you've been absent from Sunday masses for 3 consecutive weeks. Each Sunday has 4 masses (please attend at least one of them to be marked as present). You will need to undergo counseling at the next meeting. Please let us know if you need any assistance.";
+                        
+                        // Send the email for 3 consecutive absences
+                        $this->sendAbsenceWarningEmail($member, $consecutiveSundays);
+                    } else if ($sundayAbsenceCount >= 4) {
+                        $notification->message = "Dear {$member->name}, we've noticed you've been absent from Sunday masses for 4 or more consecutive weeks. Each Sunday has 4 masses (please attend at least one of them to be marked as present). You will need to undergo serious counseling on the next Sunday. If you fail to attend, the council will visit you at your home. Please contact us immediately.";
+                        
+                        // Send the email for 4+ consecutive absences
+                        $this->sendSeriousAbsenceWarningEmail($member, $consecutiveSundays);
+                    }
+                    
+                    $notification->is_sent = true;
+                    $notification->sent_at = now();
+                    $notification->save();
+                    
+                    $notificationCount++;
+                    
+                    $this->info("Sent notification to {$member->name} for {$sundayAbsenceCount} consecutive absences.");
+                }
+            }
         }
-
-        Notification::create([
-            'user_id' => $member->id,
-            'type' => 'absence_' . $type,
-            'message' => $message,
-            'is_sent' => false,
-            'consecutive_absences' => $consecutiveAbsences,
-        ]);
-
-        $this->line("Created notification for {$member->name} with {$consecutiveAbsences} consecutive absences.");
+        
+        $this->info("Sent a total of {$notificationCount} notifications.");
+        
+        return Command::SUCCESS;
+    }
+    
+    /**
+     * Send an email notification for 3 consecutive absences.
+     */
+    private function sendAbsenceWarningEmail($user, $missedDates)
+    {
+        try {
+            Mail::to($user->email)->send(new AbsenceWarningMail($user, $missedDates));
+            return true;
+        } catch (\Exception $e) {
+            $this->error("Failed to send email to {$user->name}: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Send an email notification for 4+ consecutive absences.
+     */
+    private function sendSeriousAbsenceWarningEmail($user, $missedDates)
+    {
+        try {
+            Mail::to($user->email)->send(new SeriousAbsenceWarningMail($user, $missedDates));
+            return true;
+        } catch (\Exception $e) {
+            $this->error("Failed to send email to {$user->name}: " . $e->getMessage());
+            return false;
+        }
     }
 } 

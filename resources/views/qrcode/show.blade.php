@@ -12,7 +12,7 @@
     <div class="bg-white shadow-md rounded-lg p-6 max-w-md mx-auto">
         <div class="text-center mb-6">
             <p class="text-lg font-medium text-gray-700 mb-1">{{ auth()->user()->name }}</p>
-            <p class="text-sm text-gray-500">ID: {{ auth()->user()->id }}</p>
+            <p class="text-sm text-gray-500">ID: {{ auth()->user()->user_id }}</p>
             @if($qrCode->last_used_at)
                 <p class="text-xs text-gray-500 mt-1">Last used: {{ $qrCode->last_used_at->format('M d, Y h:i A') }}</p>
             @endif
@@ -28,12 +28,16 @@
         </div>
         
         <div class="mt-6 flex justify-center">
+            @if(auth()->user()->isAdmin())
             <button id="download-qr" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
                 Download QR Code
             </button>
-            <button id="print-qr" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+            <a href="{{ route('qrcode.print') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                 Print QR Code
-            </button>
+            </a>
+            @else
+            <p class="text-gray-500 text-sm">Please contact an administrator to print your QR code</p>
+            @endif
         </div>
     </div>
 </div>
@@ -53,19 +57,16 @@
             correctLevel: QRCode.CorrectLevel.H
         });
         
+        @if(auth()->user()->isAdmin())
         // Download function
         document.getElementById('download-qr').addEventListener('click', function() {
             const canvas = document.querySelector("#qrcode-container canvas");
             const link = document.createElement('a');
-            link.download = 'qrcode-{{ auth()->user()->id }}.png';
+            link.download = 'qrcode-{{ auth()->user()->user_id }}.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
-        
-        // Print function
-        document.getElementById('print-qr').addEventListener('click', function() {
-            window.print();
-        });
+        @endif
     });
 </script>
 <style>

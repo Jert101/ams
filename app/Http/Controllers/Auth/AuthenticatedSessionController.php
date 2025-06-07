@@ -42,8 +42,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('member.dashboard', absolute: false));
         }
         
-        // Fallback to default dashboard
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Fallback to home page if no role-specific dashboard is available
+        return redirect()->intended('/');
     }
 
     /**
@@ -58,5 +58,13 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+    
+    /**
+     * Show the facial recognition login form.
+     */
+    public function showFacialLoginForm(): View
+    {
+        return view('auth.facial-login');
     }
 }

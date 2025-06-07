@@ -43,7 +43,7 @@ class ProfileController extends Controller
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('users')->ignore($user->id),
+                Rule::unique('users')->ignore($user->user_id, 'user_id'),
             ],
             'phone' => 'nullable|string|max:20',
             'current_password' => 'nullable|required_with:password|string',

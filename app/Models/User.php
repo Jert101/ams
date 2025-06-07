@@ -4,36 +4,86 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
+    use HasApiTokens;
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory;
+    use Notifiable;
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            if (!$user->user_id) {
+                // Generate a new user_id (starting from 110600 or get the max and increment)
+                $maxUserId = static::max('user_id') ?? 110600;
+                $user->user_id = $maxUserId + 1;
+            }
+        });
+    }
+
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'user_id';
+
+    /**
+     * Indicates if the model's ID is auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
+        'user_id',
         'name',
         'email',
+        'address',
+        'mobile_number',
         'password',
         'role_id',
-        'phone',
+        'profile_photo_path',
+        'approval_status',
+        'rejection_reason',
+        'date_of_birth',
+        'gender',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'profile_photo_url',
     ];
 
     /**
@@ -46,12 +96,12 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'deleted_at' => 'datetime',
+            'date_of_birth' => 'date',
         ];
     }
 
     /**
-     * Get the role that owns this user.
+     * Get the user's role.
      */
     public function role()
     {
@@ -59,98 +109,130 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the QR code associated with this user.
-     */
-    public function qrCode()
-    {
-        return $this->hasOne(QrCode::class);
-    }
-
-    /**
-     * Get the attendances for this user.
-     */
-    public function attendances()
-    {
-        return $this->hasMany(Attendance::class);
-    }
-
-    /**
-     * Get the events that this user has attended.
-     */
-    public function events()
-    {
-        return $this->belongsToMany(Event::class, 'attendances')
-            ->withPivot('status', 'approved_by', 'approved_at', 'remarks')
-            ->withTimestamps();
-    }
-
-    /**
-     * Get the notifications for this user.
-     */
-    public function userNotifications()
-    {
-        return $this->hasMany(Notification::class);
-    }
-
-    /**
-     * Check if the user has a specific role.
-     */
-    public function hasRole($roleName)
-    {
-        // Make sure role relationship is loaded
-        if (!$this->relationLoaded('role')) {
-            $this->load('role');
-        }
-        
-        // If no role relationship exists, the user has no role
-        if (!$this->role) {
-            return false;
-        }
-        
-        // If we're checking for multiple roles (passed as comma-separated string from middleware)
-        if (is_string($roleName) && strpos($roleName, ',') !== false) {
-            $roles = explode(',', $roleName);
-            foreach ($roles as $role) {
-                if ($this->role->name === trim($role)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        
-        // If we're passed a single role as string
-        return $this->role->name === $roleName;
-    }
-
-    /**
      * Check if the user is an admin.
      */
-    public function isAdmin()
+    public function isAdmin(): bool
     {
-        return $this->hasRole('Admin');
+        return $this->role && strtolower($this->role->name) === 'admin';
     }
 
     /**
      * Check if the user is an officer.
      */
-    public function isOfficer()
+    public function isOfficer(): bool
     {
-        return $this->hasRole('Officer');
+        return $this->role && strtolower($this->role->name) === 'officer';
     }
 
     /**
      * Check if the user is a secretary.
      */
-    public function isSecretary()
+    public function isSecretary(): bool
     {
-        return $this->hasRole('Secretary');
+        return $this->role && strtolower($this->role->name) === 'secretary';
     }
 
     /**
      * Check if the user is a member.
      */
-    public function isMember()
+    public function isMember(): bool
     {
-        return $this->hasRole('Member');
+        return $this->role && strtolower($this->role->name) === 'member';
+    }
+    
+    /**
+     * Check if the user has a specific role.
+     *
+     * @param string $roleName
+     * @return bool
+     */
+    public function hasRole(string $roleName): bool
+    {
+        return $this->role && strtolower($this->role->name) === strtolower($roleName);
+    }
+
+    /**
+     * Get the attendance records for the user.
+     */
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'user_id', 'user_id');
+    }
+    
+    /**
+     * Get the QR code for the user.
+     */
+    public function qrCode()
+    {
+        return $this->hasOne(QrCode::class, 'user_id', 'user_id');
+    }
+    
+    /**
+     * Check if the user account is pending approval.
+     */
+    public function isPending(): bool
+    {
+        return $this->approval_status === 'pending';
+    }
+    
+    /**
+     * Check if the user account is approved.
+     */
+    public function isApproved(): bool
+    {
+        return $this->approval_status === 'approved';
+    }
+    
+    /**
+     * Check if the user account is rejected.
+     */
+    public function isRejected(): bool
+    {
+        return $this->approval_status === 'rejected';
+    }
+
+    /**
+     * Get the default profile photo URL if no profile photo has been uploaded.
+     *
+     * @return string
+     */
+    protected function defaultProfilePhotoUrl()
+    {
+        // Use kofa.png as default profile photo if it exists
+        if (file_exists(public_path('kofa.png'))) {
+            return asset('kofa.png');
+        }
+        
+        // Fall back to the default avatar generator
+        $name = trim(collect(explode(' ', $this->name))->map(function ($segment) {
+            return mb_substr($segment, 0, 1);
+        })->join(' '));
+
+        return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=7F9CF5&background=EBF4FF';
+    }
+
+    /**
+     * Get the URL for the user's profile photo.
+     *
+     * @return string
+     */
+    public function getProfilePhotoUrlAttribute()
+    {
+        if ($this->profile_photo_path) {
+            // Check if it's the default photo
+            if ($this->profile_photo_path === 'kofa.png') {
+                return asset('kofa.png');
+            }
+            
+            // Check if it's a full URL
+            if (filter_var($this->profile_photo_path, FILTER_VALIDATE_URL)) {
+                return $this->profile_photo_path;
+            }
+            
+            // Otherwise, it's a path in the storage
+            return asset('storage/' . $this->profile_photo_path);
+        }
+        
+        return asset('kofa.png');
     }
 }

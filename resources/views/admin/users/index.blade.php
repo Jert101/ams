@@ -1,11 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.admin-app')
 
 @section('content')
 <div class="container mx-auto px-4 py-6">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Manage Users</h1>
-        <a href="{{ route('admin.users.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-            Add New User
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+            <i class="bi bi-person-plus-fill mr-1"></i> Add New User
         </a>
     </div>
     
@@ -27,6 +27,7 @@
                 <thead>
                     <tr>
                         <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                        <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
                         <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                         <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                         <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
@@ -37,8 +38,9 @@
                     @forelse ($users as $user)
                         <tr>
                             <td class="py-4 px-6 text-sm font-medium text-gray-900">{{ $user->name }}</td>
+                            <td class="py-4 px-6 text-sm text-gray-500">{{ $user->user_id }}</td>
                             <td class="py-4 px-6 text-sm text-gray-500">{{ $user->email }}</td>
-                            <td class="py-4 px-6 text-sm text-gray-500">{{ $user->role->name }}</td>
+                            <td class="py-4 px-6 text-sm text-gray-500">{{ $user->role ? $user->role->name : 'No Role' }}</td>
                             <td class="py-4 px-6 text-sm text-gray-500">{{ $user->phone ?? 'N/A' }}</td>
                             <td class="py-4 px-6 text-sm font-medium">
                                 <div class="flex space-x-2">
@@ -56,7 +58,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td class="py-4 px-6 text-sm text-gray-500 text-center" colspan="5">No users found.</td>
+                            <td class="py-4 px-6 text-sm text-gray-500 text-center" colspan="6">No users found.</td>
                         </tr>
                     @endforelse
                 </tbody>

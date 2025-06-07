@@ -25,7 +25,9 @@ class RoleMiddleware
         $rolesArray = explode(',', $roles);
         
         foreach ($rolesArray as $role) {
-            if ($request->user()->hasRole(trim($role))) {
+            $roleToCheck = trim($role);
+            // Make case-insensitive comparison
+            if ($request->user()->role && strtolower($request->user()->role->name) === strtolower($roleToCheck)) {
                 return $next($request);
             }
         }

@@ -10,6 +10,7 @@ class Attendance extends Model
         'user_id',
         'event_id',
         'status',
+        'selfie_path',
         'approved_by',
         'approved_at',
         'remarks',
@@ -24,7 +25,7 @@ class Attendance extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
     /**
@@ -40,7 +41,7 @@ class Attendance extends Model
      */
     public function approver()
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(User::class, 'approved_by', 'user_id');
     }
 
     /**
@@ -65,5 +66,13 @@ class Attendance extends Model
     public function scopeExcused($query)
     {
         return $query->where('status', 'excused');
+    }
+
+    /**
+     * Scope a query to only include pending attendances.
+     */
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
     }
 }

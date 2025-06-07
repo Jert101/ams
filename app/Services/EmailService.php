@@ -163,7 +163,7 @@ class EmailService
                     <p>Please contact the secretary or an officer as soon as possible to discuss this matter.</p>
                     
                     <p>Best regards,<br>
-                    The Organization Secretary</p>
+                    Knights of the Altar Council</p>
                 </div>
                 <div class="footer">
                     <p>This is an automated message. Please do not reply directly to this email.</p>

@@ -11,109 +11,544 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#b91c1c',
+                            secondary: '#eab308'
+                        }
+                    }
+                }
+            }
+        </script>
+        
+        <!-- jQuery (needed for some Bootstrap components) -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        
+        <!-- Global Responsive CSS -->
+        <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
         
         <style>
-            :root {
-                --primary-color: #b91c1c; /* Red */
-                --secondary-color: #facc15; /* Golden Yellow */
-                --white-color: #ffffff; /* White */
-                --dark-primary: #991b1b; /* Darker Red */
-            }
-            
-            .card {
-                @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6;
-            }
-            
-            .card-hover {
-                @apply transition-all duration-300 hover:shadow-md;
-            }
-            
-            .section-title {
-                @apply text-xl font-semibold text-red-700 dark:text-red-400;
-            }
-                --light-secondary: #fef3c7; /* Light Gold */
-            }
-            
             body {
                 font-family: 'Figtree', sans-serif;
-                scroll-behavior: smooth;
+                background-color: #f3f4f6;
             }
             
-            .pattern-bg {
-                background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23b91c1c' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+            /* Sidebar styles */
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 250px;
+                background-color: #b91c1c;
+                color: white;
+                z-index: 30;
+                transition: transform 0.3s ease;
             }
             
-            .floating {
-                animation: floating 6s ease-in-out infinite;
+            /* Content styles */
+            .main-content {
+                margin-left: 250px;
+                padding: 1rem;
+                transition: margin-left 0.3s ease;
             }
             
-            @keyframes floating {
-                0% { transform: translateY(0px); }
-                50% { transform: translateY(-10px); }
-                100% { transform: translateY(0px); }
+            /* Mobile styles */
+            @media (max-width: 768px) {
+                .sidebar {
+                    transform: translateX(-100%);
+                }
+                
+                .sidebar.show {
+                    transform: translateX(0);
+                }
+                
+                .main-content {
+                    margin-left: 0;
+                }
             }
             
-            .card {
-                @apply bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-all duration-300;
+            /* Toggle button */
+            .sidebar-toggle {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 40;
+                display: none;
+                background-color: #b91c1c;
+                color: white;
+                border: none;
+                border-radius: 0.375rem;
+                padding: 0.5rem;
             }
             
-            .card-hover {
-                @apply hover:shadow-lg hover:-translate-y-1;
+            @media (max-width: 768px) {
+                .sidebar-toggle {
+                    display: block;
+                }
             }
             
-            .section-title {
-                @apply text-xl font-bold text-red-700 dark:text-red-500 mb-4;
+            /* Tailwind Utility Classes */
+            .font-semibold {
+                font-weight: 600;
             }
             
-            .nav-gradient {
-                background: linear-gradient(to right, rgba(185, 28, 28, 0.95), rgba(157, 23, 77, 0.95));
+            .text-xl {
+                font-size: 1.25rem;
+                line-height: 1.75rem;
+            }
+            
+            .text-gray-800 {
+                color: #1f2937;
+            }
+            
+            .leading-tight {
+                line-height: 1.25;
+            }
+            
+            .py-12 {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+            
+            .max-w-7xl {
+                max-width: 80rem;
+            }
+            
+            .mx-auto {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .sm\:px-6 {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+            
+            .lg\:px-8 {
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1.5rem;
+            }
+            
+            .bg-white {
+                background-color: #ffffff;
+            }
+            
+            .shadow-sm {
+                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            }
+            
+            .rounded-lg {
+                border-radius: 0.5rem;
+            }
+            
+            .mb-6 {
+                margin-bottom: 1.5rem;
+            }
+            
+            .p-6 {
+                padding: 1.5rem;
+            }
+            
+            .p-4 {
+                padding: 1rem;
+            }
+            
+            .p-3 {
+                padding: 0.75rem;
+            }
+            
+            .grid {
+                display: grid;
+            }
+            
+            .grid-cols-1 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+            
+            .md\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            
+            .lg\:grid-cols-4 {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+            
+            .gap-6 {
+                gap: 1.5rem;
+            }
+            
+            .flex {
+                display: flex;
+            }
+            
+            .flex-col {
+                flex-direction: column;
+            }
+            
+            .items-center {
+                align-items: center;
+            }
+            
+            .justify-center {
+                justify-content: center;
+            }
+            
+            .justify-between {
+                justify-content: space-between;
+            }
+            
+            .rounded-full {
+                border-radius: 9999px;
+            }
+            
+            .mr-4 {
+                margin-right: 1rem;
+            }
+            
+            .h-6 {
+                height: 1.5rem;
+            }
+            
+            .w-6 {
+                width: 1.5rem;
+            }
+            
+            .text-sm {
+                font-size: 0.875rem;
+            }
+            
+            .font-medium {
+                font-weight: 500;
+            }
+            
+            .text-gray-600 {
+                color: #4b5563;
+            }
+            
+            .text-2xl {
+                font-size: 1.5rem;
+            }
+            
+            .text-gray-900 {
+                color: #111827;
+            }
+            
+            .bg-blue-100 {
+                background-color: #dbeafe;
+            }
+            
+            .text-blue-600 {
+                color: #2563eb;
+            }
+            
+            .bg-green-100 {
+                background-color: #d1fae5;
+            }
+            
+            .text-green-600 {
+                color: #059669;
+            }
+            
+            .bg-purple-100 {
+                background-color: #f3e8ff;
+            }
+            
+            .text-purple-600 {
+                color: #9333ea;
+            }
+            
+            .bg-yellow-100 {
+                background-color: #fef3c7;
+            }
+            
+            .text-yellow-600 {
+                color: #d97706;
+            }
+            
+            .shadow {
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            }
+            
+            .text-lg {
+                font-size: 1.125rem;
+            }
+            
+            .font-bold {
+                font-weight: 700;
+            }
+            
+            .mb-4 {
+                margin-bottom: 1rem;
+            }
+            
+            .bg-red-700 {
+                background-color: #b91c1c;
+            }
+            
+            .text-white {
+                color: #ffffff;
+            }
+            
+            .hover\:bg-red-800:hover {
+                background-color: #991b1b;
+            }
+            
+            .mt-6 {
+                margin-top: 1.5rem;
+            }
+            
+            .lg\:col-span-2 {
+                grid-column: span 2 / span 2;
+            }
+            
+            .overflow-x-auto {
+                overflow-x: auto;
+            }
+            
+            .min-w-full {
+                min-width: 100%;
+            }
+            
+            .divide-y {
+                border-top-width: 1px;
+                border-bottom-width: 1px;
+            }
+            
+            .divide-gray-200 {
+                border-color: #e5e7eb;
+            }
+            
+            .bg-gray-50 {
+                background-color: #f9fafb;
+            }
+            
+            .px-6 {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+            
+            .py-3 {
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+            
+            .text-left {
+                text-align: left;
+            }
+            
+            .text-xs {
+                font-size: 0.75rem;
+            }
+            
+            .text-gray-500 {
+                color: #6b7280;
+            }
+            
+            .uppercase {
+                text-transform: uppercase;
+            }
+            
+            .tracking-wider {
+                letter-spacing: 0.05em;
+            }
+            
+            .whitespace-nowrap {
+                white-space: nowrap;
+            }
+            
+            .py-4 {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+            
+            .h-10 {
+                height: 2.5rem;
+            }
+            
+            .w-10 {
+                width: 2.5rem;
+            }
+            
+            .ml-4 {
+                margin-left: 1rem;
+            }
+            
+            .px-2 {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+            
+            .inline-flex {
+                display: inline-flex;
+            }
+            
+            .leading-5 {
+                line-height: 1.25rem;
+            }
+            
+            .rounded-full {
+                border-radius: 9999px;
+            }
+            
+            .bg-green-100 {
+                background-color: #d1fae5;
+            }
+            
+            .text-green-800 {
+                color: #065f46;
+            }
+            
+            .bg-yellow-100 {
+                background-color: #fef3c7;
+            }
+            
+            .text-yellow-800 {
+                color: #92400e;
+            }
+            
+            .text-center {
+                text-align: center;
+            }
+            
+            .py-6 {
+                padding-top: 1.5rem;
+                padding-bottom: 1.5rem;
             }
         </style>
-        <!-- Theme Toggle Script -->
-        <script src="{{ asset('js/theme-toggle.js') }}"></script>
+        
+        <!-- Livewire Styles -->
+        @livewireStyles
     </head>
-    <body class="font-sans antialiased pattern-bg dark:bg-gray-900">
-        <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-            @include('layouts.navigation')
-
+    <body class="font-sans antialiased">
+        <!-- Mobile Sidebar Toggle Button -->
+        <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle Sidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+        
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            @include('layouts.sidebar')
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
             <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-yellow-400">
+                <header class="bg-white shadow-sm rounded-lg mb-6">
                     <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+                        <div class="flex justify-between items-center">
+                            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                                {{ $header }}
+                            </h2>
+                            
+                            @auth
+                                <!-- User Profile -->
+                                <div class="flex items-center">
+                                    <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ Auth::user()->name }}" />
+                                    <div class="ml-2">
+                                        <div class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</div>
+                                        <div class="text-xs text-gray-500">{{ Auth::user()->role->name ?? 'User' }}</div>
+                                    </div>
+                                </div>
+                            @endauth
+                        </div>
                     </div>
                 </header>
             @endisset
+            
+            <!-- Facial recognition modal removed -->
+
+            <!-- Flash Messages -->
+            @if (session('success'))
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg" role="alert">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-lg" role="alert">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if (session('warning'))
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded-lg" role="alert">
+                    {{ session('warning') }}
+                </div>
+            @endif
+
+            @if (session('info'))
+                <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4 rounded-lg" role="alert">
+                    {{ session('info') }}
+                </div>
+            @endif
 
             <!-- Page Content -->
-            <main class="py-6">
+            <main>
+                {{ $slot ?? '' }}
                 @yield('content')
             </main>
-            
-            <!-- Footer -->
-            <footer class="bg-gray-800 text-white mt-auto py-4">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex flex-col md:flex-row justify-between items-center">
-                        <p class="text-gray-400 text-sm mb-2 md:mb-0">&copy; {{ date('Y') }} KofA AMS. All rights reserved.</p>
-                        <div class="flex space-x-4">
-                            <a href="#" class="text-gray-400 hover:text-yellow-400 transition-colors duration-300">
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
-                            <a href="#" class="text-gray-400 hover:text-yellow-400 transition-colors duration-300">
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
         </div>
+
+        <!-- Livewire Scripts -->
+        @livewireScripts
         
+        <!-- Additional Scripts -->
         @stack('scripts')
+        
+        <!-- Script to show fallback content if React fails -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Check if React root exists and show fallback content after a timeout
+                setTimeout(function() {
+                    const reactRoots = document.querySelectorAll('[data-react-root]');
+                    reactRoots.forEach(function(root) {
+                        const component = root.getAttribute('data-component');
+                        const fallback = document.getElementById(component.toLowerCase() + '-fallback-content');
+                        if (fallback) {
+                            fallback.style.display = 'block';
+                        }
+                    });
+                }, 100);
+            });
+        </script>
+        
+        <!-- Sidebar Toggle Script -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const sidebarToggle = document.getElementById('sidebar-toggle');
+                const sidebar = document.getElementById('sidebar');
+                
+                if (sidebarToggle) {
+                    sidebarToggle.addEventListener('click', function() {
+                        sidebar.classList.toggle('show');
+                    });
+                }
+                
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function(event) {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target) && sidebar.classList.contains('show')) {
+                            sidebar.classList.remove('show');
+                        }
+                    }
+                });
+            });
+        </script>
     </body>
-</html>
+</html> 

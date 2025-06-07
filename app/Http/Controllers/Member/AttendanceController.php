@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\Event;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AttendanceController extends Controller
 {
@@ -21,7 +23,7 @@ class AttendanceController extends Controller
         $status = $request->input('status');
         
         $query = Attendance::with('event')
-            ->where('user_id', $user->id);
+            ->where('user_id', $user->user_id);
             
         if ($startDate) {
             $query->whereHas('event', function ($q) use ($startDate) {
@@ -43,9 +45,10 @@ class AttendanceController extends Controller
         
         // Get attendance statistics
         $stats = [
-            'present' => Attendance::where('user_id', $user->id)->where('status', 'present')->count(),
-            'absent' => Attendance::where('user_id', $user->id)->where('status', 'absent')->count(),
-            'excused' => Attendance::where('user_id', $user->id)->where('status', 'excused')->count(),
+            'present' => Attendance::where('user_id', $user->user_id)->where('status', 'present')->count(),
+            'absent' => Attendance::where('user_id', $user->user_id)->where('status', 'absent')->count(),
+            'excused' => Attendance::where('user_id', $user->user_id)->where('status', 'excused')->count(),
+            'pending' => Attendance::where('user_id', $user->user_id)->where('status', 'pending')->count(),
         ];
         
         $totalAttendances = array_sum($stats);
@@ -71,7 +74,7 @@ class AttendanceController extends Controller
         $user = Auth::user();
         
         // Ensure the attendance record belongs to the authenticated user
-        if ($attendance->user_id !== $user->id) {
+        if ($attendance->user_id !== $user->user_id) {
             abort(403, 'Unauthorized action.');
         }
         
@@ -96,7 +99,7 @@ class AttendanceController extends Controller
             
         // Get the user's attendances for these events
         $eventIds = $events->pluck('id')->toArray();
-        $attendances = Attendance::where('user_id', $user->id)
+        $attendances = Attendance::where('user_id', $user->user_id)
             ->whereIn('event_id', $eventIds)
             ->get()
             ->keyBy('event_id');
@@ -105,6 +108,7 @@ class AttendanceController extends Controller
         $presentCount = 0;
         $absentCount = 0;
         $excusedCount = 0;
+        $pendingCount = 0;
         
         foreach ($events as $event) {
             if (isset($attendances[$event->id])) {
@@ -115,6 +119,8 @@ class AttendanceController extends Controller
                     $absentCount++;
                 } elseif ($status === 'excused') {
                     $excusedCount++;
+                } elseif ($status === 'pending') {
+                    $pendingCount++;
                 }
             } else {
                 // No record means absent
@@ -134,9 +140,74 @@ class AttendanceController extends Controller
             'month', 
             'presentCount', 
             'absentCount', 
-            'excusedCount', 
+            'excusedCount',
+            'pendingCount',
             'totalEvents', 
             'attendancePercentage'
         ));
+    }
+
+    /**
+     * Show form for submitting attendance with selfie
+     */
+    public function create()
+    {
+        $user = Auth::user();
+        
+        // Get today's events
+        $todayEvents = Event::whereDate('date', now()->toDateString())
+            ->where('is_active', true)
+            ->orderBy('time')
+            ->get();
+            
+        // Check if user already has attendance for these events
+        $eventIds = $todayEvents->pluck('id')->toArray();
+        $existingAttendances = Attendance::where('user_id', $user->user_id)
+            ->whereIn('event_id', $eventIds)
+            ->whereIn('status', ['present', 'pending'])
+            ->get()
+            ->keyBy('event_id');
+            
+        return view('member.attendances.create', compact('todayEvents', 'existingAttendances'));
+    }
+    
+    /**
+     * Store a newly created attendance record with selfie
+     */
+    public function store(Request $request)
+    {
+        $user = Auth::user();
+        
+        $validated = $request->validate([
+            'event_id' => 'required|exists:events,id',
+            'selfie' => 'required|image|max:5120', // 5MB max
+        ]);
+        
+        $event = Event::findOrFail($validated['event_id']);
+        
+        // Check if user already has attendance for this event
+        $existingAttendance = Attendance::where('user_id', $user->user_id)
+            ->where('event_id', $event->id)
+            ->whereIn('status', ['present', 'pending'])
+            ->first();
+            
+        if ($existingAttendance) {
+            return redirect()->back()->with('error', 'You have already submitted attendance for this event.');
+        }
+        
+        // Store the selfie
+        $selfiePath = $request->file('selfie')->store('selfies', 'public');
+        
+        // Create attendance record
+        Attendance::create([
+            'user_id' => $user->user_id,
+            'event_id' => $event->id,
+            'status' => 'pending',
+            'selfie_path' => $selfiePath,
+            'remarks' => $request->input('remarks'),
+        ]);
+        
+        return redirect()->route('member.attendances.index')
+            ->with('success', 'Attendance submitted successfully. Waiting for approval.');
     }
 }

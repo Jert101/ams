@@ -35,7 +35,10 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role_id' => $adminRole->id,
                 'email_verified_at' => now(),
-                'phone' => '1234567890',
+                'mobile_number' => '1234567890',
+                'user_id' => 110002,
+                'profile_photo_path' => 'kofa.png',
+                'approval_status' => 'approved',
             ]
         );
 
@@ -47,7 +50,10 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role_id' => $officerRole->id,
                 'email_verified_at' => now(),
-                'phone' => '2345678901',
+                'mobile_number' => '2345678901',
+                'user_id' => 110003,
+                'profile_photo_path' => 'kofa.png',
+                'approval_status' => 'approved',
             ]
         );
 
@@ -59,7 +65,10 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role_id' => $secretaryRole->id,
                 'email_verified_at' => now(),
-                'phone' => '3456789012',
+                'mobile_number' => '3456789012',
+                'user_id' => 110004,
+                'profile_photo_path' => 'kofa.png',
+                'approval_status' => 'approved',
             ]
         );
 
@@ -71,7 +80,10 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role_id' => $memberRole->id,
                 'email_verified_at' => now(),
-                'phone' => '4567890123',
+                'mobile_number' => '4567890123',
+                'user_id' => 110005,
+                'profile_photo_path' => 'kofa.png',
+                'approval_status' => 'approved',
             ]
         );
 
@@ -79,7 +91,7 @@ class UserSeeder extends Seeder
         try {
             foreach ([$admin, $officer, $secretary, $member] as $user) {
                 QrCode::updateOrCreate(
-                    ['user_id' => $user->id],
+                    ['user_id' => $user->user_id],
                     [
                         'code' => method_exists(QrCode::class, 'generateUniqueCode') 
                             ? QrCode::generateUniqueCode() 
@@ -92,5 +104,21 @@ class UserSeeder extends Seeder
             // QrCode model might not exist or have different structure
             // Just continue without creating QR codes
         }
+
+        // Get the admin role ID for the production admin
+        $adminRoleId = Role::where('name', 'Admin')->first()->id;
+
+        // Create a production admin account
+        User::create([
+            'name' => 'Administrator',
+            'email' => 'admin@kofa-ams.com',
+            'password' => Hash::make('admin123'),
+            'role_id' => $adminRoleId,
+            'email_verified_at' => now(),
+            'mobile_number' => '9876543210',
+            'user_id' => 110006,
+            'profile_photo_path' => 'kofa.png',
+            'approval_status' => 'approved',
+        ]);
     }
 }

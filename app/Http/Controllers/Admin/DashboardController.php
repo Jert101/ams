@@ -22,6 +22,7 @@ class DashboardController extends Controller
         $totalEvents = Event::count();
         $totalAttendances = Attendance::count();
         $totalNotifications = Notification::count();
+        $pendingRegistrations = User::where('approval_status', 'pending')->count();
         
         // Get recent users
         $recentUsers = User::with('role')
@@ -60,6 +61,7 @@ class DashboardController extends Controller
             'totalEvents',
             'totalAttendances',
             'totalNotifications',
+            'pendingRegistrations',
             'recentUsers',
             'upcomingEvents',
             'recentAttendances',

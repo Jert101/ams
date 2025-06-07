@@ -43,6 +43,11 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+        
+        // Custom middleware group for excluding CSRF protection
+        'excludeFromCsrfProtection' => [
+            \App\Http\Middleware\ExcludeFromCsrfProtection::class,
+        ],
     ];
 
     /**
@@ -65,5 +70,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         'roles' => \App\Http\Middleware\CheckRole::class,
+        'approved' => \App\Http\Middleware\EnsureAccountIsApproved::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'role.admin' => \App\Http\Middleware\RoleAdmin::class,
     ];
 }

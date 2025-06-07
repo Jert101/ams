@@ -28,6 +28,15 @@ class DatabaseSeeder extends Seeder
             
             // Create test users for each role
             $this->call(TestUsersSeeder::class);
+            
+            // Create sample events
+            $this->call(EventSeeder::class);
+            
+            // Create mass schedules
+            $this->call(MassScheduleSeeder::class);
+            
+            // Generate QR codes for users
+            $this->call(QrCodeSeeder::class);
         }
     }
 }

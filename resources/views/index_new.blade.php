@@ -105,19 +105,19 @@
             
             /* Breeze-inspired custom styles */
             .btn-primary {
-                @apply inline-flex items-center px-4 py-2 bg-red-700 dark:bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white dark:text-white uppercase tracking-widest hover:bg-red-800 dark:hover:bg-red-700 focus:bg-red-800 dark:focus:bg-red-700 active:bg-red-900 dark:active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150;
+                @apply inline-flex items-center px-4 py-2 bg-red-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-800 focus:bg-red-800 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150;
             }
             
             .btn-secondary {
-                @apply inline-flex items-center px-4 py-2 bg-yellow-400 dark:bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-gray-800 dark:text-gray-800 uppercase tracking-widest hover:bg-yellow-500 dark:hover:bg-yellow-400 focus:bg-yellow-500 dark:focus:bg-yellow-400 active:bg-yellow-600 dark:active:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150;
+                @apply inline-flex items-center px-4 py-2 bg-yellow-400 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-yellow-500 focus:bg-yellow-500 active:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition ease-in-out duration-150;
             }
             
             .btn-outline {
-                @apply inline-flex items-center px-4 py-2 bg-transparent border border-red-700 dark:border-red-600 rounded-md font-semibold text-xs text-red-700 dark:text-red-600 uppercase tracking-widest hover:bg-red-700 hover:text-white dark:hover:bg-red-600 dark:hover:text-white focus:bg-red-700 focus:text-white dark:focus:bg-red-600 dark:focus:text-white active:bg-red-800 dark:active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150;
+                @apply inline-flex items-center px-4 py-2 bg-transparent border border-red-700 rounded-md font-semibold text-xs text-red-700 uppercase tracking-widest hover:bg-red-700 hover:text-white focus:bg-red-700 focus:text-white active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150;
             }
             
             .card {
-                @apply bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6;
+                @apply bg-white overflow-hidden shadow-sm sm:rounded-lg p-6;
             }
         </style>
     </head>

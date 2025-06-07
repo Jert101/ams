@@ -9,16 +9,30 @@ use App\Models\QrCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the users.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('role')->paginate(10);
-        return view('admin.users.index', compact('users'));
+        // Check for filters
+        $filter = $request->query('filter');
+        
+        $query = User::with('role', 'qrCode');
+        
+        // Apply filters if any
+        if ($filter === 'members-with-qr') {
+            $query->whereHas('role', function($q) {
+                $q->where('name', 'Member');
+            })->whereHas('qrCode');
+        }
+        
+        $users = $query->paginate(10);
+        
+        return view('admin.users.index', compact('users', 'filter'));
     }
 
     /**
@@ -38,24 +52,45 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'nullable|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
-            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+            'mobile_number' => 'nullable|string|max:20',
+            'date_of_birth' => 'nullable|date',
+            'profile_photo' => 'nullable|image|max:1024',
         ]);
+        
+        // Generate random password if not provided
+        if (empty($validated['password'])) {
+            $password = substr(str_shuffle('abcdefghjklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()'), 0, 12);
+        } else {
+            $password = $validated['password'];
+        }
 
+        // Create the user
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'password' => Hash::make($password),
             'role_id' => $validated['role_id'],
-            'phone' => $validated['phone'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'mobile_number' => $validated['mobile_number'] ?? null,
+            'date_of_birth' => $validated['date_of_birth'] ?? null,
+            'profile_photo_path' => 'kofa.png', // Default profile photo
+            'approval_status' => 'approved', // Auto-approve users created by admin
         ]);
+
+        // Handle profile photo upload
+        if ($request->hasFile('profile_photo')) {
+            $path = $request->file('profile_photo')->store('profile-photos', 'public');
+            $user->profile_photo_path = $path;
+            $user->save();
+        }
 
         // Generate QR code for the user
         QrCode::create([
-            'user_id' => $user->id,
+            'user_id' => $user->user_id,
             'code' => QrCode::generateUniqueCode(),
-            'is_active' => true,
         ]);
 
         return redirect()->route('admin.users.index')
@@ -85,6 +120,25 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        // Handle QR code generation request
+        if ($request->has('generate_qr')) {
+            // Check if the user already has a QR code
+            if (!$user->qrCode) {
+                // Create a new QR code for the user
+                QrCode::create([
+                    'user_id' => $user->user_id,
+                    'code' => QrCode::generateUniqueCode(),
+                ]);
+                
+                return redirect()->route('admin.users.show', $user)
+                    ->with('success', 'QR code generated successfully.');
+            }
+            
+            return redirect()->route('admin.users.show', $user)
+                ->with('info', 'User already has a QR code.');
+        }
+        
+        // Regular user update
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => [
@@ -92,22 +146,38 @@ class UserController extends Controller
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('users')->ignore($user->id),
+                Rule::unique('users')->ignore($user->user_id, 'user_id'),
             ],
             'password' => 'nullable|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
-            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+            'mobile_number' => 'nullable|string|max:20',
+            'date_of_birth' => 'nullable|date',
+            'profile_photo' => 'nullable|image|max:1024',
         ]);
 
         $userData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
             'role_id' => $validated['role_id'],
-            'phone' => $validated['phone'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'mobile_number' => $validated['mobile_number'] ?? null,
+            'date_of_birth' => $validated['date_of_birth'] ?? null,
         ];
 
         if (!empty($validated['password'])) {
             $userData['password'] = Hash::make($validated['password']);
+        }
+        
+        // Handle profile photo upload
+        if ($request->hasFile('profile_photo')) {
+            // Delete old photo if exists and it's not the default
+            if ($user->profile_photo_path && $user->profile_photo_path !== 'kofa.png') {
+                Storage::disk('public')->delete($user->profile_photo_path);
+            }
+            
+            $path = $request->file('profile_photo')->store('profile-photos', 'public');
+            $userData['profile_photo_path'] = $path;
         }
 
         $user->update($userData);

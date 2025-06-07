@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class AdminSeeder extends Seeder
 {
@@ -12,25 +15,27 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get the admin role ID
-        $adminRole = \App\Models\Role::where('name', 'Admin')->first();
-
-        if ($adminRole) {
-            // Create admin user
-            $admin = \App\Models\User::create([
-                'name' => 'Admin User',
-                'email' => 'admin@example.com',
-                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+        // Make sure the roles exist
+        $adminRole = Role::where('name', 'Admin')->first();
+        
+        if (!$adminRole) {
+            $this->call(RoleSeeder::class);
+            $adminRole = Role::where('name', 'Admin')->first();
+        }
+        
+        // Create an admin user
+        User::updateOrCreate(
+            ['email' => 'admin@admin.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('admin'),
                 'role_id' => $adminRole->id,
                 'email_verified_at' => now(),
-            ]);
-
-            // Create QR code for admin
-            \App\Models\QrCode::create([
-                'user_id' => $admin->id,
-                'code' => \App\Models\QrCode::generateUniqueCode(),
-                'is_active' => true,
-            ]);
-        }
+                'user_id' => 110001,
+                'profile_photo_path' => 'kofa.png',
+                'mobile_number' => '0987654321',
+                'approval_status' => 'approved',
+            ]
+        );
     }
 }

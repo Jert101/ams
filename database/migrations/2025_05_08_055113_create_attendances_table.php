@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('event_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['present', 'absent', 'excused'])->default('absent');
+            $table->enum('status', ['present', 'absent', 'excused', 'pending'])->default('absent');
+            $table->string('selfie_path')->nullable();
             $table->foreignId('approved_by')->nullable()->constrained('users');
             $table->timestamp('approved_at')->nullable();
             $table->text('remarks')->nullable();

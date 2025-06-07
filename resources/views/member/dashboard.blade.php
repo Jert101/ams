@@ -1,164 +1,228 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Member Dashboard') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-[#B22234] mb-6">Member Dashboard</h1>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <!-- Attendance Summary Card -->
-        <div class="bg-white p-6 rounded-lg shadow border border-[#FFD700]">
-            <div class="flex items-start justify-between">
-                <div>
-                    <h2 class="text-lg font-medium text-[#B22234]">Attendance Summary</h2>
-                    <p class="text-gray-700 mt-1">Your attendance statistics</p>
-                </div>
-                <div class="bg-[#FFD700] p-2 rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[#B22234]">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
-                    </svg>
-                </div>
-            </div>
-            <div class="mt-4">
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-700">Present:</span>
-                    <span class="text-green-600 font-semibold">{{ $presentCount ?? 0 }}</span>
-                </div>
-                <div class="flex justify-between items-center mt-2">
-                    <span class="text-gray-700">Absent:</span>
-                    <span class="text-red-600 font-semibold">{{ $absentCount ?? 0 }}</span>
-                </div>
-                <div class="flex justify-between items-center mt-2">
-                    <span class="text-gray-700">Excused:</span>
-                    <span class="text-blue-600 font-semibold">{{ $excusedCount ?? 0 }}</span>
-                </div>
-            </div>
-        </div>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- React Dashboard -->
+            <div 
+                id="member-dashboard-root"
+                data-react-root 
+                data-component="MemberDashboard"
+                data-props='{
+                    "presentCount": {{ $presentCount }},
+                    "absentCount": {{ $absentCount }},
+                    "excusedCount": {{ $excusedCount }},
+                    "attendanceRate": {{ $attendanceRate }},
+                    "nextEvent": @json($nextEvent),
+                    "recentAttendances": @json($recentAttendances)
+                }'
+            ></div>
 
-        <!-- QR Code Card -->
-        <div class="bg-white p-6 rounded-lg shadow border border-[#FFD700]">
-            <div class="flex items-start justify-between">
-                <div>
-                    <h2 class="text-lg font-medium text-[#B22234]">Your QR Code</h2>
-                    <p class="text-gray-700 mt-1">Show this for attendance</p>
-                </div>
-                <div class="bg-[#FFD700] p-2 rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[#B22234]">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" />
-                    </svg>
-                </div>
-            </div>
-            <div class="flex justify-center mt-4">
-                <div class="border-2 border-[#FFD700] rounded-lg p-2 bg-white">
-                    <div class="flex items-center justify-center w-32 h-32 bg-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-[#B22234]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                        </svg>
+            <!-- Fallback HTML Content (displayed if React fails) -->
+            <div id="memberdashboard-fallback-content" style="display: none;" class="space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-bold mb-4">Attendance Summary</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div class="text-center p-4 bg-green-50 rounded-lg">
+                                    <p class="text-sm font-medium text-green-600">Present</p>
+                                    <p class="mt-1 text-3xl font-semibold text-green-800">{{ $presentCount }}</p>
+                                </div>
+                                <div class="text-center p-4 bg-red-50 rounded-lg">
+                                    <p class="text-sm font-medium text-red-600">Absent</p>
+                                    <p class="mt-1 text-3xl font-semibold text-red-800">{{ $absentCount }}</p>
+                                </div>
+                                <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                                    <p class="text-sm font-medium text-yellow-600">Excused</p>
+                                    <p class="mt-1 text-3xl font-semibold text-yellow-800">{{ $excusedCount }}</p>
+                                </div>
+                                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                    <p class="text-sm font-medium text-blue-600">Attendance Rate</p>
+                                    <p class="mt-1 text-3xl font-semibold text-blue-800">{{ $attendanceRate }}%</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-green-600 h-2.5 rounded-full" style="width: {{ $attendanceRate }}%"></div>
+                                </div>
+                                <p class="mt-2 text-sm text-gray-600">
+                                    Total Events: {{ $presentCount + $absentCount + $excusedCount }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-bold mb-4">Member Status</h3>
+                            <div class="text-center py-6">
+                                <p class="text-2xl font-bold text-red-700">{{ auth()->user()->name }}</p>
+                                <p class="text-gray-500 mt-2">{{ auth()->user()->role->name }}</p>
+                                <p class="text-gray-500">Member since {{ auth()->user()->created_at->format('F Y') }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="mt-4 text-center">
-                <a href="{{ route('qrcode.show') }}" class="text-[#B22234] hover:text-[#8B0000]">View Full QR Code</a>
-            </div>
-        </div>
 
-        <!-- Next Event Card -->
-        <div class="bg-white p-6 rounded-lg shadow border border-[#FFD700]">
-            <div class="flex items-start justify-between">
-                <div>
-                    <h2 class="text-lg font-medium text-[#B22234]">Next Event</h2>
-                    <p class="text-gray-700 mt-1">Upcoming mass</p>
-                </div>
-                <div class="bg-[#FFD700] p-2 rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[#B22234]">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
-                    </svg>
-                </div>
-            </div>
-            @if(isset($nextEvent))
-                <div class="mt-4">
-                    <div class="mt-2">
-                        <span class="text-gray-700 font-semibold">{{ $nextEvent->title }}</span>
-                    </div>
-                    <div class="mt-2">
-                        <span class="text-gray-700">Date:</span>
-                        <span class="text-[#B22234]">{{ \Carbon\Carbon::parse($nextEvent->date)->format('M d, Y') }}</span>
-                    </div>
-                    <div class="mt-2">
-                        <span class="text-gray-700">Time:</span>
-                        <span class="text-[#B22234]">{{ \Carbon\Carbon::parse($nextEvent->time)->format('h:i A') }}</span>
-                    </div>
-                    <div class="mt-2">
-                        <span class="text-gray-700">Location:</span>
-                        <span class="text-[#B22234]">{{ $nextEvent->location }}</span>
-                    </div>
-                </div>
-            @else
-                <div class="mt-4 flex justify-center items-center h-24">
-                    <span class="text-gray-500">No upcoming events</span>
-                </div>
-            @endif
-        </div>
-    </div>
-
-    <!-- Recent Attendance History -->
-    <div class="bg-white p-6 rounded-lg shadow border border-[#FFD700] mb-8">
-        <h2 class="text-xl font-medium text-[#B22234] mb-4">Recent Attendance History</h2>
-        @if(isset($recentAttendances) && count($recentAttendances) > 0)
-            <div class="overflow-x-auto">
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50">
-                            <th class="px-4 py-2 text-left text-gray-700">Date</th>
-                            <th class="px-4 py-2 text-left text-gray-700">Event</th>
-                            <th class="px-4 py-2 text-left text-gray-700">Status</th>
-                            <th class="px-4 py-2 text-left text-gray-700">Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($recentAttendances as $attendance)
-                            <tr class="border-t">
-                                <td class="px-4 py-2 text-gray-700">{{ \Carbon\Carbon::parse($attendance->event->date)->format('M d, Y') }}</td>
-                                <td class="px-4 py-2 text-gray-700">{{ $attendance->event->title }}</td>
-                                <td class="px-4 py-2">
-                                    @if($attendance->status === 'present')
-                                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Present</span>
-                                    @elseif($attendance->status === 'absent')
-                                        <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">Absent</span>
-                                    @else
-                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">Excused</span>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div>
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-bold mb-4">Next Event</h3>
+                            @if($nextEvent)
+                                <div class="space-y-4">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-gray-900">{{ $nextEvent['name'] }}</h3>
+                                        <p class="text-gray-600">{{ $nextEvent['description'] }}</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg class="h-5 w-5 text-gray-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <span class="text-gray-700">{{ date('F j, Y', strtotime($nextEvent['date'])) }}</span>
+                                    </div>
+                                    @if(isset($nextEvent['time']))
+                                        <div class="flex items-center">
+                                            <svg class="h-5 w-5 text-gray-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span class="text-gray-700">{{ $nextEvent['time'] }}</span>
+                                        </div>
                                     @endif
-                                </td>
-                                <td class="px-4 py-2 text-gray-700">{{ $attendance->remarks ?? 'N/A' }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                    @if(isset($nextEvent['location']))
+                                        <div class="flex items-center">
+                                            <svg class="h-5 w-5 text-gray-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                            <span class="text-gray-700">{{ $nextEvent['location'] }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            @else
+                                <div class="text-center py-6">
+                                    <p class="text-gray-500">No upcoming events scheduled</p>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <!-- QR Code Section -->
+                        @if(isset($qrCode))
+                        <div class="bg-white rounded-lg shadow p-6 mt-6">
+                            <h3 class="text-lg font-bold mb-4">Your QR Code</h3>
+                            <div class="text-center">
+                                <div class="mb-4 flex justify-center">
+                                    <div id="qrcode-container-dashboard"></div>
+                                </div>
+                                <p class="text-gray-600 mb-1 text-sm">Code: <span class="font-mono">{{ $qrCode->code }}</span></p>
+                                <div class="mt-4 flex justify-center space-x-2">
+                                    <a href="{{ route('qrcode.show') }}" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                                        View Full QR
+                                    </a>
+                                    @if(auth()->user()->isAdmin())
+                                    <a href="{{ route('qrcode.print') }}" class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm">
+                                        Print ID Card
+                                    </a>
+                                    @endif
+                                </div>
+                                <p class="mt-2 text-xs text-gray-500">Click "View Full QR" to see your complete QR code</p>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-bold mb-4">Recent Attendance</h3>
+                            @if(count($recentAttendances) > 0)
+                                <div class="overflow-hidden">
+                                    <table class="min-w-full divide-y divide-gray-200">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Event
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Date
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Status
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200">
+                                            @foreach($recentAttendances as $attendance)
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                        {{ $attendance['event']['name'] ?? 'Unknown Event' }}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        {{ isset($attendance['event']['date']) ? date('M d, Y', strtotime($attendance['event']['date'])) : 'Unknown Date' }}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                        @php
+                                                            $statusClass = '';
+                                                            switch($attendance['status']) {
+                                                                case 'present':
+                                                                    $statusClass = 'bg-green-100 text-green-800';
+                                                                    break;
+                                                                case 'absent':
+                                                                    $statusClass = 'bg-red-100 text-red-800';
+                                                                    break;
+                                                                case 'excused':
+                                                                    $statusClass = 'bg-yellow-100 text-yellow-800';
+                                                                    break;
+                                                                default:
+                                                                    $statusClass = 'bg-gray-100 text-gray-800';
+                                                            }
+                                                        @endphp
+                                                        <span class="px-2 py-1 text-xs rounded-full {{ $statusClass }}">
+                                                            {{ ucfirst($attendance['status']) }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-4 flex justify-end">
+                                    <a href="/member/attendances" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                                        View All
+                                    </a>
+                                </div>
+                            @else
+                                <div class="text-center py-6">
+                                    <p class="text-gray-500">No attendance records found</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
-        @else
-            <div class="text-gray-500 py-4 text-center">No attendance records found</div>
-        @endif
+        </div>
     </div>
+</x-app-layout>
 
-    <!-- Profile Information -->
-    <div class="bg-white p-6 rounded-lg shadow border border-[#FFD700]">
-        <h2 class="text-xl font-medium text-[#B22234] mb-4">Profile Information</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <p class="text-gray-700"><span class="font-semibold">Name:</span> {{ auth()->user()->name }}</p>
-                <p class="text-gray-700 mt-2"><span class="font-semibold">Email:</span> {{ auth()->user()->email }}</p>
-                <p class="text-gray-700 mt-2"><span class="font-semibold">Phone:</span> {{ auth()->user()->phone ?? 'Not provided' }}</p>
-            </div>
-            <div>
-                <p class="text-gray-700"><span class="font-semibold">Role:</span> {{ auth()->user()->role->name ?? 'Unknown' }}</p>
-                <p class="text-gray-700 mt-2"><span class="font-semibold">Address:</span> {{ auth()->user()->address ?? 'Not provided' }}</p>
-                <p class="text-gray-700 mt-2"><span class="font-semibold">Gender:</span> {{ ucfirst(auth()->user()->gender) ?? 'Not provided' }}</p>
-            </div>
-        </div>
-        <div class="mt-4 text-center">
-            <a href="#" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#B22234] hover:bg-[#8B0000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FFD700]">
-                View Full Profile
-            </a>
-        </div>
-    </div>
-</div>
-@endsection 
+@push('scripts')
+@if(isset($qrCode))
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if container exists (might not be visible in the React version)
+        const container = document.getElementById('qrcode-container-dashboard');
+        if (container) {
+            new QRCode(container, {
+                text: "{{ $qrCode->code }}",
+                width: 100,
+                height: 100,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+    });
+</script>
+@endif
+@endpush 

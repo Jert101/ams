@@ -1,0 +1,285 @@
+/* ==== GLOBAL RESPONSIVE STYLES ==== */
+
+/* Base responsive rules */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Fluid typography - scales text based on viewport width */
+:root {
+  --font-size-sm: clamp(0.8rem, 0.17vw + 0.76rem, 0.89rem);
+  --font-size-base: clamp(1rem, 0.34vw + 0.91rem, 1.19rem);
+  --font-size-md: clamp(1.25rem, 0.61vw + 1.1rem, 1.58rem);
+  --font-size-lg: clamp(1.56rem, 1vw + 1.31rem, 2.11rem);
+  --font-size-xl: clamp(1.95rem, 1.56vw + 1.56rem, 2.81rem);
+  --font-size-xxl: clamp(2.44rem, 2.38vw + 1.85rem, 3.75rem);
+  --font-size-xxxl: clamp(3.05rem, 3.54vw + 2.17rem, 5rem);
+}
+
+/* Responsive spacing utility classes */
+.container {
+  width: 100%;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+/* Image responsiveness */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Table responsiveness */
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Card responsiveness */
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  flex: 1 1 auto;
+}
+
+/* Responsive flex utilities */
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+/* Responsive grid system enhancement */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .grid-sm-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .grid-md-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-lg-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Button responsiveness */
+.btn-responsive {
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-sm);
+}
+
+@media (min-width: 768px) {
+  .btn-responsive {
+    padding: 0.75rem 1.5rem;
+    font-size: var(--font-size-base);
+  }
+}
+
+/* Form controls */
+input, select, textarea {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: var(--font-size-base);
+}
+
+/* Responsive spacing */
+.responsive-p {
+  padding: clamp(0.5rem, 2vw, 2rem);
+}
+
+.responsive-m {
+  margin: clamp(0.5rem, 2vw, 2rem);
+}
+
+/* Hide/show elements based on screen size */
+.hide-on-mobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hide-on-mobile {
+    display: block;
+  }
+  
+  .hide-on-desktop {
+    display: none;
+  }
+}
+
+/* Responsive navigation and sidebar */
+.sidebar-toggle {
+  display: block;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 100;
+  background-color: var(--primary-color, #b91c1c);
+  color: white;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 1024px) {
+  .sidebar-toggle {
+    display: none;
+  }
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 18rem;
+  transition: transform 0.3s ease-in-out;
+  z-index: 40;
+  overflow-y: auto;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.show {
+    transform: translateX(0);
+  }
+}
+
+/* Content wrapper adjustments */
+.content-wrapper {
+  transition: margin-left 0.3s ease;
+}
+
+@media (min-width: 1024px) {
+  .content-wrapper {
+    margin-left: 18rem;
+    width: calc(100% - 18rem);
+  }
+}
+
+@media (max-width: 1024px) {
+  .content-wrapper {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* QR Code specific responsiveness */
+.qr-card {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .qr-card {
+    max-width: 540px;
+  }
+}
+
+/* Dashboard card responsiveness */
+.dashboard-card {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .dashboard-card {
+    margin-bottom: 0;
+  }
+}
+
+/* Print styles for QR codes */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  .container {
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+/* Enhanced visibility for small screens */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+  
+  h1 {
+    font-size: var(--font-size-lg);
+  }
+  
+  h2 {
+    font-size: var(--font-size-md);
+  }
+  
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .card {
+    padding: 0.75rem;
+  }
+  
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .button-container > * {
+    width: 100%;
+  }
+} 

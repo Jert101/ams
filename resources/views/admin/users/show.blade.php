@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.admin-app')
 
 @section('content')
 <div class="container mx-auto px-4 py-6">
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-3xl font-bold">User Details</h1>
+        <h1 class="text-3xl font-bold text-red-700">User Details</h1>
         <div class="flex space-x-2">
             <a href="{{ route('admin.users.edit', $user) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
                 Edit User
@@ -18,71 +18,60 @@
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <h2 class="text-xl font-semibold mb-4">User Information</h2>
-                    <div class="mb-4">
-                        <p class="text-sm font-medium text-gray-500">Name</p>
-                        <p class="text-lg">{{ $user->name }}</p>
+                    <h2 class="text-xl font-semibold text-red-700 mb-4">User Information</h2>
+                    
+                    <!-- Profile Photo -->
+                    <div class="mb-6 flex justify-center md:justify-start">
+                        <img src="{{ $user->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ $user->name }}'s profile photo" class="h-32 w-32 object-cover rounded-full border-4 border-red-200">
                     </div>
                     
                     <div class="mb-4">
-                        <p class="text-sm font-medium text-gray-500">Email</p>
-                        <p class="text-lg">{{ $user->email }}</p>
+                        <p class="text-sm font-medium text-gray-700">Name</p>
+                        <p class="text-lg font-semibold text-gray-900">{{ $user->name }}</p>
                     </div>
                     
                     <div class="mb-4">
-                        <p class="text-sm font-medium text-gray-500">Role</p>
-                        <p class="text-lg">{{ $user->role->name }}</p>
+                        <p class="text-sm font-medium text-gray-700">User ID</p>
+                        <p class="text-lg font-semibold text-gray-900">{{ $user->user_id }}</p>
                     </div>
                     
                     <div class="mb-4">
-                        <p class="text-sm font-medium text-gray-500">Phone</p>
-                        <p class="text-lg">{{ $user->phone ?? 'Not provided' }}</p>
+                        <p class="text-sm font-medium text-gray-700">Email</p>
+                        <p class="text-lg font-semibold text-gray-900">{{ $user->email }}</p>
                     </div>
                     
                     <div class="mb-4">
-                        <p class="text-sm font-medium text-gray-500">Created At</p>
-                        <p class="text-lg">{{ $user->created_at->format('F d, Y h:i A') }}</p>
+                        <p class="text-sm font-medium text-gray-700">Role</p>
+                        <p class="text-lg font-semibold text-gray-900">{{ $user->role->name }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="text-sm font-medium text-gray-700">Address</p>
+                        <p class="text-lg font-semibold text-gray-900">{{ $user->address ?? 'Not provided' }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="text-sm font-medium text-gray-700">Mobile Number</p>
+                        <p class="text-lg font-semibold text-gray-900">{{ $user->mobile_number ?? 'Not provided' }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="text-sm font-medium text-gray-700">Date of Birth</p>
+                        <p class="text-lg font-semibold text-gray-900">{{ $user->date_of_birth ? $user->date_of_birth->format('F d, Y') : 'Not provided' }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="text-sm font-medium text-gray-700">Created At</p>
+                        <p class="text-lg font-semibold text-gray-900">{{ $user->created_at->format('F d, Y h:i A') }}</p>
                     </div>
                 </div>
                 
                 <div>
-                    <h2 class="text-xl font-semibold mb-4">QR Code</h2>
-                    @if ($user->qrCode)
-                        <div class="mb-4">
-                            <p class="text-sm font-medium text-gray-500">QR Code ID</p>
-                            <p class="text-lg">{{ $user->qrCode->code }}</p>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <p class="text-sm font-medium text-gray-500">Status</p>
-                            <p class="text-lg">
-                                @if ($user->qrCode->is_active)
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                                @else
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>
-                                @endif
-                            </p>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <p class="text-sm font-medium text-gray-500">Last Used</p>
-                            <p class="text-lg">{{ $user->qrCode->last_used_at ? $user->qrCode->last_used_at->format('F d, Y h:i A') : 'Never used' }}</p>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ $user->qrCode->code }}" alt="QR Code" class="border border-gray-300 rounded">
-                        </div>
-                    @else
-                        <p class="text-red-500">No QR code assigned to this user.</p>
-                        <form action="{{ route('admin.users.update', $user) }}" method="POST" class="mt-4">
-                            @csrf
-                            @method('PUT')
-                            <input type="hidden" name="generate_qr" value="1">
-                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                                Generate QR Code
-                            </button>
-                        </form>
-                    @endif
+                    <h2 class="text-xl font-semibold text-red-700 mb-4">Additional Information</h2>
+                    <div class="p-6 bg-red-50 rounded-lg border border-red-200 mb-6">
+                        <p class="text-red-700 font-medium mb-4">User account status: <span class="font-bold">{{ ucfirst($user->approval_status) }}</span></p>
+                        <p class="text-gray-700">This user was created on {{ $user->created_at->format('F d, Y') }} and has been a member for {{ $user->created_at->diffForHumans(null, true) }}.</p>
+                    </div>
                 </div>
             </div>
         </div>
