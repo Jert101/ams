@@ -102,7 +102,7 @@
                                             </a>
                                             
                                             @if($candidate->status === 'pending')
-                                                <form action="{{ route('admin.election.candidate.approve', $candidate->id) }}" method="POST" class="d-inline">
+                                                <form action="{{ url('/admin/election/candidates/' . $candidate->id . '/approve') }}" method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="btn btn-success btn-sm">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
@@ -204,7 +204,7 @@
     // Function to open the reject modal
     function openRejectModal(candidateId, candidateName, positionTitle) {
         // Set the form action
-        document.getElementById('rejectForm').action = "{{ route('admin.election.candidate.reject', '') }}/" + candidateId;
+        document.getElementById('rejectForm').action = "{{ url('/admin/election/candidates') }}/" + candidateId + "/reject";
         
         // Set the rejection message
         document.getElementById('rejectMessage').innerHTML = 
