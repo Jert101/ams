@@ -403,6 +403,8 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     
     // Test route for debugging
     Route::get('/election/test-add-position', [App\Http\Controllers\Admin\ElectionController::class, 'testAddPosition'])->name('election.test-add-position');
+
+// All candidate applications are automatically approved
 });
 
 // Add the following route for the memory bank management page

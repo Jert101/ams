@@ -323,4 +323,6 @@ class ElectionController extends Controller
         return redirect()->route('admin.election.index')
             ->with('success', $message);
     }
+
+    // Candidate approval is now automatic via the ElectionCandidate model's booted method
 } 

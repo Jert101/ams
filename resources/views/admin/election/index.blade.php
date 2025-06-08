@@ -739,100 +739,26 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 font-bold flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
-                    Pending Candidate Applications
+                    Candidate Management
                 </h5>
-                <span class="badge {{ $pendingCandidates->isEmpty() ? 'bg-secondary' : 'bg-warning text-dark' }} px-3 py-2">
-                    {{ $pendingCandidates->count() }} Pending
+                <span class="badge bg-success px-3 py-2">
+                    Auto-Approval Enabled
                 </span>
             </div>
         </div>
         <div class="card-body">
-            @if($pendingCandidates->isEmpty())
-                <div class="text-center py-5">
-                    <div class="mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">No Pending Applications</h3>
-                    <p class="text-gray-500">All candidate applications have been processed.</p>
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                 </div>
-            @else
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th class="text-gray-700">Candidate</th>
-                                <th class="text-gray-700">Position</th>
-                                <th class="text-gray-700">Details</th>
-                                <th class="text-gray-700">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($pendingCandidates as $candidate)
-                                <tr class="border-b">
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-wrapper mr-3">
-                                                <img src="{{ $candidate->user->profile_photo_url ?? asset('img/defaults/user.svg') }}" 
-                                                     alt="{{ $candidate->user->name ?? 'User' }}" 
-                                                     class="rounded-circle" 
-                                                     width="40" height="40">
-                                            </div>
-                                            <div>
-                                                <div class="font-semibold text-gray-800">{{ $candidate->user->name ?? 'Unknown User' }}</div>
-                                                <div class="text-gray-500 text-sm">{{ $candidate->user->email ?? 'No email available' }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-blue-100 text-blue-800 px-3 py-2">
-                                            {{ $candidate->position->title }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#candidateDetails{{ $candidate->id }}" aria-expanded="false">
-                                            View Details
-                                        </button>
-                                        <div class="collapse mt-2" id="candidateDetails{{ $candidate->id }}">
-                                            <div class="card card-body bg-light">
-                                                <h6 class="font-semibold mb-2">Platform:</h6>
-                                                <p class="text-gray-700 mb-3">{{ $candidate->platform }}</p>
-                                                
-                                                <h6 class="font-semibold mb-2">Qualifications:</h6>
-                                                <p class="text-gray-700">{{ $candidate->qualifications }}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex">
-                                            <form action="{{ route('admin.election.candidate.approve', $candidate->id) }}" method="POST" class="me-2">
-                                                @csrf
-                                                <button type="submit" class="btn btn-success">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                    Approve
-                                                </button>
-                                            </form>
-                                            <button class="btn btn-danger reject-candidate-btn" 
-                                                data-candidate-id="{{ $candidate->id }}"
-                                                onclick="openRejectModal('{{ $candidate->id }}')">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                                Reject
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
+                <h3 class="text-xl font-semibold mb-2">Automatic Approval System</h3>
+                <p class="text-gray-500 mb-3">All candidate applications are automatically approved when submitted.</p>
+                <p class="text-sm text-gray-600">Candidates will be immediately added to the election ballot during the voting period.</p>
+            </div>
         </div>
     </div>
     

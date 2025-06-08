@@ -19,6 +19,9 @@ class ElectionCandidate extends Model
 
     /**
      * The "booted" method of the model.
+     * 
+     * All candidate applications are automatically approved when created.
+     * The system does not require admin review or approval.
      */
     protected static function booted()
     {

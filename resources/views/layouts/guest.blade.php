@@ -15,7 +15,9 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <!-- Using asset helpers for production environment -->
+        <link rel="stylesheet" href="{{ asset('build/assets/app-CoOQjfJF.css') }}">
+        <script src="{{ asset('build/assets/app-DQS8sAPH.js') }}" defer></script>
 
         <!-- Auth Fix CSS -->
         <link rel="stylesheet" href="{{ asset('css/auth-fix.css') }}">
