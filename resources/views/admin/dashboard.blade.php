@@ -228,25 +228,24 @@
                                                             Approved
                                                         </span>
                                                     @else
-                                                                                    @else
-                                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                                Pending
-                                                            </span>
-                                                        @endif
-                                                    </div>
-                                                    <div class="text-xs text-gray-500 ml-11">
-                                                        <p class="truncate">{{ $user['email'] }}</p>
-                                                        <p class="mt-1">{{ $user['role']['name'] ?? 'No Role' }}</p>
-                                                    </div>
+                                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                            Pending
+                                                        </span>
+                                                    @endif
                                                 </div>
-                                            @endforeach
-                                        </div>
+                                                <div class="text-xs text-gray-500 ml-11">
+                                                    <p class="truncate">{{ $user['email'] }}</p>
+                                                    <p class="mt-1">{{ $user['role']['name'] ?? 'No Role' }}</p>
+                                                </div>
+                                            </div>
+                                        @endforeach
                                     </div>
-                                @else
-                                    <div class="text-center py-4 sm:py-6">
-                                        <p class="text-gray-500">No users found</p>
-                                    </div>
-                                @endif
+                                </div>
+                            @else
+                                <div class="text-center py-4 sm:py-6">
+                                    <p class="text-gray-500">No users found</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
