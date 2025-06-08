@@ -397,6 +397,9 @@ Route::middleware(['auth', 'verified', 'role:Admin'])->group(function () {
     Route::post('/admin/election/settings', [ElectionController::class, 'updateSettings'])->name('admin.election.settings');
     Route::post('/admin/election/change-status', [ElectionController::class, 'changeStatus'])->name('admin.election.change-status');
     
+    // Test route for position development
+    Route::get('/admin/election/test-add-position', [ElectionController::class, 'testAddPosition'])->name('admin.election.test-add-position');
+    
     // Election Positions
     Route::post('/admin/election/position/store', [ElectionController::class, 'storePosition'])->name('admin.election.position.store');
     Route::post('/admin/election/position/{position}/update', [ElectionController::class, 'updatePosition'])->name('admin.election.position.update');
