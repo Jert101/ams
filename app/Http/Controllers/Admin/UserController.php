@@ -18,10 +18,23 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        // Get search query
+        $search = $request->query('search');
+        
         // Check for filters
         $filter = $request->query('filter');
         
         $query = User::with('role', 'qrCode');
+        
+        // Apply search if provided
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('user_id', 'like', "%{$search}%")
+                  ->orWhere('mobile_number', 'like', "%{$search}%");
+            });
+        }
         
         // Apply filters if any
         if ($filter === 'members-with-qr') {
@@ -32,7 +45,10 @@ class UserController extends Controller
         
         $users = $query->paginate(10);
         
-        return view('admin.users.index', compact('users', 'filter'));
+        // Keep search parameter in pagination links
+        $users->appends(['search' => $search, 'filter' => $filter]);
+        
+        return view('admin.users.index', compact('users', 'filter', 'search'));
     }
 
     /**

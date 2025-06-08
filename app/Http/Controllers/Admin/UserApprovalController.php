@@ -76,27 +76,28 @@ class UserApprovalController extends Controller
             'rejection_reason' => 'required|string|max:255',
         ]);
 
-        $user->update([
-            'approval_status' => 'rejected',
-            'rejection_reason' => $validated['rejection_reason'],
-        ]);
+        // Store rejection reason temporarily for notification
+        $rejectionReason = $validated['rejection_reason'];
         
-        // Send notification to the user with the rejection reason
+        // Send notification to the user with the rejection reason before deleting
         try {
-            $user->notify(new AccountRejected($validated['rejection_reason']));
+            $user->notify(new AccountRejected($rejectionReason));
         } catch (\Exception $e) {
             // Log the error but continue
             \Log::error("Failed to send rejection notification: " . $e->getMessage());
         }
 
+        // Delete the user instead of just marking as rejected
+        $user->delete();
+
         if (request()->ajax() || request()->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'User registration has been rejected.'
+                'message' => 'User registration has been rejected and deleted.'
             ]);
         }
 
         return redirect()->route('admin.approvals.index')
-            ->with('success', 'User registration has been rejected.');
+            ->with('success', 'User registration has been rejected and deleted.');
     }
 }
