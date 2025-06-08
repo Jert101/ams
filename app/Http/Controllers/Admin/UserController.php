@@ -26,6 +26,9 @@ class UserController extends Controller
         
         $query = User::with('role', 'qrCode');
         
+        // Exclude rejected users
+        $query->where('approval_status', '!=', 'rejected');
+        
         // Apply search if provided
         if ($search) {
             $query->where(function($q) use ($search) {

@@ -96,10 +96,6 @@
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
                                         Pending
                                     </span>
-                                @elseif($user->approval_status === 'rejected')
-                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                        Rejected
-                                    </span>
                                 @endif
                             </td>
                             <td class="py-4 px-6 text-sm font-medium">

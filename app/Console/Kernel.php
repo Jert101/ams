@@ -11,6 +11,7 @@ use App\Console\Commands\TestConsecutiveAbsencesNotification;
 use App\Console\Commands\FixAdminElectionViewCommand;
 use App\Console\Commands\FixElectionDatesCommand;
 use App\Console\Commands\FixSyntaxErrorCommand;
+use App\Console\Commands\CleanupRejectedUsers;
 
 class Kernel extends ConsoleKernel
 {
@@ -31,6 +32,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\ForceElectionStatusCheck::class,
         \App\Console\Commands\CheckTableSchema::class,
         \App\Console\Commands\GenerateQrCodes::class,
+        \App\Console\Commands\CleanupRejectedUsers::class,
         DownloadFaceApiModels::class,
         QrCodeGenerator::class,
         CheckFaceModels::class,
