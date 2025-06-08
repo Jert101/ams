@@ -140,4 +140,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Initialize Bootstrap modals
+    document.addEventListener('DOMContentLoaded', function() {
+        var myModalEls = document.querySelectorAll('.modal');
+        var modals = [];
+        myModalEls.forEach(function(modalEl) {
+            modals.push(new bootstrap.Modal(modalEl));
+        });
+    });
+</script>
 @endsection 
