@@ -371,4 +371,233 @@ input, select, textarea {
     padding-right: 0.75rem;
     width: calc(100% + 1.5rem);
   }
+}
+
+/* Global Responsive CSS for AMS */
+
+/* Common Mobile Enhancements */
+@media (max-width: 768px) {
+    /* Typography adjustments for mobile */
+    body {
+        font-size: 14px;
+    }
+    
+    h1 {
+        font-size: 1.5rem !important;
+    }
+    
+    h2 {
+        font-size: 1.25rem !important;
+    }
+    
+    h3 {
+        font-size: 1.125rem !important;
+    }
+    
+    /* Table adjustments for mobile */
+    .mobile-responsive-table {
+        border: 0;
+        width: 100%;
+    }
+    
+    .mobile-responsive-table thead {
+        border: none;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+    }
+    
+    .mobile-responsive-table tr {
+        border-bottom: 3px solid #f5f5f5;
+        display: block;
+        margin-bottom: 0.75rem;
+        background-color: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border-radius: 0.375rem;
+    }
+    
+    .mobile-responsive-table td {
+        border-bottom: 1px solid #f5f5f5;
+        display: block;
+        font-size: 0.875rem;
+        text-align: right;
+        padding: 0.75rem 0.75rem;
+        position: relative;
+    }
+    
+    .mobile-responsive-table td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        position: absolute;
+        left: 0.75rem;
+        color: #6b7280;
+        text-align: left;
+    }
+    
+    .mobile-responsive-table td:last-child {
+        border-bottom: 0;
+    }
+    
+    /* Card styles for mobile */
+    .card-mobile {
+        padding: 0.75rem !important;
+    }
+    
+    /* Improved button sizes for touch */
+    .btn {
+        min-height: 2.5rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    /* Responsive spacing */
+    .mobile-p-2 {
+        padding: 0.5rem !important;
+    }
+    
+    .mobile-p-3 {
+        padding: 0.75rem !important;
+    }
+    
+    .mobile-m-2 {
+        margin: 0.5rem !important;
+    }
+    
+    .mobile-my-3 {
+        margin-top: 0.75rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    /* Modal improvements */
+    .modal {
+        padding: 0.5rem;
+    }
+    
+    .modal-content {
+        max-width: 95%;
+        margin: 1rem auto;
+    }
+    
+    /* Fix z-index issues */
+    .modal-backdrop {
+        z-index: 30;
+    }
+    
+    .modal {
+        z-index: 40;
+    }
+    
+    .dropdown-menu {
+        z-index: 25;
+    }
+    
+    /* Improve form inputs */
+    input, select, textarea {
+        font-size: 16px !important; /* Prevents iOS zoom */
+        padding: 0.5rem 0.75rem !important;
+    }
+    
+    /* Make action buttons more spaced */
+    .action-buttons-mobile {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .action-buttons-mobile > * {
+        flex: 1;
+        text-align: center;
+        padding: 0.375rem 0;
+        margin: 0 0.25rem;
+        border-radius: 0.25rem;
+    }
+}
+
+/* Small phone specific enhancements */
+@media (max-width: 480px) {
+    /* Even smaller elements */
+    .card-mobile {
+        padding: 0.5rem !important;
+    }
+    
+    /* Full width buttons */
+    .btn-mobile-full {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+    
+    /* Stack form fields */
+    .form-row-mobile {
+        flex-direction: column !important;
+    }
+    
+    .form-row-mobile > * {
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Compact tables */
+    .mobile-responsive-table td {
+        padding: 0.5rem 0.5rem;
+        font-size: 0.8125rem;
+    }
+    
+    /* Reduce headings further */
+    h1 {
+        font-size: 1.375rem !important;
+    }
+    
+    h2 {
+        font-size: 1.125rem !important;
+    }
+    
+    h3 {
+        font-size: 1rem !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    .print-only {
+        display: block !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
+    }
+    
+    .container, .container-fluid {
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .print-break-after {
+        page-break-after: always;
+    }
+    
+    .print-break-before {
+        page-break-before: always;
+    }
+    
+    a:after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        font-weight: normal;
+    }
+    
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
 } 

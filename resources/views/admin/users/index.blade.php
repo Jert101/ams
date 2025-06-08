@@ -1,51 +1,51 @@
 @extends('layouts.admin-app')
 
 @section('content')
-<div class="container mx-auto px-4 py-6">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">Manage Users</h1>
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+<div class="container mx-auto px-2 sm:px-4 py-4">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+        <h1 class="text-2xl sm:text-3xl font-bold">Manage Users</h1>
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary whitespace-nowrap text-sm sm:text-base">
             <i class="bi bi-person-plus-fill mr-1"></i> Add New User
         </a>
     </div>
     
     @if (session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <div class="bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded relative mb-4" role="alert">
             <span class="block sm:inline">{{ session('success') }}</span>
         </div>
     @endif
     
     @if (session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <div class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded relative mb-4" role="alert">
             <span class="block sm:inline">{{ session('error') }}</span>
         </div>
     @endif
     
     <!-- Search and Filter Bar -->
-    <div class="bg-white shadow-md rounded-lg p-4 mb-4">
-        <form action="{{ route('admin.users.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+    <div class="bg-white shadow-md rounded-lg p-3 mb-4">
+        <form action="{{ route('admin.users.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
             <div class="flex-grow">
                 <div class="relative">
                     <input 
                         type="text" 
                         name="search" 
                         value="{{ $search ?? '' }}" 
-                        placeholder="Search by name, email, ID, or mobile..."
-                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="Search by name, email, ID..."
+                        class="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                     >
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                         </svg>
                     </div>
                 </div>
             </div>
             <div class="flex gap-2">
-                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <button type="submit" class="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Search
                 </button>
                 @if($search || $filter)
-                    <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Clear
                     </a>
                 @endif
@@ -53,7 +53,74 @@
         </form>
     </div>
     
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <!-- Mobile user cards (visible on small screens) -->
+    <div class="block lg:hidden">
+        <div class="space-y-3">
+            @forelse ($users as $user)
+                <div class="bg-white rounded-lg shadow-md p-3">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h3 class="font-bold text-gray-900">{{ $user->name }}</h3>
+                            <p class="text-sm text-gray-500">ID: {{ $user->user_id }}</p>
+                        </div>
+                        <div>
+                            @if($user->approval_status === 'approved')
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    Approved
+                                </span>
+                            @elseif($user->approval_status === 'pending')
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    Pending
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-1 mb-3">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500">Email</p>
+                            <p class="text-sm truncate">{{ $user->email }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-gray-500">Role</p>
+                            <p class="text-sm">{{ $user->role ? $user->role->name : 'No Role' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-gray-500">Mobile</p>
+                            <p class="text-sm">{{ $user->mobile_number ?? 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-gray-500">QR Code</p>
+                            @if($user->qrCode)
+                                <span class="text-xs text-green-800">Generated</span>
+                            @else
+                                <span class="text-xs text-yellow-800">Not Generated</span>
+                            @endif
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between border-t pt-2">
+                        <a href="{{ route('admin.users.show', $user) }}" class="text-sm text-indigo-600 hover:text-indigo-900">View</a>
+                        <a href="{{ route('admin.users.edit', $user) }}" class="text-sm text-yellow-600 hover:text-yellow-900">Edit</a>
+                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-sm text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this user?')">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @empty
+                <div class="bg-white rounded-lg shadow-md p-4 text-center">
+                    <p class="text-gray-500">No users found.</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
+    
+    <!-- Desktop table (hidden on small screens) -->
+    <div class="hidden lg:block bg-white shadow-md rounded-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white">
                 <thead>
@@ -126,4 +193,20 @@
         {{ $users->links() }}
     </div>
 </div>
+
+<style>
+/* Additional mobile optimization styles */
+@media (max-width: 768px) {
+    .pagination {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+    
+    .pagination > * {
+        margin: 0.125rem;
+    }
+}
+</style>
 @endsection
