@@ -50,11 +50,9 @@ class ElectionCandidate extends Model
      */
     public function user(): BelongsTo
     {
-        // Try a different approach to the relationship
-        // First argument: related model
-        // Second argument: foreign key on this model
-        // Third argument: primary key on related model
-        return $this->belongsTo(User::class, 'user_id', 'user_id')
+        // Fixed relationship to match the actual database foreign key constraint
+        // election_candidates.user_id references users.id (NOT users.user_id)
+        return $this->belongsTo(User::class, 'user_id', 'id')
             ->withDefault([
                 'name' => 'Unknown User',
                 'email' => 'No Email Available'
@@ -115,7 +113,8 @@ class ElectionCandidate extends Model
         
         // If that still fails, try a direct database query
         try {
-            $user = \DB::table('users')->where('user_id', $this->user_id)->first();
+            // Updated to query the correct column - we want to find the user by 'id', not 'user_id'
+            $user = \DB::table('users')->where('id', $this->user_id)->first();
             if ($user) {
                 return $user->name;
             }

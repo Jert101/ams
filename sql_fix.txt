@@ -1,0 +1,31 @@
+-- SQL commands to fix election_candidates table
+-- Copy and paste these commands into the SQL tab in PhpMyAdmin
+
+-- 1. First, examine the tables to understand the structure
+-- View election candidates
+SELECT id, user_id, position_id, status FROM election_candidates;
+
+-- View available users
+SELECT id, user_id, name, email FROM users LIMIT 30;
+
+-- 2. Check which candidates have invalid user_ids
+-- For each candidate ID from the first query, check if its user_id exists in users.id
+-- Replace X with each user_id value you found in the first query
+SELECT COUNT(*) FROM users WHERE id = X;
+
+-- 3. Update the candidates with valid user_ids
+-- Use these statements to fix each problematic candidate
+-- Replace the values based on what you find in steps 1 and 2
+
+-- Example:
+-- UPDATE election_candidates SET user_id = 123 WHERE id = 1;
+-- This will set candidate with ID 1 to have user_id 123
+
+-- 4. Alternative approach: Delete problematic candidates
+-- Only use this if updating isn't possible
+-- DELETE FROM election_candidates WHERE id = X;
+
+-- 5. Verify the fix
+SELECT c.id, c.user_id, c.position_id, c.status, u.name 
+FROM election_candidates c
+LEFT JOIN users u ON c.user_id = u.id; 
