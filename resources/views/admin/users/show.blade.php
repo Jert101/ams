@@ -72,6 +72,54 @@
                         <p class="text-red-700 font-medium mb-4">User account status: <span class="font-bold">{{ ucfirst($user->approval_status) }}</span></p>
                         <p class="text-gray-700">This user was created on {{ $user->created_at->format('F d, Y') }} and has been a member for {{ $user->created_at->diffForHumans(null, true) }}.</p>
                     </div>
+                    
+                    <!-- QR Code Information Section -->
+                    <div class="p-6 bg-yellow-50 rounded-lg border border-yellow-200 mb-6">
+                        <h3 class="text-lg font-semibold text-yellow-700 mb-3">QR Code Status</h3>
+                        
+                        @if($user->qrCode)
+                            <div class="mb-4">
+                                <p class="text-green-700 font-medium">
+                                    <i class="bi bi-check-circle-fill text-green-600 mr-1"></i> 
+                                    QR Code has been generated
+                                </p>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    Code: {{ $user->qrCode->code }}
+                                </p>
+                                <p class="text-sm text-gray-600">
+                                    Generated on: {{ $user->qrCode->created_at->format('F d, Y') }}
+                                </p>
+                            </div>
+                            
+                            <div class="flex space-x-2 mt-4">
+                                <a href="{{ route('admin.qrcode.print', $user->user_id) }}" target="_blank" class="bg-blue-500 hover:bg-blue-700 text-white text-sm py-2 px-4 rounded flex items-center">
+                                    <i class="bi bi-printer mr-1"></i> Print QR Code
+                                </a>
+                                <a href="{{ route('admin.qrcode.view', $user->user_id) }}" target="_blank" class="bg-indigo-500 hover:bg-indigo-700 text-white text-sm py-2 px-4 rounded flex items-center">
+                                    <i class="bi bi-qr-code mr-1"></i> View QR Code
+                                </a>
+                            </div>
+                        @else
+                            <div class="mb-4">
+                                <p class="text-yellow-700 font-medium">
+                                    <i class="bi bi-exclamation-triangle-fill text-yellow-600 mr-1"></i> 
+                                    No QR Code found for this user
+                                </p>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    You can generate a QR code for this user using the button below.
+                                </p>
+                            </div>
+                            
+                            <form action="{{ route('admin.users.update', $user) }}" method="POST" class="mt-4">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="generate_qr" value="1">
+                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white text-sm py-2 px-4 rounded flex items-center">
+                                    <i class="bi bi-qr-code-scan mr-1"></i> Generate QR Code
+                                </button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

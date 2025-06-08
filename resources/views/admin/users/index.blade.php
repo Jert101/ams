@@ -30,7 +30,8 @@
                         <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
                         <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                         <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                        <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                        <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">QR Code</th>
+                        <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mobile</th>
                         <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
@@ -41,7 +42,18 @@
                             <td class="py-4 px-6 text-sm text-gray-500">{{ $user->user_id }}</td>
                             <td class="py-4 px-6 text-sm text-gray-500">{{ $user->email }}</td>
                             <td class="py-4 px-6 text-sm text-gray-500">{{ $user->role ? $user->role->name : 'No Role' }}</td>
-                            <td class="py-4 px-6 text-sm text-gray-500">{{ $user->phone ?? 'N/A' }}</td>
+                            <td class="py-4 px-6 text-sm text-gray-500">
+                                @if($user->qrCode)
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        <i class="bi bi-check-circle-fill mr-1"></i> Generated
+                                    </span>
+                                @else
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        <i class="bi bi-exclamation-circle-fill mr-1"></i> Not Generated
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="py-4 px-6 text-sm text-gray-500">{{ $user->mobile_number ?? 'N/A' }}</td>
                             <td class="py-4 px-6 text-sm font-medium">
                                 <div class="flex space-x-2">
                                     <a href="{{ route('admin.users.show', $user) }}" class="text-indigo-600 hover:text-indigo-900">View</a>

@@ -90,7 +90,7 @@ class UserController extends Controller
         // Generate QR code for the user
         QrCode::create([
             'user_id' => $user->user_id,
-            'code' => QrCode::generateUniqueCode(),
+            'code' => QrCode::generateCodeWithUserId($user->user_id),
         ]);
 
         return redirect()->route('admin.users.index')
@@ -124,10 +124,10 @@ class UserController extends Controller
         if ($request->has('generate_qr')) {
             // Check if the user already has a QR code
             if (!$user->qrCode) {
-                // Create a new QR code for the user
+                // Create a new QR code for the user with user ID embedded for better identification
                 QrCode::create([
                     'user_id' => $user->user_id,
-                    'code' => QrCode::generateUniqueCode(),
+                    'code' => QrCode::generateCodeWithUserId($user->user_id),
                 ]);
                 
                 return redirect()->route('admin.users.show', $user)
