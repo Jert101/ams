@@ -20,14 +20,13 @@ class ElectionCandidate extends Model
     /**
      * The "booted" method of the model.
      * 
-     * All candidate applications are automatically approved when created.
-     * The system does not require admin review or approval.
+     * Applications are now set to pending by default and require admin approval.
      */
     protected static function booted()
     {
-        // Auto-approve all candidacies when created
+        // Set candidates to pending status when created
         static::creating(function ($candidate) {
-            $candidate->status = 'approved';
+            $candidate->status = 'pending';
         });
     }
 
@@ -36,7 +35,7 @@ class ElectionCandidate extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**

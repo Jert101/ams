@@ -404,6 +404,8 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     // Candidate management
     Route::get('/election/candidates', [App\Http\Controllers\Admin\ElectionController::class, 'listCandidates'])->name('election.candidates');
     Route::get('/election/view-candidate/{id}', [App\Http\Controllers\Admin\ElectionController::class, 'viewCandidate'])->name('election.candidate');
+    Route::post('/election/approve-candidate/{id}', [App\Http\Controllers\Admin\ElectionController::class, 'approveCandidate'])->name('election.approve-candidate');
+    Route::post('/election/reject-candidate/{id}', [App\Http\Controllers\Admin\ElectionController::class, 'rejectCandidate'])->name('election.reject-candidate');
     
     // Test route for debugging
     Route::get('/election/test-add-position', [App\Http\Controllers\Admin\ElectionController::class, 'testAddPosition'])->name('election.test-add-position');

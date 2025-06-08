@@ -350,5 +350,30 @@ class ElectionController extends Controller
         return view('admin.election.candidates', compact('candidates'));
     }
 
+    /**
+     * Approve a candidate application
+     */
+    public function approveCandidate($id)
+    {
+        $candidate = ElectionCandidate::findOrFail($id);
+        $candidate->status = 'approved';
+        $candidate->save();
+        
+        return redirect()->back()->with('success', 'Candidate application approved successfully.');
+    }
+    
+    /**
+     * Reject a candidate application
+     */
+    public function rejectCandidate(Request $request, $id)
+    {
+        $candidate = ElectionCandidate::findOrFail($id);
+        $candidate->status = 'rejected';
+        $candidate->rejection_reason = $request->rejection_reason;
+        $candidate->save();
+        
+        return redirect()->back()->with('success', 'Candidate application rejected successfully.');
+    }
+
     // Candidate approval is now automatic via the ElectionCandidate model's booted method
 } 
