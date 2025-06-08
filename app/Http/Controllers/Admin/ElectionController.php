@@ -421,39 +421,17 @@ class ElectionController extends Controller
      */
     public function listCandidates()
     {
-        // Log directly to file to avoid DB connection issues
-        $logMessage = "Starting listCandidates method\n";
-        file_put_contents(storage_path('logs/debug.log'), $logMessage, FILE_APPEND);
-        
         try {
             // Get all candidates with their user and position information using correct keys
             $candidates = ElectionCandidate::with(['user' => function($query) {
                 $query->select('id', 'user_id', 'name', 'email', 'profile_photo_path');
             }, 'position'])->get();
             
-            // Log the candidates and their user_id values
-            $debugInfo = "Found " . count($candidates) . " candidates.\n";
-            foreach ($candidates as $candidate) {
-                // Try to get user info directly through relationship
-                $userName = $candidate->user ? $candidate->user->name : 'Unknown';
-                $debugInfo .= "Candidate #" . $candidate->id . " - user_id: " . $candidate->user_id . ", name: " . $userName . "\n";
-            }
-            file_put_contents(storage_path('logs/debug.log'), $debugInfo, FILE_APPEND);
-            
             // Try to directly get users from database using the correct ID column
             $userIds = $candidates->pluck('user_id')->toArray();
-            $userIdsList = implode(',', $userIds);
             $users = \DB::table('users')->whereIn('id', $userIds)->get();
             
-            $userDebug = "User lookup - Found " . count($users) . " users for user_ids: " . $userIdsList . "\n";
-            if (count($users) > 0) {
-                foreach ($users as $user) {
-                    $userDebug .= "User ID: " . $user->id . ", user_id: " . $user->user_id . " - name: " . $user->name . "\n";
-                }
-            }
-            file_put_contents(storage_path('logs/debug.log'), $userDebug, FILE_APPEND);
-            
-            // Add debug info to the view
+            // Add user info to each candidate
             $candidates->each(function($candidate) use ($users) {
                 // User information directly from the relationship
                 if ($candidate->user) {
@@ -494,25 +472,20 @@ class ElectionController extends Controller
                         $candidate->profile_photo_url = asset('kofa.png');
                     }
                 }
-                
-                // Add debug info
-                $candidate->debug_info = [
-                    'candidate_id' => $candidate->id,
-                    'user_id' => $candidate->user_id,
-                    'user_name' => $candidate->user_name,
-                    'has_user' => $candidate->user ? true : false
-                ];
+            });
+            
+            // Remove any debug information before returning to view
+            $candidates->each(function($candidate) {
+                if (isset($candidate->debug_info)) {
+                    unset($candidate->debug_info);
+                }
             });
             
             return view('admin.election.candidates', compact('candidates'));
         } catch (\Exception $e) {
-            // Log any exceptions
-            $errorMsg = "Error in listCandidates: " . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n";
-            file_put_contents(storage_path('logs/debug.log'), $errorMsg, FILE_APPEND);
-            
             // Create an empty collection if there's an error
             $candidates = collect([]);
-            return view('admin.election.candidates', compact('candidates'))->with('error', 'Database error: ' . $e->getMessage());
+            return view('admin.election.candidates', compact('candidates'))->with('error', 'Unable to load candidates data.');
         }
     }
 

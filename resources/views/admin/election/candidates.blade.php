@@ -4,65 +4,6 @@
 <div class="container">
     <h1 class="mb-4 text-red-700 font-bold text-3xl">Candidate Applications</h1>
 
-    <!-- Debug section to understand data structure -->
-    <div class="card mb-4">
-        <div class="card-header bg-dark text-white">
-            <h5 class="mb-0">Debug Information</h5>
-        </div>
-        <div class="card-body">
-            <h6>Candidates: {{ isset($candidates) ? count($candidates) : 'None' }}</h6>
-            
-            @if(isset($candidates) && count($candidates) > 0)
-                <div class="overflow-auto" style="max-height: 200px;">
-                    <table class="table table-sm table-bordered">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>User ID</th>
-                                <th>Position ID</th>
-                                <th>Status</th>
-                                <th>Created</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($candidates as $c)
-                                <tr>
-                                    <td>{{ $c->id }}</td>
-                                    <td>{{ $c->user_id }}</td>
-                                    <td>{{ $c->position_id }}</td>
-                                    <td>{{ $c->status }}</td>
-                                    <td>{{ $c->created_at }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="mt-3">
-                    <h6>User IDs Check:</h6>
-                    <ul>
-                        @foreach($candidates as $c)
-                            @php
-                                try {
-                                    $userExists = DB::table('users')->where('user_id', $c->user_id)->exists();
-                                    $userInfo = $userExists ? DB::table('users')->where('user_id', $c->user_id)->first() : null;
-                                } catch (\Exception $e) {
-                                    $userExists = false;
-                                    $userInfo = null;
-                                }
-                            @endphp
-                            <li>
-                                Candidate #{{ $c->id }}: 
-                                User ID {{ $c->user_id }} 
-                                {{ $userExists ? ' exists - Name: ' . ($userInfo ? $userInfo->name : 'Unknown') : ' does not exist in users table' }}
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-        </div>
-    </div>
-
     <div class="mb-4">
         <a href="{{ route('admin.election.index') }}" class="btn btn-outline-secondary">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
