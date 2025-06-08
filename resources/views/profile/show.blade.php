@@ -20,6 +20,26 @@
         <h1 class="text-2xl font-bold text-red-700">{{ __('My Profile') }}</h1>
     </div>
     
+    <!-- Status Messages -->
+    @if (session('status') === 'profile-updated')
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
+            <p class="font-semibold">Profile updated successfully!</p>
+        </div>
+    @endif
+
+    @if (session('status') === 'password-updated')
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
+            <p class="font-semibold">Password updated successfully!</p>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+            <p class="font-semibold">Error:</p>
+            <p>{{ session('error') }}</p>
+        </div>
+    @endif
+    
     <!-- Profile Information Card -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Left Column - Profile Photo and Basic Info -->
@@ -126,7 +146,8 @@
                             @enderror
                         </div>
                         
-                        <!-- Profile Photo -->
+                        <!-- Profile Photo - Only visible to admin users -->
+                        @if(Auth::user()->isAdmin())
                         <div class="mb-4">
                             <label for="profile_photo" class="block text-red-700 text-sm font-semibold mb-2">Profile Photo:</label>
                             <div class="flex items-center">
@@ -142,7 +163,18 @@
                             @error('profile_photo')
                                 <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
                             @enderror
+                            
+                            <!-- Added photo upload info for debugging -->
+                            <div class="mt-2 text-xs text-gray-500">
+                                <p>Note: Photo uploads require proper server configuration. If you're experiencing issues:</p>
+                                <ul class="list-disc pl-5 mt-1">
+                                    <li>Maximum upload size: {{ ini_get('upload_max_filesize') }}</li>
+                                    <li>Storage symlink: {{ file_exists(public_path('storage')) ? '✓ Exists' : '✗ Missing' }}</li>
+                                    <li>For troubleshooting, visit: <a href="{{ url('/storage-test.php') }}" class="text-blue-500 hover:underline" target="_blank">Storage Test</a></li>
+                                </ul>
+                            </div>
                         </div>
+                        @endif
                         
                         <div class="flex justify-end">
                             <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out flex items-center">
@@ -223,7 +255,8 @@
                 </div>
             </div>
             
-            <!-- Delete Account -->
+            <!-- Delete Account - Only visible to admin users -->
+            @if(Auth::user()->isAdmin())
             <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-red-100">
                 <div class="bg-red-50 px-6 py-4 border-b border-red-100">
                     <h2 class="text-xl font-semibold text-red-700">Delete Account</h2>
@@ -252,10 +285,12 @@
                     </button>
                 </div>
             </div>
+            @endif
         </div>
     </div>
     
-    <!-- Delete Account Modal -->
+    <!-- Delete Account Modal - Only for admin users -->
+    @if(Auth::user()->isAdmin())
     <div id="delete-account-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-lg w-full">
             <div class="bg-red-50 px-6 py-4 border-b border-red-100">
@@ -316,13 +351,16 @@
             </form>
         </div>
     </div>
+    @endif
 </div>
 
 <!-- JavaScript for file input display -->
+@if(Auth::user()->isAdmin())
 <script>
     document.getElementById('profile_photo').addEventListener('change', function() {
         const fileName = this.files[0] ? this.files[0].name : 'No file selected';
         document.getElementById('file-name').textContent = fileName;
     });
 </script>
+@endif
 @endsection
