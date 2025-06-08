@@ -27,8 +27,21 @@ class ElectionCandidate extends Model
     {
         // Set candidates to pending or approved status when created based on settings
         static::creating(function ($candidate) {
-            $electionSetting = ElectionSetting::getActiveOrCreate();
-            $candidate->status = $electionSetting->auto_approve_candidates ? 'approved' : 'pending';
+            try {
+                $electionSetting = ElectionSetting::getActiveOrCreate();
+                
+                // Check if the auto_approve_candidates attribute exists
+                if (isset($electionSetting->auto_approve_candidates)) {
+                    $candidate->status = $electionSetting->auto_approve_candidates ? 'approved' : 'pending';
+                } else {
+                    // Default to approved for backward compatibility
+                    $candidate->status = 'approved';
+                }
+            } catch (\Exception $e) {
+                // If there's any error, default to approved status
+                \Log::error('Error in ElectionCandidate booted method: ' . $e->getMessage());
+                $candidate->status = 'approved';
+            }
         });
     }
 

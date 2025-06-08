@@ -745,8 +745,8 @@
                 </h5>
                 <form action="{{ route('admin.election.toggle-auto-approval') }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn {{ $electionSetting->auto_approve_candidates ? 'btn-success' : 'btn-secondary' }} btn-sm">
-                        {{ $electionSetting->auto_approve_candidates ? 'Auto-Approval Enabled' : 'Auto-Approval Disabled' }}
+                    <button type="submit" class="btn {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'btn-success' : 'btn-secondary' }} btn-sm">
+                        {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'Auto-Approval Enabled' : 'Auto-Approval Disabled' }}
                     </button>
                 </form>
             </div>

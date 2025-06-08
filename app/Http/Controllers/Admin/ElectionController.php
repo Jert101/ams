@@ -397,11 +397,24 @@ class ElectionController extends Controller
      */
     public function toggleAutoApproval()
     {
-        $electionSetting = ElectionSetting::getActiveOrCreate();
-        $electionSetting->auto_approve_candidates = !$electionSetting->auto_approve_candidates;
-        $electionSetting->save();
-        
-        return redirect()->back()->with('success', 'Auto-approval setting has been ' . 
-            ($electionSetting->auto_approve_candidates ? 'enabled' : 'disabled'));
+        try {
+            $electionSetting = ElectionSetting::getActiveOrCreate();
+            
+            // Check if the column exists
+            if (isset($electionSetting->auto_approve_candidates)) {
+                $electionSetting->auto_approve_candidates = !$electionSetting->auto_approve_candidates;
+            } else {
+                // If the column doesn't exist yet, set it to false (default is true)
+                $electionSetting->auto_approve_candidates = false;
+            }
+            
+            $electionSetting->save();
+            
+            return redirect()->back()->with('success', 'Auto-approval setting has been ' . 
+                ($electionSetting->auto_approve_candidates ? 'enabled' : 'disabled'));
+        } catch (\Exception $e) {
+            \Log::error('Error toggling auto-approval: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'There was an error changing the auto-approval setting. Database migration may be pending.');
+        }
     }
 } 
