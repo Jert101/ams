@@ -229,8 +229,18 @@ class User extends Authenticatable
                 return $this->profile_photo_path;
             }
             
+            // Try multiple ways to access the storage
+            $storageUrl = asset('storage/' . $this->profile_photo_path);
+            
+            // For shared hosting workaround - check if we should use the storage.php proxy
+            if (file_exists(public_path('storage.php')) && !is_link(public_path('storage'))) {
+                $host = request()->getHost();
+                $scheme = request()->getScheme();
+                return $scheme . '://' . $host . '/storage.php?path=' . $this->profile_photo_path;
+            }
+            
             // Otherwise, it's a path in the storage
-            return asset('storage/' . $this->profile_photo_path);
+            return $storageUrl;
         }
         
         return asset('kofa.png');
