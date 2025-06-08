@@ -36,7 +36,7 @@
             </a>
             
             <!-- Close button for mobile -->
-            <button id="close-sidebar" class="text-white p-1 rounded-full hover:bg-opacity-20 hover:bg-white lg:hidden">
+            <button class="sidebar-close text-white p-1 rounded-full hover:bg-opacity-20 hover:bg-white lg:hidden">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -288,17 +288,3 @@
         </nav>
     </div>
 </div>
-
-<!-- Script for close button -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const closeButton = document.getElementById('close-sidebar');
-        const sidebar = document.getElementById('sidebar');
-        
-        if (closeButton && sidebar) {
-            closeButton.addEventListener('click', function() {
-                sidebar.classList.remove('show');
-            });
-        }
-    });
-</script>

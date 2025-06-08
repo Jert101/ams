@@ -33,7 +33,7 @@
                         <tbody>
                             @foreach($candidates as $candidate)
                                 <tr>
-                                    <td>
+                                    <td data-label="Candidate">
                                         <div class="d-flex align-items-center">
                                             <div class="me-3">
                                                 @php
@@ -72,33 +72,33 @@
                                             <div>
                                                 <div class="font-weight-bold">{{ $candidate->user_name }}</div>
                                                 @if(isset($candidate->user_email) && $candidate->user_email != 'No Email Available')
-                                                    <small>{{ $candidate->user_email }}</small>
+                                                    <small class="d-none d-md-inline">{{ $candidate->user_email }}</small>
                                                 @endif
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td data-label="Position">
                                         @if($candidate->position)
                                             {{ $candidate->position->title }}
                                         @else
                                             <span class="text-danger">Position not found</span>
                                         @endif
                                     </td>
-                                    <td>{{ $candidate->created_at->format('M d, Y - h:i A') }}</td>
-                                    <td>
+                                    <td class="d-none d-md-table-cell" data-label="Applied On">{{ $candidate->created_at->format('M d, Y - h:i A') }}</td>
+                                    <td data-label="Status">
                                         <span class="badge bg-{{ $candidate->status === 'approved' ? 'success' : 
                                             ($candidate->status === 'pending' ? 'warning' : 'danger') }}">
                                             {{ ucfirst($candidate->status) }}
                                         </span>
                                     </td>
-                                    <td>
-                                        <div class="btn-group">
+                                    <td data-label="Actions">
+                                        <div class="btn-group btn-group-responsive">
                                             <a href="{{ url('/admin/election/candidates/'.$candidate->id) }}" class="btn btn-info btn-sm">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
                                                     <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
                                                     <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
                                                 </svg>
-                                                View
+                                                <span class="d-none d-sm-inline">View</span>
                                             </a>
                                             
                                             @if($candidate->status === 'pending')
@@ -108,7 +108,7 @@
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
                                                             <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
                                                         </svg>
-                                                        Approve
+                                                        <span class="d-none d-sm-inline">Approve</span>
                                                     </button>
                                                 </form>
                                                 
@@ -116,7 +116,7 @@
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                                                         <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
                                                     </svg>
-                                                    Reject
+                                                    <span class="d-none d-sm-inline">Reject</span>
                                                 </button>
                                             @endif
                                         </div>
@@ -137,25 +137,25 @@
 
 <!-- Global Reject Modal -->
 <div class="modal fade" id="globalRejectModal" tabindex="-1" aria-labelledby="globalRejectModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="z-index: 2000 !important;">
             <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title" id="globalRejectModalLabel">Reject Candidate Application</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="rejectForm" action="" method="POST">
+            <form id="rejectForm" method="POST">
                 @csrf
-                <div class="modal-body">
+                <div class="modal-body" style="z-index: 2001 !important;">
                     <p id="rejectMessage">Are you sure you want to reject this candidacy application?</p>
                     <div class="mb-3">
                         <p class="text-muted small" id="candidateIds"></p>
                         <label for="rejection_reason" class="form-label">Rejection Reason:</label>
-                        <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3" required></textarea>
+                        <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3" required style="z-index: 2002 !important; position: relative;"></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Reject Application</button>
+                <div class="modal-footer" style="z-index: 2001 !important;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="z-index: 2002 !important; position: relative;">Cancel</button>
+                    <button type="submit" class="btn btn-danger" style="z-index: 2002 !important; position: relative;">Reject Application</button>
                 </div>
             </form>
         </div>
@@ -174,10 +174,20 @@
 
 .modal-dialog {
     z-index: 1060 !important;
+    margin: 0.5rem auto;
+    max-width: 95%;
+}
+
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 500px;
+    }
 }
 
 .modal-content {
     box-shadow: 0 5px 15px rgba(0,0,0,.5);
+    position: relative;
+    z-index: 1200 !important;
 }
 
 /* Make sure modal form elements are clickable */
@@ -198,13 +208,57 @@
     position: relative;
     z-index: 1063 !important;
 }
+
+/* Extra specificity for buttons */
+.modal .btn, .modal .btn-danger, .modal .btn-secondary {
+    position: relative !important;
+    z-index: 2500 !important;
+}
+
+/* Ensure form interactivity */
+.modal form {
+    position: relative !important;
+    z-index: 2000 !important;
+}
+
+/* Responsive button group */
+.btn-group-responsive {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .btn-group-responsive {
+        flex-direction: column;
+    }
+    
+    .btn-group-responsive .btn {
+        width: 100%;
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* Adjust table responsiveness */
+@media (max-width: 640px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .table-responsive th,
+    .table-responsive td {
+        padding: 0.5rem;
+    }
+}
 </style>
 
 <script>
     // Function to open the reject modal
     function openRejectModal(candidateId, candidateName, positionTitle) {
-        // Set the form action
-        document.getElementById('rejectForm').action = "{{ url('/admin/election/candidates') }}/" + candidateId + "/reject";
+        // Set the form action with direct URL path
+        var form = document.getElementById('rejectForm');
+        form.action = "/admin/election/candidates/" + candidateId + "/reject";
+        form.method = "POST"; // Ensure method is POST
         
         // Set the rejection message
         document.getElementById('rejectMessage').innerHTML = 
@@ -220,6 +274,11 @@
         // Open the modal
         var rejectModal = new bootstrap.Modal(document.getElementById('globalRejectModal'));
         rejectModal.show();
+        
+        // Force focus on textarea after modal is shown
+        setTimeout(function() {
+            document.getElementById('rejection_reason').focus();
+        }, 500);
     }
 
     // Initialize Bootstrap modals
@@ -229,7 +288,28 @@
             console.log('Bootstrap is loaded');
         } else {
             console.error('Bootstrap is not loaded');
+            
+            // Fallback to direct reject if Bootstrap is not available
+            var rejectButtons = document.querySelectorAll('[onclick^="openRejectModal"]');
+            rejectButtons.forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    var candidateId = this.getAttribute('onclick').match(/\((\d+)/)[1];
+                    if (confirm('Bootstrap modal failed. Use direct rejection instead?')) {
+                        window.location.href = '/direct-reject.php?id=' + candidateId;
+                    }
+                });
+            });
         }
+        
+        // Add event listener to form submission
+        document.getElementById('rejectForm').addEventListener('submit', function(e) {
+            var textarea = document.getElementById('rejection_reason');
+            if (!textarea.value.trim()) {
+                e.preventDefault();
+                alert('Please provide a rejection reason.');
+                textarea.focus();
+            }
+        });
     });
 </script>
 @endsection 
