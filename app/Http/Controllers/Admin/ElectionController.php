@@ -28,7 +28,15 @@ class ElectionController extends Controller
         $roles = Role::all();
         
         // Get all candidates with their user and position information
-        $candidates = ElectionCandidate::with(['user', 'position'])->get();
+        // Force the correct relationship loading with user_id column
+        $candidates = ElectionCandidate::with(['user' => function($query) {
+            $query->select('user_id', 'name', 'email', 'profile_photo_path');
+        }, 'position'])->get();
+        
+        // Make sure each candidate has the candidate_name accessor available
+        $candidates->each(function($candidate) {
+            $candidate->candidate_name; // Touch the accessor to ensure it's loaded
+        });
         
         // For debugging - log candidate data
         \Log::info('Candidates loaded for admin election page:', [
@@ -37,6 +45,7 @@ class ElectionController extends Controller
                 return [
                     'id' => $c->id,
                     'user_id' => $c->user_id,
+                    'candidate_name' => $c->candidate_name,
                     'user' => $c->user ? [
                         'id' => $c->user->user_id,
                         'name' => $c->user->name,
@@ -362,7 +371,15 @@ class ElectionController extends Controller
     public function listCandidates()
     {
         // Get all candidates with their user and position information
-        $candidates = ElectionCandidate::with(['user', 'position'])->get();
+        // Force the correct relationship loading with user_id column
+        $candidates = ElectionCandidate::with(['user' => function($query) {
+            $query->select('user_id', 'name', 'email', 'profile_photo_path');
+        }, 'position'])->get();
+        
+        // Make sure each candidate has the candidate_name accessor available
+        $candidates->each(function($candidate) {
+            $candidate->candidate_name; // Touch the accessor to ensure it's loaded
+        });
         
         return view('admin.election.candidates', compact('candidates'));
     }
