@@ -19,10 +19,17 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ - [R=404,L]
 
+    # Handle homepage specially - try Laravel first but fallback to direct implementation
+    RewriteRule ^$ - [E=HOME_REQUEST:1]
+    
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+    
+    # If we get a 500 error on the homepage, use the direct PHP landing page
+    ErrorDocument 500 /direct-index.php
+    ErrorDocument 404 /direct-index.php
 </IfModule>
 
 # Additional file type handling

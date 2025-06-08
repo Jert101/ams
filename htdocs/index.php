@@ -17,6 +17,18 @@ function serve_fallback() {
     exit;
 }
 
+// Check if this is the homepage and if we should try the direct approach
+if (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] === '/' && 
+    isset($_SERVER['HTTP_USER_AGENT']) && 
+    (strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') !== false ||
+     strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false ||
+     strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false ||
+     strpos($_SERVER['HTTP_USER_AGENT'], 'iPad') !== false)) {
+    // For mobile devices, serve direct page immediately
+    include __DIR__ . '/direct-index.php';
+    exit;
+}
+
 // Check if a specific CSS/JS asset is being requested
 $requestUri = $_SERVER['REQUEST_URI'] ?? '';
 if (preg_match('/\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/', $requestUri)) {
