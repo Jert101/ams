@@ -3,15 +3,16 @@
  * Laravel - A PHP Framework For Web Artisans
  */
 
-// Check if the request is for a specific file in the public directory
-$uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-$publicPath = __DIR__ . '/public';
+define('LARAVEL_START', microtime(true));
 
-// Check for direct file access (like css, js, images)
-if ($uri !== '/' && file_exists($publicPath . $uri)) {
-    // If it's a direct file request, return the file
-    return false;
-}
+require __DIR__.'/../vendor/autoload.php';
 
-// Otherwise, include the Laravel framework bootstrap
-require_once __DIR__ . '/public/index.php'; 
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+
+$response = $kernel->handle(
+    $request = Illuminate\Http\Request::capture()
+)->send();
+
+$kernel->terminate($request, $response); 

@@ -1,0 +1,25 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-CoOQjfJF.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DQS8sAPH.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "resources/js/react/index.jsx"
+    ]
+  },
+  "resources/js/react/index.jsx": {
+    "file": "assets/index-CNt_jxie.js",
+    "name": "index",
+    "src": "resources/js/react/index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ]
+  }
+}
