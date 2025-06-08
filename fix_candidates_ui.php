@@ -106,8 +106,14 @@ if (!empty($host) && !empty($db) && !empty($user)) {
         $candidates = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         // Get users
-        $stmt = $pdo->query("SELECT user_id, name, email FROM users");
+        $stmt = $pdo->query("SELECT id, user_id, name, email FROM users");
         $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        echo "USERS LIST:\n";
+        echo "----------\n";
+        foreach ($users as $user) {
+            echo "ID: {$user['id']}, User ID: {$user['user_id']}, Name: {$user['name']}, Email: {$user['email']}\n";
+        }
         
     } catch (PDOException $e) {
         $message = "Database connection error: " . $e->getMessage();
@@ -262,8 +268,8 @@ if (!empty($host) && !empty($db) && !empty($user)) {
                                     <select name="mappings[<?php echo $candidate['id']; ?>]">
                                         <option value="">Select User ID</option>
                                         <?php foreach ($users as $user): ?>
-                                            <option value="<?php echo $user['user_id']; ?>">
-                                                <?php echo $user['user_id']; ?> - <?php echo htmlspecialchars($user['name']); ?> (<?php echo htmlspecialchars($user['email']); ?>)
+                                            <option value="<?php echo $user['id']; ?>">
+                                                ID: <?php echo $user['id']; ?> - <?php echo htmlspecialchars($user['name']); ?> (<?php echo htmlspecialchars($user['email']); ?>)
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -284,6 +290,7 @@ if (!empty($host) && !empty($db) && !empty($user)) {
             <table>
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>User ID</th>
                         <th>Name</th>
                         <th>Email</th>
@@ -292,6 +299,7 @@ if (!empty($host) && !empty($db) && !empty($user)) {
                 <tbody>
                     <?php foreach ($users as $user): ?>
                         <tr>
+                            <td><?php echo $user['id']; ?></td>
                             <td><?php echo $user['user_id']; ?></td>
                             <td><?php echo htmlspecialchars($user['name']); ?></td>
                             <td><?php echo htmlspecialchars($user['email']); ?></td>

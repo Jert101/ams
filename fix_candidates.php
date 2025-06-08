@@ -36,12 +36,13 @@ try {
     echo "Database connection successful\n\n";
     
     // Define the user ID mapping from wrong IDs to correct IDs
-    // Format: old_user_id => correct_user_id
+    // Format: old_user_id => users.id (NOT users.user_id)
+    // IMPORTANT: Use the ID values from the "ID" column, not the "User ID" column!
     $userIdMapping = [
-        5 => 110024,  // Replace these with your actual values
-        6 => 110025,  // Replace these with your actual values
-        7 => 110026,  // Replace these with your actual values
-        28 => 110027  // Replace these with your actual values
+        5 => 1,  // Replace with actual users.id values
+        6 => 2,  // Replace with actual users.id values
+        7 => 3,  // Replace with actual users.id values
+        28 => 4  // Replace with actual users.id values
     ];
     
     // VIEW MODE - Just show the data
@@ -60,16 +61,19 @@ try {
         echo "\n\n";
         
         // Get users
-        $stmt = $pdo->query("SELECT user_id, name, email FROM users");
+        $stmt = $pdo->query("SELECT id, user_id, name, email FROM users");
         $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         echo "USERS LIST:\n";
         echo "----------\n";
         foreach ($users as $user) {
-            echo "User ID: {$user['user_id']}, Name: {$user['name']}, Email: {$user['email']}\n";
+            echo "ID: {$user['id']}, User ID: {$user['user_id']}, Name: {$user['name']}, Email: {$user['email']}\n";
         }
         
         echo "\n\n";
+        echo "IMPORTANT NOTE:\n";
+        echo "The election_candidates.user_id column must reference the users.id column (not users.user_id).\n";
+        echo "Make sure your mappings use the correct ID values from the 'ID' column above, not the 'User ID' column.\n\n";
         echo "STEPS TO FIX:\n";
         echo "1. Look at the candidate list and user list above\n";
         echo "2. Edit this PHP file and update the \$userIdMapping array with the correct mappings\n";
