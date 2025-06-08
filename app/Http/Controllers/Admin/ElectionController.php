@@ -28,14 +28,39 @@ class ElectionController extends Controller
         $roles = Role::all();
         
         // Get all candidates with their user and position information
-        // Force the correct relationship loading with user_id column
+        // Fixed relationship using 'id' instead of 'user_id'
         $candidates = ElectionCandidate::with(['user' => function($query) {
-            $query->select('user_id', 'name', 'email', 'profile_photo_path');
+            $query->select('id', 'user_id', 'name', 'email', 'profile_photo_path');
         }, 'position'])->get();
         
-        // Make sure each candidate has the candidate_name accessor available
+        // Process candidates to ensure they have user information
         $candidates->each(function($candidate) {
-            $candidate->candidate_name; // Touch the accessor to ensure it's loaded
+            $candidate->user_details = [];
+            
+            // Try to get user data through the relationship
+            if ($candidate->user) {
+                $candidate->user_details = [
+                    'name' => $candidate->user->name,
+                    'email' => $candidate->user->email,
+                    'photo' => $candidate->user->profile_photo_path
+                ];
+            } 
+            // If relationship fails, try direct database query
+            else {
+                try {
+                    $user = DB::table('users')->where('id', $candidate->user_id)->first();
+                    if ($user) {
+                        $candidate->user_details = [
+                            'name' => $user->name,
+                            'email' => $user->email,
+                            'photo' => $user->profile_photo_path
+                        ];
+                    }
+                } catch (\Exception $e) {
+                    // Log the error
+                    \Log::error('Failed to get user details for candidate: ' . $e->getMessage());
+                }
+            }
         });
         
         // For debugging - log candidate data
@@ -45,12 +70,14 @@ class ElectionController extends Controller
                 return [
                     'id' => $c->id,
                     'user_id' => $c->user_id,
-                    'candidate_name' => $c->candidate_name,
+                    'candidate_name' => $c->candidate_name ?? 'Unknown',
                     'user' => $c->user ? [
-                        'id' => $c->user->user_id,
+                        'id' => $c->user->id,
+                        'user_id' => $c->user->user_id,
                         'name' => $c->user->name,
                         'email' => $c->user->email
                     ] : null,
+                    'user_details' => $c->user_details,
                     'position' => $c->position ? $c->position->title : null
                 ];
             })
@@ -359,8 +386,32 @@ class ElectionController extends Controller
      */
     public function viewCandidate($id)
     {
-        // Find the candidate by ID
-        $candidate = ElectionCandidate::with(['user', 'position', 'votes'])->findOrFail($id);
+        // Find the candidate by ID with proper relationship
+        $candidate = ElectionCandidate::with(['position', 'votes'])->findOrFail($id);
+        
+        // Load the user relationship correctly
+        try {
+            $candidate->load(['user' => function($query) {
+                $query->select('id', 'user_id', 'name', 'email', 'profile_photo_path');
+            }]);
+            
+            // If relationship loading fails, try direct database query
+            if (!$candidate->user) {
+                $user = DB::table('users')->where('id', $candidate->user_id)->first();
+                if ($user) {
+                    // Create a custom user object to pass to the view
+                    $candidate->direct_user = (object)[
+                        'id' => $user->id,
+                        'user_id' => $user->user_id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'profile_photo_path' => $user->profile_photo_path
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to load user for candidate ' . $id . ': ' . $e->getMessage());
+        }
         
         return view('admin.election.candidate', compact('candidate'));
     }
@@ -375,39 +426,60 @@ class ElectionController extends Controller
         file_put_contents(storage_path('logs/debug.log'), $logMessage, FILE_APPEND);
         
         try {
-            // Get all candidates with their user and position information
-            // Force the correct relationship loading with user_id column
+            // Get all candidates with their user and position information using correct keys
             $candidates = ElectionCandidate::with(['user' => function($query) {
-                $query->select('user_id', 'name', 'email', 'profile_photo_path');
+                $query->select('id', 'user_id', 'name', 'email', 'profile_photo_path');
             }, 'position'])->get();
             
             // Log the candidates and their user_id values
             $debugInfo = "Found " . count($candidates) . " candidates.\n";
             foreach ($candidates as $candidate) {
-                $debugInfo .= "Candidate #" . $candidate->id . " - user_id: " . $candidate->user_id . "\n";
+                // Try to get user info directly through relationship
+                $userName = $candidate->user ? $candidate->user->name : 'Unknown';
+                $debugInfo .= "Candidate #" . $candidate->id . " - user_id: " . $candidate->user_id . ", name: " . $userName . "\n";
             }
             file_put_contents(storage_path('logs/debug.log'), $debugInfo, FILE_APPEND);
             
-            // Try to directly get users from database
+            // Try to directly get users from database using the correct ID column
             $userIds = $candidates->pluck('user_id')->toArray();
             $userIdsList = implode(',', $userIds);
-            $users = \DB::table('users')->whereIn('user_id', $userIds)->get();
+            $users = \DB::table('users')->whereIn('id', $userIds)->get();
             
             $userDebug = "User lookup - Found " . count($users) . " users for user_ids: " . $userIdsList . "\n";
             if (count($users) > 0) {
                 foreach ($users as $user) {
-                    $userDebug .= "User #" . $user->user_id . " - name: " . $user->name . "\n";
+                    $userDebug .= "User ID: " . $user->id . ", user_id: " . $user->user_id . " - name: " . $user->name . "\n";
                 }
             }
             file_put_contents(storage_path('logs/debug.log'), $userDebug, FILE_APPEND);
             
-            // Make each candidate's user_id directly available in the view
+            // Add debug info to the view
             $candidates->each(function($candidate) use ($users) {
-                $candidate->candidate_name; // Touch the accessor to ensure it's loaded
+                // User information directly from the relationship
+                if ($candidate->user) {
+                    $candidate->user_name = $candidate->user->name;
+                    $candidate->user_email = $candidate->user->email;
+                    $candidate->profile_photo = $candidate->user->profile_photo_path;
+                } 
+                // Fallback to direct lookup if relationship fails
+                else {
+                    $directUser = $users->where('id', $candidate->user_id)->first();
+                    if ($directUser) {
+                        $candidate->user_name = $directUser->name;
+                        $candidate->user_email = $directUser->email;
+                        $candidate->profile_photo = $directUser->profile_photo_path;
+                    } else {
+                        $candidate->user_name = 'Unknown User';
+                        $candidate->user_email = 'No Email Available';
+                        $candidate->profile_photo = null;
+                    }
+                }
+                
+                // Add debug info
                 $candidate->debug_info = [
                     'candidate_id' => $candidate->id,
                     'user_id' => $candidate->user_id,
-                    'candidate_name' => $candidate->candidate_name,
+                    'user_name' => $candidate->user_name,
                     'has_user' => $candidate->user ? true : false
                 ];
             });

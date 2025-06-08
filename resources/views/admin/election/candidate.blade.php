@@ -2,8 +2,25 @@
 
 @section('content')
 <div class="container py-4">
+    @php
+        // Get user information from either the relationship or direct query
+        $userName = 'Unknown User';
+        $userEmail = '';
+        $profilePhoto = null;
+        
+        if ($candidate->user) {
+            $userName = $candidate->user->name;
+            $userEmail = $candidate->user->email;
+            $profilePhoto = $candidate->user->profile_photo_path;
+        } elseif (isset($candidate->direct_user)) {
+            $userName = $candidate->direct_user->name;
+            $userEmail = $candidate->direct_user->email;
+            $profilePhoto = $candidate->direct_user->profile_photo_path;
+        }
+    @endphp
+
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-2xl font-bold text-gray-800">Candidate Details: {{ $candidate->candidate_name }}</h1>
+        <h1 class="text-2xl font-bold text-gray-800">Candidate Details: {{ $userName }}</h1>
         <a href="{{ route('admin.election.index') }}" class="btn btn-outline-secondary">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -33,51 +50,17 @@
                 <div class="col-md-4 mb-4 mb-md-0">
                     <div class="text-center">
                         <div class="mx-auto mb-3 w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                            @if($candidate->user && $candidate->user->profile_photo_path)
-                                <img src="{{ asset('storage/' . $candidate->user->profile_photo_path) }}" alt="{{ $candidate->candidate_name }}" class="w-full h-full object-cover">
+                            @if($profilePhoto)
+                                <img src="{{ asset('storage/' . $profilePhoto) }}" alt="{{ $userName }}" class="w-full h-full object-cover">
                             @else
-                                @php
-                                    // Try to get user profile photo directly from database
-                                    $profilePhoto = null;
-                                    try {
-                                        $user = DB::table('users')->where('id', $candidate->user_id)->first();
-                                        if ($user && $user->profile_photo_path) {
-                                            $profilePhoto = $user->profile_photo_path;
-                                        }
-                                    } catch (\Exception $e) {
-                                        // Silently ignore errors
-                                    }
-                                @endphp
-                                
-                                @if($profilePhoto)
-                                    <img src="{{ asset('storage/' . $profilePhoto) }}" alt="{{ $candidate->candidate_name }}" class="w-full h-full object-cover">
-                                @else
-                                    <svg class="h-16 w-16 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
-                                @endif
+                                <svg class="h-16 w-16 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
                             @endif
                         </div>
-                        <h3 class="text-xl font-semibold mt-2">{{ $candidate->candidate_name }}</h3>
-                        @if($candidate->user)
-                            <p class="text-gray-600">{{ $candidate->user->email }}</p>
-                        @else
-                            @php
-                                // Try to get user email directly from database
-                                $userEmail = null;
-                                try {
-                                    $user = DB::table('users')->where('id', $candidate->user_id)->first();
-                                    if ($user) {
-                                        $userEmail = $user->email;
-                                    }
-                                } catch (\Exception $e) {
-                                    // Silently ignore errors
-                                }
-                            @endphp
-                            
-                            @if($userEmail)
-                                <p class="text-gray-600">{{ $userEmail }}</p>
-                            @endif
+                        <h3 class="text-xl font-semibold mt-2">{{ $userName }}</h3>
+                        @if($userEmail)
+                            <p class="text-gray-600">{{ $userEmail }}</p>
                         @endif
                         
                         <div class="mt-4 py-3 px-4 bg-blue-50 rounded-lg">

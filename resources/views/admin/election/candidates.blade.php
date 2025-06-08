@@ -93,51 +93,23 @@
                             @foreach($candidates as $candidate)
                                 <tr>
                                     <td>
-                                        @php
-                                            // Try to get user details
-                                            $userName = $candidate->candidate_name;
-                                            $userEmail = '';
-                                            $profilePath = null;
-                                            $initial = 'U';
-                                            
-                                            if ($candidate->user) {
-                                                $userName = $candidate->user->name;
-                                                $userEmail = $candidate->user->email;
-                                                $profilePath = $candidate->user->profile_photo_path;
-                                                $initial = strtoupper(substr($userName, 0, 1));
-                                            }
-                                            else {
-                                                try {
-                                                    // Updated to query the correct column - we want to find the user by 'id', not 'user_id'
-                                                    $user = DB::table('users')->where('id', $candidate->user_id)->first();
-                                                    if ($user) {
-                                                        $userName = $user->name;
-                                                        $userEmail = $user->email;
-                                                        $profilePath = $user->profile_photo_path;
-                                                        $initial = strtoupper(substr($userName, 0, 1));
-                                                    }
-                                                } catch (\Exception $e) {
-                                                    // Silently handle database errors
-                                                }
-                                            }
-                                        @endphp
                                         <div class="d-flex align-items-center">
                                             <div class="me-3">
-                                                @if($profilePath)
-                                                    <img src="{{ asset('storage/' . $profilePath) }}" 
-                                                         alt="{{ $userName }}" class="rounded-circle" 
+                                                @if(isset($candidate->profile_photo) && $candidate->profile_photo)
+                                                    <img src="{{ asset('storage/' . $candidate->profile_photo) }}" 
+                                                         alt="{{ $candidate->user_name }}" class="rounded-circle" 
                                                          width="40" height="40">
                                                 @else
                                                     <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" 
                                                          style="width: 40px; height: 40px;">
-                                                        {{ $initial }}
+                                                        {{ strtoupper(substr($candidate->user_name ?? 'U', 0, 1)) }}
                                                     </div>
                                                 @endif
                                             </div>
                                             <div>
-                                                <div class="font-weight-bold">{{ $userName }}</div>
-                                                @if($userEmail)
-                                                    <small>{{ $userEmail }}</small>
+                                                <div class="font-weight-bold">{{ $candidate->user_name }}</div>
+                                                @if(isset($candidate->user_email) && $candidate->user_email != 'No Email Available')
+                                                    <small>{{ $candidate->user_email }}</small>
                                                 @endif
                                             </div>
                                         </div>
@@ -195,7 +167,7 @@
                                                             <form action="{{ route('admin.election.reject-candidate', $candidate->id) }}" method="POST">
                                                                 @csrf
                                                                 <div class="modal-body">
-                                                                    <p>Are you sure you want to reject the candidacy application of <strong>{{ $userName }}</strong> for <strong>{{ $candidate->position->title }}</strong>?</p>
+                                                                    <p>Are you sure you want to reject the candidacy application of <strong>{{ $candidate->user_name }}</strong> for <strong>{{ $candidate->position->title }}</strong>?</p>
                                                                     <div class="mb-3">
                                                                         <p class="text-muted small">Candidate ID: {{ $candidate->id }}, User ID: {{ $candidate->user_id }}</p>
                                                                         <label for="rejection_reason" class="form-label">Rejection Reason:</label>

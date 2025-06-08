@@ -779,32 +779,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($candidates->take(3) as $candidate)
+                                @foreach($candidates->sortByDesc('created_at')->take(3) as $candidate)
                                     <tr>
                                         <td>
-                                            @php
-                                                // Direct approach to get user data when relationship fails
-                                                $userName = 'Unknown';
-                                                
-                                                // Try to get user data through the relationship
-                                                if ($candidate->user) {
-                                                    $userName = $candidate->user->name;
-                                                } 
-                                                // If that fails, try a direct database query
-                                                else {
-                                                    try {
-                                                        $user = DB::table('users')->where('user_id', $candidate->user_id)->first();
-                                                        if ($user) {
-                                                            $userName = $user->name;
-                                                        }
-                                                    } catch (\Exception $e) {
-                                                        // Silently handle database errors
-                                                    }
-                                                }
-                                            @endphp
-                                            {{ $userName }}
+                                            <div class="d-flex align-items-center">
+                                                @if($candidate->user || isset($candidate->user_details))
+                                                    @php
+                                                        $candidateName = $candidate->user ? $candidate->user->name : 
+                                                            (isset($candidate->user_details['name']) ? $candidate->user_details['name'] : 'Unknown User');
+                                                    @endphp
+                                                    {{ $candidateName }}
+                                                @else
+                                                    Unknown User
+                                                @endif
+                                            </div>
                                         </td>
-                                        <td>{{ $candidate->position ? $candidate->position->title : 'Unknown' }}</td>
+                                        <td>{{ $candidate->position ? $candidate->position->title : 'Unknown Position' }}</td>
                                         <td>{{ $candidate->created_at->format('M d, Y') }}</td>
                                     </tr>
                                 @endforeach
