@@ -97,15 +97,19 @@ class ElectionController extends Controller
             return redirect()->route('election.index')->with('error', 'You have already applied for this position.');
         }
         
-        // Create the candidacy - automatically approved via model boot method
-        ElectionCandidate::create([
+        // Create the candidacy - status set by model boot method
+        $candidate = ElectionCandidate::create([
             'user_id' => $user->id,
             'position_id' => $position->id,
             'platform' => $request->platform,
             'qualifications' => $request->qualifications,
         ]);
         
-        return redirect()->route('election.index')->with('success', 'Your candidacy application has been submitted and automatically approved.');
+        $approvalMessage = isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates
+            ? 'Your candidacy application has been submitted and automatically approved.'
+            : 'Your candidacy application has been submitted and is pending approval by an administrator.';
+            
+        return redirect()->route('election.index')->with('success', $approvalMessage);
     }
 
     /**

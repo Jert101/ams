@@ -30,17 +30,25 @@ class ElectionCandidate extends Model
             try {
                 $electionSetting = ElectionSetting::getActiveOrCreate();
                 
-                // Check if the auto_approve_candidates attribute exists
-                if (isset($electionSetting->auto_approve_candidates)) {
-                    $candidate->status = $electionSetting->auto_approve_candidates ? 'approved' : 'pending';
-                } else {
-                    // Default to approved for backward compatibility
+                // Explicitly check if auto_approve_candidates is true
+                // Default to pending if the attribute doesn't exist or is not true
+                if (isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates === true) {
                     $candidate->status = 'approved';
+                } else {
+                    $candidate->status = 'pending';
                 }
+                
+                // Log the decision for debugging purposes
+                \Log::info('Candidate application status set', [
+                    'status' => $candidate->status,
+                    'auto_approve_setting' => $electionSetting->auto_approve_candidates ?? 'not set',
+                    'user_id' => $candidate->user_id,
+                    'position_id' => $candidate->position_id
+                ]);
             } catch (\Exception $e) {
-                // If there's any error, default to approved status
+                // If there's any error, default to pending status for safety
                 \Log::error('Error in ElectionCandidate booted method: ' . $e->getMessage());
-                $candidate->status = 'approved';
+                $candidate->status = 'pending';
             }
         });
     }
