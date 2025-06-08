@@ -29,6 +29,23 @@ class ElectionController extends Controller
         
         // Get all candidates with their user and position information
         $candidates = ElectionCandidate::with(['user', 'position'])->get();
+        
+        // For debugging - log candidate data
+        \Log::info('Candidates loaded for admin election page:', [
+            'count' => $candidates->count(),
+            'candidates' => $candidates->map(function($c) {
+                return [
+                    'id' => $c->id,
+                    'user_id' => $c->user_id,
+                    'user' => $c->user ? [
+                        'id' => $c->user->user_id,
+                        'name' => $c->user->name,
+                        'email' => $c->user->email
+                    ] : null,
+                    'position' => $c->position ? $c->position->title : null
+                ];
+            })
+        ]);
             
         return view('admin.election.index', compact('electionSetting', 'positions', 'roles', 'candidates'));
     }
@@ -375,5 +392,16 @@ class ElectionController extends Controller
         return redirect()->back()->with('success', 'Candidate application rejected successfully.');
     }
 
-    // Candidate approval is now automatic via the ElectionCandidate model's booted method
+    /**
+     * Toggle auto-approval setting for candidate applications
+     */
+    public function toggleAutoApproval()
+    {
+        $electionSetting = ElectionSetting::getActiveOrCreate();
+        $electionSetting->auto_approve_candidates = !$electionSetting->auto_approve_candidates;
+        $electionSetting->save();
+        
+        return redirect()->back()->with('success', 'Auto-approval setting has been ' . 
+            ($electionSetting->auto_approve_candidates ? 'enabled' : 'disabled'));
+    }
 } 

@@ -20,13 +20,15 @@ class ElectionCandidate extends Model
     /**
      * The "booted" method of the model.
      * 
-     * Applications are now set to pending by default and require admin approval.
+     * Applications are now set to pending by default and require admin approval,
+     * unless auto-approval is enabled in election settings.
      */
     protected static function booted()
     {
-        // Set candidates to pending status when created
+        // Set candidates to pending or approved status when created based on settings
         static::creating(function ($candidate) {
-            $candidate->status = 'pending';
+            $electionSetting = ElectionSetting::getActiveOrCreate();
+            $candidate->status = $electionSetting->auto_approve_candidates ? 'approved' : 'pending';
         });
     }
 
@@ -65,5 +67,19 @@ class ElectionCandidate extends Model
             ->orderByDesc('votes_count')
             ->get()
             ->groupBy('position_id');
+    }
+
+    /**
+     * Get the candidate's name.
+     * This is a helper accessor that safely gets the user's name or returns 'Unknown'
+     */
+    public function getCandidateNameAttribute()
+    {
+        // Make sure to load the user relationship if it hasn't been loaded
+        if (!$this->relationLoaded('user')) {
+            $this->load('user');
+        }
+        
+        return $this->user ? $this->user->name : 'Unknown';
     }
 } 

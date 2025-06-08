@@ -9,6 +9,7 @@ use App\Models\ElectionPosition;
 use App\Models\ElectionCandidate;
 use App\Models\ElectionSetting;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class CandidateSeeder extends Seeder
 {
@@ -19,6 +20,12 @@ class CandidateSeeder extends Seeder
     {
         // Get the current active election setting
         $electionSetting = ElectionSetting::getActiveOrCreate();
+        
+        // Ensure auto_approve_candidates is set to true for seeding
+        if (!isset($electionSetting->auto_approve_candidates)) {
+            $electionSetting->auto_approve_candidates = true;
+            $electionSetting->save();
+        }
         
         // Make sure we have roles
         $this->createRolesIfNeeded();
@@ -56,6 +63,11 @@ class CandidateSeeder extends Seeder
             // Get roles
             $memberRole = Role::where('name', 'Member')->first();
             $officerRole = Role::where('name', 'Officer')->first();
+            
+            if (!$memberRole || !$officerRole) {
+                $this->command->error('Member or Officer role not found.');
+                return;
+            }
             
             // Create test users
             $usersToCreate = [
@@ -167,41 +179,78 @@ class CandidateSeeder extends Seeder
      */
     private function createCandidates()
     {
-        // Clear existing candidates first
-        ElectionCandidate::query()->delete();
-        
-        // Get all positions
-        $positions = ElectionPosition::all();
-        
-        // Get users
-        $users = User::all();
-        
-        if ($users->count() < 6 || $positions->count() < 3) {
-            $this->command->error('Not enough users or positions in the database.');
-            return;
-        }
-        
-        // Create 2 candidates for each position
-        foreach ($positions as $index => $position) {
-            // Create first candidate
-            ElectionCandidate::create([
-                'user_id' => $users[$index * 2]->user_id,
-                'position_id' => $position->id,
-                'platform' => 'Platform for position ' . $position->title . ' - Candidate 1',
-                'qualifications' => 'Qualifications for position ' . $position->title . ' - Candidate 1',
-                'status' => 'approved',
-            ]);
+        try {
+            // Clear existing candidates first
+            ElectionCandidate::query()->delete();
             
-            // Create second candidate
-            ElectionCandidate::create([
-                'user_id' => $users[$index * 2 + 1]->user_id,
-                'position_id' => $position->id,
-                'platform' => 'Platform for position ' . $position->title . ' - Candidate 2',
-                'qualifications' => 'Qualifications for position ' . $position->title . ' - Candidate 2',
-                'status' => 'approved',
+            // Get all positions
+            $positions = ElectionPosition::all();
+            
+            // Get users
+            $users = User::whereIn('email', [
+                'test1@example.com', 'test2@example.com', 'test3@example.com',
+                'test4@example.com', 'test5@example.com', 'test6@example.com'
+            ])->get();
+            
+            if ($users->count() < 6 || $positions->count() < 3) {
+                $this->command->warn('Not enough users or positions in the database.');
+                $this->command->info('Found ' . $users->count() . ' users and ' . $positions->count() . ' positions.');
+                return;
+            }
+            
+            // Create 2 candidates for each position
+            foreach ($positions as $index => $position) {
+                if ($index >= 3) break; // Limit to 3 positions
+                
+                $user1 = $users->get($index * 2);
+                $user2 = $users->get($index * 2 + 1);
+                
+                if (!$user1 || !$user2) {
+                    $this->command->warn('Not enough users for position: ' . $position->title);
+                    continue;
+                }
+                
+                // Log user data for debugging
+                Log::info('Creating candidate with user data:', [
+                    'position' => $position->title,
+                    'user1' => [
+                        'id' => $user1->user_id,
+                        'name' => $user1->name,
+                        'email' => $user1->email
+                    ],
+                    'user2' => [
+                        'id' => $user2->user_id,
+                        'name' => $user2->name,
+                        'email' => $user2->email
+                    ]
+                ]);
+                
+                // Create first candidate
+                ElectionCandidate::create([
+                    'user_id' => $user1->user_id,
+                    'position_id' => $position->id,
+                    'platform' => 'Platform for position ' . $position->title . ' - Candidate 1',
+                    'qualifications' => 'Qualifications for position ' . $position->title . ' - Candidate 1',
+                    'status' => 'approved',
+                ]);
+                
+                // Create second candidate
+                ElectionCandidate::create([
+                    'user_id' => $user2->user_id,
+                    'position_id' => $position->id,
+                    'platform' => 'Platform for position ' . $position->title . ' - Candidate 2',
+                    'qualifications' => 'Qualifications for position ' . $position->title . ' - Candidate 2',
+                    'status' => 'approved',
+                ]);
+            }
+            
+            $this->command->info('Election candidates created successfully!');
+        } catch (\Exception $e) {
+            $this->command->error('Error creating candidates: ' . $e->getMessage());
+            Log::error('Error in CandidateSeeder:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
         }
-        
-        $this->command->info('Election candidates created successfully!');
     }
-} 
+}

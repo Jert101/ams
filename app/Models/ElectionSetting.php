@@ -17,6 +17,7 @@ class ElectionSetting extends Model
         'voting_start_date',
         'voting_end_date',
         'ignore_automatic_updates',
+        'auto_approve_candidates',
     ];
 
     protected $casts = [
@@ -26,6 +27,7 @@ class ElectionSetting extends Model
         'voting_start_date' => 'datetime',
         'voting_end_date' => 'datetime',
         'ignore_automatic_updates' => 'boolean',
+        'auto_approve_candidates' => 'boolean',
     ];
 
     /**

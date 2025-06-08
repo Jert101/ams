@@ -734,18 +734,21 @@
     </div>
 
     <!-- Pending Candidates -->
-    <div class="card shadow-lg mb-5 border-0">
-        <div class="card-header">
+    <div class="card shadow-lg mb-5">
+        <div class="card-header bg-red-700 text-white">
             <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 font-bold flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                <h5 class="mb-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                     Candidate Management
                 </h5>
-                <span class="badge bg-success px-3 py-2">
-                    Auto-Approval Enabled
-                </span>
+                <form action="{{ route('admin.election.toggle-auto-approval') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn {{ $electionSetting->auto_approve_candidates ? 'btn-success' : 'btn-secondary' }} btn-sm">
+                        {{ $electionSetting->auto_approve_candidates ? 'Auto-Approval Enabled' : 'Auto-Approval Disabled' }}
+                    </button>
+                </form>
             </div>
         </div>
         <div class="card-body">
@@ -778,7 +781,7 @@
                             <tbody>
                                 @foreach($candidates->take(3) as $candidate)
                                     <tr>
-                                        <td>{{ $candidate->user ? $candidate->user->name : 'Unknown' }}</td>
+                                        <td>{{ $candidate->candidate_name }}</td>
                                         <td>{{ $candidate->position ? $candidate->position->title : 'Unknown' }}</td>
                                         <td>{{ $candidate->created_at->format('M d, Y') }}</td>
                                     </tr>
