@@ -400,11 +400,10 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/election/archives', [App\Http\Controllers\Admin\ElectionController::class, 'archives'])->name('election.archives');
     Route::get('/election/archives/{archive}', [App\Http\Controllers\Admin\ElectionController::class, 'viewArchive'])->name('election.archive');
     Route::post('/election/send-notifications', [App\Http\Controllers\Admin\ElectionController::class, 'sendWinnerNotifications'])->name('election.send-notifications');
+    Route::get('/election/candidate/{candidate}', [App\Http\Controllers\Admin\ElectionController::class, 'viewCandidate'])->name('election.candidate');
     
     // Test route for debugging
     Route::get('/election/test-add-position', [App\Http\Controllers\Admin\ElectionController::class, 'testAddPosition'])->name('election.test-add-position');
-
-// All candidate applications are automatically approved
 });
 
 // Add the following route for the memory bank management page

@@ -749,16 +749,86 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="text-center py-5">
-                <div class="mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+            @if(isset($candidates) && count($candidates) > 0)
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-gray-700">Candidate</th>
+                                <th class="text-gray-700">Position</th>
+                                <th class="text-gray-700">Applied On</th>
+                                <th class="text-gray-700">Status</th>
+                                <th class="text-gray-700">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($candidates as $candidate)
+                                <tr class="border-b">
+                                    <td class="font-semibold text-gray-800">
+                                        @if($candidate->user)
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0 mr-3">
+                                                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                                                        @if($candidate->user->profile_photo_path)
+                                                            <img src="{{ asset('storage/' . $candidate->user->profile_photo_path) }}" alt="{{ $candidate->user->name }}" class="w-full h-full object-cover">
+                                                        @else
+                                                            <svg class="h-6 w-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                            </svg>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="font-medium">{{ $candidate->user->name }}</div>
+                                                    <div class="text-sm text-gray-500">{{ $candidate->user->email }}</div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <span class="text-red-500">User not found</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($candidate->position)
+                                            {{ $candidate->position->title ?? 'Unknown Position' }}
+                                        @else
+                                            <span class="text-red-500">Position not found</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-gray-600">{{ $candidate->created_at->format('M d, Y - h:i A') }}</td>
+                                    <td>
+                                        <span class="badge rounded-pill 
+                                            {{ $candidate->status === 'approved' ? 'bg-success' : 
+                                               ($candidate->status === 'pending' ? 'bg-warning' : 'bg-danger') }}
+                                            px-3 py-2">
+                                            {{ ucfirst($candidate->status) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('admin.election.candidate', $candidate->id) }}" class="btn btn-info btn-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                            <span class="ms-1 d-none d-md-inline">View Details</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">Automatic Approval System</h3>
-                <p class="text-gray-500 mb-3">All candidate applications are automatically approved when submitted.</p>
-                <p class="text-sm text-gray-600">Candidates will be immediately added to the election ballot during the voting period.</p>
-            </div>
+            @else
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">No Candidate Applications Yet</h3>
+                    <p class="text-gray-500 mb-3">There are currently no candidates who have applied for any positions.</p>
+                    <p class="text-sm text-gray-600">Candidates will appear here once members apply for positions during the candidacy period.</p>
+                </div>
+            @endif
         </div>
     </div>
     

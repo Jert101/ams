@@ -25,8 +25,11 @@ class ElectionController extends Controller
         
         $positions = ElectionPosition::where('election_settings_id', $electionSetting->id)->get();
         $roles = Role::all();
+        
+        // Get all candidates with their user and position information
+        $candidates = ElectionCandidate::with(['user', 'position'])->get();
             
-        return view('admin.election.index', compact('electionSetting', 'positions', 'roles'));
+        return view('admin.election.index', compact('electionSetting', 'positions', 'roles', 'candidates'));
     }
 
     /**
@@ -322,6 +325,14 @@ class ElectionController extends Controller
         
         return redirect()->route('admin.election.index')
             ->with('success', $message);
+    }
+
+    /**
+     * View candidate details
+     */
+    public function viewCandidate(ElectionCandidate $candidate)
+    {
+        return view('admin.election.candidate', compact('candidate'));
     }
 
     // Candidate approval is now automatic via the ElectionCandidate model's booted method
