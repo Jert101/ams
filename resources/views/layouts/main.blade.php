@@ -17,12 +17,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
     <!-- Custom styles -->
-    <link href="/css/style.css" rel="stylesheet">
-    <link href="/css/sidebar-enhancements.css" rel="stylesheet">
-    <link href="/css/responsive.css" rel="stylesheet">
+    <link href="{{ url('/css/style.css') }}" rel="stylesheet">
+    <link href="{{ url('/css/sidebar-enhancements.css') }}" rel="stylesheet">
+    <link href="{{ url('/css/responsive.css') }}" rel="stylesheet">
 
     <!-- Scripts -->
-    <script src="/js/app.js" defer></script>
+    <script src="{{ url('/js/app.js') }}" defer></script>
     
     <style>
         :root {

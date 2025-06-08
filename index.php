@@ -10,6 +10,25 @@
 // Define the public path
 $publicPath = __DIR__ . '/public';
 
+// Check if we're on production (shared hosting)
+$isProduction = (strpos($_SERVER['HTTP_HOST'] ?? '', 'ckpkofa-network.ct.ws') !== false);
+
+// For debugging
+$debug = isset($_GET['debug']) && $_GET['debug'] === 'true';
+if ($debug) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+    
+    echo "<h1>Debug Information</h1>";
+    echo "<p>Current directory: " . __DIR__ . "</p>";
+    echo "<p>Public path: " . $publicPath . "</p>";
+    echo "<p>Is production: " . ($isProduction ? 'Yes' : 'No') . "</p>";
+    echo "<p>REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? 'Not set') . "</p>";
+    echo "<p>SCRIPT_FILENAME: " . ($_SERVER['SCRIPT_FILENAME'] ?? 'Not set') . "</p>";
+    echo "<p>DOCUMENT_ROOT: " . ($_SERVER['DOCUMENT_ROOT'] ?? 'Not set') . "</p>";
+}
+
 // Load the autoloader
 $autoloader = __DIR__ . '/vendor/autoload.php';
 
@@ -25,6 +44,12 @@ require $autoloader;
 $env = __DIR__ . '/.env';
 if (file_exists($env)) {
     // Load environment variables - this is done inside Laravel's bootstrap
+}
+
+// Set proper asset URL for production
+if ($isProduction) {
+    putenv('APP_URL=https://ckpkofa-network.ct.ws');
+    putenv('ASSET_URL=https://ckpkofa-network.ct.ws');
 }
 
 // Run the application
