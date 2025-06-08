@@ -743,7 +743,7 @@
                     </svg>
                     Candidate Management
                 </h5>
-                <form action="{{ url('/admin/election/toggle-auto-approval') }}" method="POST">
+                <form action="{{ route('admin.election.toggle-auto-approval') }}" method="POST">
                     @csrf
                     <button type="submit" class="btn {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'btn-success' : 'btn-secondary' }} btn-sm">
                         {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'Auto-Approval Enabled' : 'Auto-Approval Disabled' }}
