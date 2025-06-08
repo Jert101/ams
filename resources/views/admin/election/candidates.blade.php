@@ -98,8 +98,12 @@
                                                 @php
                                                     $profilePhotoUrl = null;
                                                     
+                                                    // First try direct URL from controller
+                                                    if (isset($candidate->profile_photo_url)) {
+                                                        $profilePhotoUrl = $candidate->profile_photo_url;
+                                                    }
                                                     // Try to get photo from pre-processed data
-                                                    if(isset($candidate->profile_photo) && $candidate->profile_photo) {
+                                                    elseif(isset($candidate->profile_photo) && $candidate->profile_photo) {
                                                         if (filter_var($candidate->profile_photo, FILTER_VALIDATE_URL)) {
                                                             $profilePhotoUrl = $candidate->profile_photo;
                                                         } else {

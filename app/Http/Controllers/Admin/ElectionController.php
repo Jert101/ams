@@ -460,6 +460,18 @@ class ElectionController extends Controller
                     $candidate->user_name = $candidate->user->name;
                     $candidate->user_email = $candidate->user->email;
                     $candidate->profile_photo = $candidate->user->profile_photo_path;
+                    
+                    // Add profile photo URL directly
+                    if (method_exists($candidate->user, 'getProfilePhotoUrlAttribute')) {
+                        $candidate->profile_photo_url = $candidate->user->profile_photo_url;
+                    } else {
+                        // Fallback to manual URL generation
+                        if ($candidate->user->profile_photo_path) {
+                            $candidate->profile_photo_url = asset('storage/' . $candidate->user->profile_photo_path);
+                        } else {
+                            $candidate->profile_photo_url = asset('kofa.png');
+                        }
+                    }
                 } 
                 // Fallback to direct lookup if relationship fails
                 else {
@@ -468,10 +480,18 @@ class ElectionController extends Controller
                         $candidate->user_name = $directUser->name;
                         $candidate->user_email = $directUser->email;
                         $candidate->profile_photo = $directUser->profile_photo_path;
+                        
+                        // Generate URL for profile photo
+                        if ($directUser->profile_photo_path) {
+                            $candidate->profile_photo_url = asset('storage/' . $directUser->profile_photo_path);
+                        } else {
+                            $candidate->profile_photo_url = asset('kofa.png');
+                        }
                     } else {
                         $candidate->user_name = 'Unknown User';
                         $candidate->user_email = 'No Email Available';
                         $candidate->profile_photo = null;
+                        $candidate->profile_photo_url = asset('kofa.png');
                     }
                 }
                 
