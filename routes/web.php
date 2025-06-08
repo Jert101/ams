@@ -406,7 +406,7 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/election/view-candidate/{id}', [App\Http\Controllers\Admin\ElectionController::class, 'viewCandidate'])->name('election.candidate');
     Route::post('/election/approve-candidate/{id}', [App\Http\Controllers\Admin\ElectionController::class, 'approveCandidate'])->name('election.approve-candidate');
     Route::post('/election/reject-candidate/{id}', [App\Http\Controllers\Admin\ElectionController::class, 'rejectCandidate'])->name('election.reject-candidate');
-    Route::post('/election/toggle-auto-approval', [App\Http\Controllers\Admin\ElectionController::class, 'toggleAutoApproval'])->name('election.toggle-auto-approval');
+    Route::post('/election/toggle-auto-approval', [App\Http\Controllers\Admin\ElectionController::class, 'toggleAutoApproval'])->name('admin.election.toggle-auto-approval');
     
     // Test route for debugging
     Route::get('/election/test-add-position', [App\Http\Controllers\Admin\ElectionController::class, 'testAddPosition'])->name('election.test-add-position');
