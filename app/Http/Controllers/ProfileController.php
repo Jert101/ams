@@ -40,6 +40,11 @@ class ProfileController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
 
+        // Check if non-admin user is trying to upload a profile photo
+        if ($request->hasFile('profile_photo') && !$user->isAdmin()) {
+            return redirect()->route('profile.show')->with('error', 'Only administrators can update profile pictures.');
+        }
+
         // Handle profile photo upload - only for admin users
         if ($request->hasFile('profile_photo') && $user->isAdmin()) {
             try {
@@ -66,7 +71,11 @@ class ProfileController extends Controller
                 }
                 
                 // Delete old photo if exists and it's not the default
-                if ($user->profile_photo_path && $user->profile_photo_path !== 'kofa.png') {
+                if ($user->profile_photo_path && 
+                    $user->profile_photo_path !== 'kofa.png' && 
+                    $user->profile_photo_path !== '0' &&
+                    $user->profile_photo_path !== 0 &&
+                    !empty($user->profile_photo_path)) {
                     try {
                         if (Storage::disk('public')->exists($user->profile_photo_path)) {
                             Storage::disk('public')->delete($user->profile_photo_path);

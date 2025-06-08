@@ -218,31 +218,36 @@ class User extends Authenticatable
      */
     public function getProfilePhotoUrlAttribute()
     {
-        if ($this->profile_photo_path) {
-            // Check if it's the default photo
-            if ($this->profile_photo_path === 'kofa.png') {
-                return asset('kofa.png');
-            }
-            
-            // Check if it's a full URL
-            if (filter_var($this->profile_photo_path, FILTER_VALIDATE_URL)) {
-                return $this->profile_photo_path;
-            }
-            
-            // Try multiple ways to access the storage
-            $storageUrl = asset('storage/' . $this->profile_photo_path);
-            
-            // For shared hosting workaround - check if we should use the storage.php proxy
-            if (file_exists(public_path('storage.php')) && !is_link(public_path('storage'))) {
-                $host = request()->getHost();
-                $scheme = request()->getScheme();
-                return $scheme . '://' . $host . '/storage.php?path=' . $this->profile_photo_path;
-            }
-            
-            // Otherwise, it's a path in the storage
-            return $storageUrl;
+        // Handle empty, null, or invalid profile photo paths
+        if (empty($this->profile_photo_path) || 
+            $this->profile_photo_path === '0' || 
+            $this->profile_photo_path === 0 || 
+            $this->profile_photo_path === 'null' ||
+            $this->profile_photo_path === 'NULL') {
+            return asset('kofa.png');
         }
         
-        return asset('kofa.png');
+        // Check if it's the default photo
+        if ($this->profile_photo_path === 'kofa.png') {
+            return asset('kofa.png');
+        }
+        
+        // Check if it's a full URL
+        if (filter_var($this->profile_photo_path, FILTER_VALIDATE_URL)) {
+            return $this->profile_photo_path;
+        }
+        
+        // Try multiple ways to access the storage
+        $storageUrl = asset('storage/' . $this->profile_photo_path);
+        
+        // For shared hosting workaround - check if we should use the storage.php proxy
+        if (file_exists(public_path('storage.php')) && !is_link(public_path('storage'))) {
+            $host = request()->getHost();
+            $scheme = request()->getScheme();
+            return $scheme . '://' . $host . '/storage.php?path=' . $this->profile_photo_path;
+        }
+        
+        // Otherwise, it's a path in the storage
+        return $storageUrl;
     }
 }
