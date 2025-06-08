@@ -525,14 +525,31 @@ class ElectionController extends Controller
             // Get value from checkbox (will be 1 if checked, null if unchecked)
             $autoApprove = request()->has('auto_approve_candidates');
             
+            // Debug logging
+            \Log::info('Auto-approval toggle requested', [
+                'has_auto_approve_candidates' => request()->has('auto_approve_candidates'),
+                'autoApprove_value' => $autoApprove,
+                'request_all' => request()->all(),
+                'current_setting' => $electionSetting->auto_approve_candidates ?? 'null'
+            ]);
+            
             // Set the value based on the checkbox
             $electionSetting->auto_approve_candidates = $autoApprove;
             $electionSetting->save();
             
+            // Log after save
+            \Log::info('Auto-approval setting saved', [
+                'new_value' => $electionSetting->auto_approve_candidates,
+                'setting_id' => $electionSetting->id
+            ]);
+            
             return redirect()->back()->with('success', 'Auto-approval setting has been ' . 
                 ($electionSetting->auto_approve_candidates ? 'enabled' : 'disabled'));
         } catch (\Exception $e) {
-            \Log::error('Error toggling auto-approval: ' . $e->getMessage());
+            \Log::error('Error toggling auto-approval: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
             return redirect()->back()->with('error', 'There was an error changing the auto-approval setting. Database migration may be pending.');
         }
     }
