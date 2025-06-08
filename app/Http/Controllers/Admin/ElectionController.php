@@ -7,6 +7,7 @@ use App\Models\ElectionArchive;
 use App\Models\ElectionCandidate;
 use App\Models\ElectionPosition;
 use App\Models\ElectionSetting;
+use App\Models\ElectionVote;
 use App\Models\Role;
 use App\Services\ElectionService;
 use Illuminate\Http\Request;
@@ -330,8 +331,11 @@ class ElectionController extends Controller
     /**
      * View candidate details
      */
-    public function viewCandidate(ElectionCandidate $candidate)
+    public function viewCandidate($id)
     {
+        // Find the candidate by ID
+        $candidate = ElectionCandidate::with(['user', 'position', 'votes'])->findOrFail($id);
+        
         return view('admin.election.candidate', compact('candidate'));
     }
 
