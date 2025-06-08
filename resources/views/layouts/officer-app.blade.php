@@ -82,27 +82,26 @@
                 position: fixed;
                 top: 1rem;
                 left: 1rem;
-                z-index: 50;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 2.5rem;
-                height: 2.5rem;
+                z-index: 100;
                 background-color: var(--primary-color);
                 border-radius: 0.375rem;
-                color: white;
+                padding: 0.5rem;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                border: none;
+                display: none;
                 cursor: pointer;
-                transition: all 0.3s;
-                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+                color: white;
             }
             
             .sidebar-toggle:hover {
                 background-color: var(--dark-primary);
             }
             
-            @media (min-width: 1024px) {
+            @media (max-width: 1023px) {
                 .sidebar-toggle {
-                    display: none;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
             }
             
