@@ -34,28 +34,26 @@
                             @foreach($candidates as $candidate)
                                 <tr>
                                     <td>
-                                        @if($candidate->user)
-                                            <div class="d-flex align-items-center">
-                                                <div class="me-3">
-                                                    @if($candidate->user->profile_photo_path)
-                                                        <img src="{{ asset('storage/' . $candidate->user->profile_photo_path) }}" 
-                                                             alt="{{ $candidate->user->name }}" class="rounded-circle" 
-                                                             width="40" height="40">
-                                                    @else
-                                                        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" 
-                                                             style="width: 40px; height: 40px;">
-                                                            {{ strtoupper(substr($candidate->user->name, 0, 1)) }}
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                                <div>
-                                                    <div class="font-weight-bold">{{ $candidate->user->name }}</div>
-                                                    <small>{{ $candidate->user->email }}</small>
-                                                </div>
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                @if($candidate->user && $candidate->user->profile_photo_path)
+                                                    <img src="{{ asset('storage/' . $candidate->user->profile_photo_path) }}" 
+                                                         alt="{{ $candidate->candidate_name }}" class="rounded-circle" 
+                                                         width="40" height="40">
+                                                @else
+                                                    <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                                         style="width: 40px; height: 40px;">
+                                                        {{ strtoupper(substr($candidate->candidate_name, 0, 1)) }}
+                                                    </div>
+                                                @endif
                                             </div>
-                                        @else
-                                            <span class="text-danger">User not found</span>
-                                        @endif
+                                            <div>
+                                                <div class="font-weight-bold">{{ $candidate->candidate_name }}</div>
+                                                @if($candidate->user)
+                                                    <small>{{ $candidate->user->email }}</small>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>
                                         @if($candidate->position)
@@ -110,7 +108,7 @@
                                                             <form action="{{ route('admin.election.reject-candidate', $candidate->id) }}" method="POST">
                                                                 @csrf
                                                                 <div class="modal-body">
-                                                                    <p>Are you sure you want to reject the candidacy application of <strong>{{ $candidate->user->name }}</strong> for <strong>{{ $candidate->position->title }}</strong>?</p>
+                                                                    <p>Are you sure you want to reject the candidacy application of <strong>{{ $candidate->candidate_name }}</strong> for <strong>{{ $candidate->position->title }}</strong>?</p>
                                                                     <div class="mb-3">
                                                                         <label for="rejection_reason" class="form-label">Rejection Reason:</label>
                                                                         <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3" required></textarea>
