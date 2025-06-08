@@ -36,14 +36,48 @@
                             @if($candidate->user && $candidate->user->profile_photo_path)
                                 <img src="{{ asset('storage/' . $candidate->user->profile_photo_path) }}" alt="{{ $candidate->candidate_name }}" class="w-full h-full object-cover">
                             @else
-                                <svg class="h-16 w-16 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
+                                @php
+                                    // Try to get user profile photo directly from database
+                                    $profilePhoto = null;
+                                    try {
+                                        $user = DB::table('users')->where('id', $candidate->user_id)->first();
+                                        if ($user && $user->profile_photo_path) {
+                                            $profilePhoto = $user->profile_photo_path;
+                                        }
+                                    } catch (\Exception $e) {
+                                        // Silently ignore errors
+                                    }
+                                @endphp
+                                
+                                @if($profilePhoto)
+                                    <img src="{{ asset('storage/' . $profilePhoto) }}" alt="{{ $candidate->candidate_name }}" class="w-full h-full object-cover">
+                                @else
+                                    <svg class="h-16 w-16 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                @endif
                             @endif
                         </div>
                         <h3 class="text-xl font-semibold mt-2">{{ $candidate->candidate_name }}</h3>
                         @if($candidate->user)
                             <p class="text-gray-600">{{ $candidate->user->email }}</p>
+                        @else
+                            @php
+                                // Try to get user email directly from database
+                                $userEmail = null;
+                                try {
+                                    $user = DB::table('users')->where('id', $candidate->user_id)->first();
+                                    if ($user) {
+                                        $userEmail = $user->email;
+                                    }
+                                } catch (\Exception $e) {
+                                    // Silently ignore errors
+                                }
+                            @endphp
+                            
+                            @if($userEmail)
+                                <p class="text-gray-600">{{ $userEmail }}</p>
+                            @endif
                         @endif
                         
                         <div class="mt-4 py-3 px-4 bg-blue-50 rounded-lg">

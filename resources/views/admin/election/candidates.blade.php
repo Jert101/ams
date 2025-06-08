@@ -94,23 +94,22 @@
                                 <tr>
                                     <td>
                                         @php
-                                            // Direct approach to get user data when relationship fails
-                                            $userName = 'Unknown';
+                                            // Try to get user details
+                                            $userName = $candidate->candidate_name;
                                             $userEmail = '';
                                             $profilePath = null;
                                             $initial = 'U';
                                             
-                                            // Try to get user data through the relationship
                                             if ($candidate->user) {
                                                 $userName = $candidate->user->name;
                                                 $userEmail = $candidate->user->email;
                                                 $profilePath = $candidate->user->profile_photo_path;
                                                 $initial = strtoupper(substr($userName, 0, 1));
-                                            } 
-                                            // If that fails, try a direct database query
+                                            }
                                             else {
                                                 try {
-                                                    $user = DB::table('users')->where('user_id', $candidate->user_id)->first();
+                                                    // Updated to query the correct column - we want to find the user by 'id', not 'user_id'
+                                                    $user = DB::table('users')->where('id', $candidate->user_id)->first();
                                                     if ($user) {
                                                         $userName = $user->name;
                                                         $userEmail = $user->email;

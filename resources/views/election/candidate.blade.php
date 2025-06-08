@@ -14,10 +14,37 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-4 text-center mb-4 mb-md-0">
-                    <img src="{{ $candidate->user && $candidate->user->profile_photo_url ? $candidate->user->profile_photo_url : asset('img/defaults/user.svg') }}" 
-                         alt="{{ $candidate->user ? $candidate->user->name : 'Unknown Candidate' }}" 
+                    @php
+                        // Try to get user information directly from database if relationship fails
+                        $userName = $candidate->user ? $candidate->user->name : 'Unknown Candidate';
+                        $profilePhotoUrl = null;
+                        
+                        if ($candidate->user && $candidate->user->profile_photo_url) {
+                            $profilePhotoUrl = $candidate->user->profile_photo_url;
+                        } else {
+                            try {
+                                $user = DB::table('users')->where('id', $candidate->user_id)->first();
+                                if ($user) {
+                                    $userName = $user->name;
+                                    if ($user->profile_photo_path) {
+                                        $profilePhotoUrl = asset('storage/' . $user->profile_photo_path);
+                                    }
+                                }
+                            } catch (\Exception $e) {
+                                // Silently ignore errors
+                            }
+                        }
+                        
+                        // Default photo if none found
+                        if (!$profilePhotoUrl) {
+                            $profilePhotoUrl = asset('img/defaults/user.svg');
+                        }
+                    @endphp
+                    
+                    <img src="{{ $profilePhotoUrl }}" 
+                         alt="{{ $userName }}" 
                          class="img-fluid rounded-circle mb-3" style="max-width: 200px;">
-                    <h4>{{ $candidate->user ? $candidate->user->name : 'Unknown Candidate' }}</h4>
+                    <h4>{{ $userName }}</h4>
                     <p class="text-muted">Running for {{ $candidate->position->title }}</p>
                     
                     @if($candidate->isApproved() && $candidate->position->electionSetting->isVotingPeriod())
