@@ -44,7 +44,7 @@ $host = $env['DB_HOST'] ?? 'localhost';
 $port = $env['DB_PORT'] ?? '3306';
 $db = $env['DB_DATABASE'] ?? 'ams';
 $user = $env['DB_USERNAME'] ?? 'root';
-$password = $env['DB_PASSWORD'] ?? '';
+$password = $env['DB_PASSWORD'] ?? 'YOUR_PASSWORD_HERE'; // IMPORTANT: Replace with your actual InfinityFree password!
 
 // Output as plain text for better readability
 header('Content-Type: text/plain');
@@ -57,9 +57,10 @@ echo "====================================================\n\n";
 
 if ($action != 'run' && $action != 'view') {
     echo "USAGE INSTRUCTIONS:\n";
-    echo "1. Add '?action=view' to the URL to view current candidate and user data\n";
-    echo "2. Add '?action=run' to the URL to perform the updates\n";
-    echo "3. Make sure to update the user ID mappings in the code before running\n";
+    echo "1. First EDIT THIS FILE to add your correct database password on line 43\n";
+    echo "2. Add '?action=view' to the URL to view current candidate and user data\n";
+    echo "3. Add '?action=run' to the URL to perform the updates\n";
+    echo "4. Make sure to update the user ID mappings in the code before running\n";
     exit;
 }
 

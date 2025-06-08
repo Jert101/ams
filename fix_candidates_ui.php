@@ -44,12 +44,12 @@ function parseEnvFile($path) {
 $envPath = __DIR__ . '/.env';
 $env = parseEnvFile($envPath);
 
-// Default connection parameters
-$host = $env['DB_HOST'] ?? '';
+// Default connection parameters for InfinityFree
+$host = $env['DB_HOST'] ?? 'sql309.infinityfree.com'; // Default InfinityFree host
 $port = $env['DB_PORT'] ?? '3306';
-$db = $env['DB_DATABASE'] ?? '';
-$user = $env['DB_USERNAME'] ?? '';
-$password = $env['DB_PASSWORD'] ?? '';
+$db = $env['DB_DATABASE'] ?? 'if0_36177017_ams'; // Replace with your database name
+$user = $env['DB_USERNAME'] ?? 'if0_36177017'; // Replace with your username
+$password = $env['DB_PASSWORD'] ?? ''; // You'll need to enter your password in the form
 
 // Override with form values if provided
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

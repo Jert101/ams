@@ -8,7 +8,7 @@ set_time_limit(300);
 $host = $_ENV['DB_HOST'] ?? 'sql309.infinityfree.com'; // Replace with your actual database host
 $db = $_ENV['DB_DATABASE'] ?? 'if0_36177017_ams'; // Replace with your actual database name
 $user = $_ENV['DB_USERNAME'] ?? 'if0_36177017'; // Replace with your actual database username
-$password = $_ENV['DB_PASSWORD'] ?? ''; // Replace with your actual database password
+$password = $_ENV['DB_PASSWORD'] ?? 'YOUR_PASSWORD_HERE'; // Replace with your ACTUAL database password - this is required!
 
 // Output as plain text for better readability
 header('Content-Type: text/plain');
@@ -21,9 +21,10 @@ echo "====================================\n\n";
 
 if ($action != 'run' && $action != 'view') {
     echo "USAGE INSTRUCTIONS:\n";
-    echo "1. Add '?action=view' to the URL to view current candidate and user data\n";
-    echo "2. Add '?action=run' to the URL to perform the updates\n";
-    echo "3. Make sure to update the user ID mappings in the code before running\n";
+    echo "1. First EDIT THIS FILE to add your correct database password on line 11\n";
+    echo "2. Add '?action=view' to the URL to view current candidate and user data\n";
+    echo "3. Add '?action=run' to the URL to perform the updates\n";
+    echo "4. Make sure to update the user ID mappings in the code before running\n";
     exit;
 }
 
