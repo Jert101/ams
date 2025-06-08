@@ -364,7 +364,7 @@ if (isset($_SERVER['HTTP_HOST']) && ($_SERVER['HTTP_HOST'] === 'localhost' || $_
         <div class="container">
             <div class="row">
                 <div class="col-md-6 mb-2 mb-md-0">
-                    <p class="mb-0">&copy; <?php echo date('Y'); ?> KofA AMS. All rights reserved.</p>
+                    <p class="mb-0">&copy; <?php echo date('Y'); ?> KofA AMS is a trademark of Jerson L. Catadman. &copy; 2025 CKP-KofA Network. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <a href="#" class="text-decoration-none text-light me-2">
