@@ -6,16 +6,34 @@
         // Get user information from either the relationship or direct query
         $userName = 'Unknown User';
         $userEmail = '';
-        $profilePhoto = null;
+        $profilePhotoUrl = null;
         
         if ($candidate->user) {
             $userName = $candidate->user->name;
             $userEmail = $candidate->user->email;
-            $profilePhoto = $candidate->user->profile_photo_path;
+            $profilePhotoUrl = $candidate->user->profile_photo_url;
         } elseif (isset($candidate->direct_user)) {
             $userName = $candidate->direct_user->name;
             $userEmail = $candidate->direct_user->email;
-            $profilePhoto = $candidate->direct_user->profile_photo_path;
+            
+            // For direct user, we need to build the URL manually
+            if ($candidate->direct_user->profile_photo_path) {
+                if (filter_var($candidate->direct_user->profile_photo_path, FILTER_VALIDATE_URL)) {
+                    $profilePhotoUrl = $candidate->direct_user->profile_photo_path;
+                } else {
+                    $profilePhotoUrl = asset('storage/' . $candidate->direct_user->profile_photo_path);
+                }
+            }
+        }
+        
+        // Fallback to default image if no profile photo was found
+        if (!$profilePhotoUrl) {
+            $profilePhotoUrl = asset('img/defaults/user.svg');
+            
+            // Check if kofa.png exists as a fallback
+            if (file_exists(public_path('kofa.png'))) {
+                $profilePhotoUrl = asset('kofa.png');
+            }
         }
     @endphp
 
@@ -50,13 +68,7 @@
                 <div class="col-md-4 mb-4 mb-md-0">
                     <div class="text-center">
                         <div class="mx-auto mb-3 w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                            @if($profilePhoto)
-                                <img src="{{ asset('storage/' . $profilePhoto) }}" alt="{{ $userName }}" class="w-full h-full object-cover">
-                            @else
-                                <svg class="h-16 w-16 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                            @endif
+                            <img src="{{ $profilePhotoUrl }}" alt="{{ $userName }}" class="w-full h-full object-cover">
                         </div>
                         <h3 class="text-xl font-semibold mt-2">{{ $userName }}</h3>
                         @if($userEmail)

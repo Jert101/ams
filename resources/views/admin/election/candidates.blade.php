@@ -95,16 +95,34 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="me-3">
-                                                @if(isset($candidate->profile_photo) && $candidate->profile_photo)
-                                                    <img src="{{ asset('storage/' . $candidate->profile_photo) }}" 
-                                                         alt="{{ $candidate->user_name }}" class="rounded-circle" 
-                                                         width="40" height="40">
-                                                @else
-                                                    <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" 
-                                                         style="width: 40px; height: 40px;">
-                                                        {{ strtoupper(substr($candidate->user_name ?? 'U', 0, 1)) }}
-                                                    </div>
-                                                @endif
+                                                @php
+                                                    $profilePhotoUrl = null;
+                                                    
+                                                    // Try to get photo from pre-processed data
+                                                    if(isset($candidate->profile_photo) && $candidate->profile_photo) {
+                                                        if (filter_var($candidate->profile_photo, FILTER_VALIDATE_URL)) {
+                                                            $profilePhotoUrl = $candidate->profile_photo;
+                                                        } else {
+                                                            $profilePhotoUrl = asset('storage/' . $candidate->profile_photo);
+                                                        }
+                                                    }
+                                                    // Try to get it from user relationship
+                                                    elseif($candidate->user && $candidate->user->profile_photo_url) {
+                                                        $profilePhotoUrl = $candidate->user->profile_photo_url;
+                                                    }
+                                                    
+                                                    // If still no photo, use default
+                                                    if (!$profilePhotoUrl) {
+                                                        if (file_exists(public_path('kofa.png'))) {
+                                                            $profilePhotoUrl = asset('kofa.png');
+                                                        } else {
+                                                            $profilePhotoUrl = asset('img/defaults/user.svg');
+                                                        }
+                                                    }
+                                                @endphp
+                                                <img src="{{ $profilePhotoUrl }}" 
+                                                     alt="{{ $candidate->user_name }}" class="rounded-circle" 
+                                                     width="40" height="40">
                                             </div>
                                             <div>
                                                 <div class="font-weight-bold">{{ $candidate->user_name }}</div>

@@ -783,15 +783,47 @@
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                @if($candidate->user || isset($candidate->user_details))
-                                                    @php
-                                                        $candidateName = $candidate->user ? $candidate->user->name : 
-                                                            (isset($candidate->user_details['name']) ? $candidate->user_details['name'] : 'Unknown User');
-                                                    @endphp
+                                                @php
+                                                    $profilePhotoUrl = null;
+                                                    $candidateName = 'Unknown User';
+                                                    
+                                                    // Try to get photo and name from user relationship
+                                                    if ($candidate->user) {
+                                                        $candidateName = $candidate->user->name;
+                                                        $profilePhotoUrl = $candidate->user->profile_photo_url;
+                                                    } 
+                                                    // Try from user_details if available
+                                                    elseif (isset($candidate->user_details['name'])) {
+                                                        $candidateName = $candidate->user_details['name'];
+                                                        
+                                                        // Try to build photo URL if we have a path
+                                                        if (!empty($candidate->user_details['photo'])) {
+                                                            if (filter_var($candidate->user_details['photo'], FILTER_VALIDATE_URL)) {
+                                                                $profilePhotoUrl = $candidate->user_details['photo'];
+                                                            } else {
+                                                                $profilePhotoUrl = asset('storage/' . $candidate->user_details['photo']);
+                                                            }
+                                                        }
+                                                    }
+                                                    
+                                                    // If still no photo, use default
+                                                    if (!$profilePhotoUrl) {
+                                                        if (file_exists(public_path('kofa.png'))) {
+                                                            $profilePhotoUrl = asset('kofa.png');
+                                                        } else {
+                                                            $profilePhotoUrl = asset('img/defaults/user.svg');
+                                                        }
+                                                    }
+                                                @endphp
+                                                
+                                                <div class="me-3">
+                                                    <img src="{{ $profilePhotoUrl }}" 
+                                                         alt="{{ $candidateName }}" class="rounded-circle" 
+                                                         width="40" height="40">
+                                                </div>
+                                                <div>
                                                     {{ $candidateName }}
-                                                @else
-                                                    Unknown User
-                                                @endif
+                                                </div>
                                             </div>
                                         </td>
                                         <td>{{ $candidate->position ? $candidate->position->title : 'Unknown Position' }}</td>
