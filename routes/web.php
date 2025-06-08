@@ -400,6 +400,9 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/election/archives', [App\Http\Controllers\Admin\ElectionController::class, 'archives'])->name('election.archives');
     Route::get('/election/archives/{archive}', [App\Http\Controllers\Admin\ElectionController::class, 'viewArchive'])->name('election.archive');
     Route::post('/election/send-notifications', [App\Http\Controllers\Admin\ElectionController::class, 'sendWinnerNotifications'])->name('election.send-notifications');
+    
+    // Candidate management
+    Route::get('/election/candidates', [App\Http\Controllers\Admin\ElectionController::class, 'listCandidates'])->name('election.candidates');
     Route::get('/election/view-candidate/{id}', [App\Http\Controllers\Admin\ElectionController::class, 'viewCandidate'])->name('election.candidate');
     
     // Test route for debugging

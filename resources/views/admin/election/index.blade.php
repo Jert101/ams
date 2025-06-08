@@ -750,72 +750,42 @@
         </div>
         <div class="card-body">
             @if(isset($candidates) && count($candidates) > 0)
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th class="text-gray-700">Candidate</th>
-                                <th class="text-gray-700">Position</th>
-                                <th class="text-gray-700">Applied On</th>
-                                <th class="text-gray-700">Status</th>
-                                <th class="text-gray-700">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($candidates as $candidate)
-                                <tr class="border-b">
-                                    <td class="font-semibold text-gray-800">
-                                        @if($candidate->user)
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0 mr-3">
-                                                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                                                        @if($candidate->user->profile_photo_path)
-                                                            <img src="{{ asset('storage/' . $candidate->user->profile_photo_path) }}" alt="{{ $candidate->user->name }}" class="w-full h-full object-cover">
-                                                        @else
-                                                            <svg class="h-6 w-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                            </svg>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="font-medium">{{ $candidate->user->name }}</div>
-                                                    <div class="text-sm text-gray-500">{{ $candidate->user->email }}</div>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <span class="text-red-500">User not found</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($candidate->position)
-                                            {{ $candidate->position->title ?? 'Unknown Position' }}
-                                        @else
-                                            <span class="text-red-500">Position not found</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-gray-600">{{ $candidate->created_at->format('M d, Y - h:i A') }}</td>
-                                    <td>
-                                        <span class="badge rounded-pill 
-                                            {{ $candidate->status === 'approved' ? 'bg-success' : 
-                                               ($candidate->status === 'pending' ? 'bg-warning' : 'bg-danger') }}
-                                            px-3 py-2">
-                                            {{ ucfirst($candidate->status) }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('admin.election.candidate', ['id' => $candidate->id]) }}" class="btn btn-info btn-sm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            <span class="ms-1 d-none d-md-inline">View Details</span>
-                                        </a>
-                                    </td>
+                <div class="mb-4">
+                    <p class="text-gray-700">There are <strong>{{ count($candidates) }}</strong> candidate applications in the system.</p>
+                    
+                    <div class="mt-4">
+                        <a href="{{ route('admin.election.candidates') }}" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                            View All Candidate Applications
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Latest candidates preview -->
+                <div class="mt-4">
+                    <h6 class="font-semibold mb-3">Latest Applications</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Position</th>
+                                    <th>Applied On</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach($candidates->take(3) as $candidate)
+                                    <tr>
+                                        <td>{{ $candidate->user ? $candidate->user->name : 'Unknown' }}</td>
+                                        <td>{{ $candidate->position ? $candidate->position->title : 'Unknown' }}</td>
+                                        <td>{{ $candidate->created_at->format('M d, Y') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             @else
                 <div class="text-center py-5">

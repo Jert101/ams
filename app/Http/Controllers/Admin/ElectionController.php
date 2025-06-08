@@ -339,5 +339,16 @@ class ElectionController extends Controller
         return view('admin.election.candidate', compact('candidate'));
     }
 
+    /**
+     * List all candidate applications
+     */
+    public function listCandidates()
+    {
+        // Get all candidates with their user and position information
+        $candidates = ElectionCandidate::with(['user', 'position'])->get();
+        
+        return view('admin.election.candidates', compact('candidates'));
+    }
+
     // Candidate approval is now automatic via the ElectionCandidate model's booted method
 } 

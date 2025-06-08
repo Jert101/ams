@@ -1,0 +1,96 @@
+@extends('layouts.admin-app')
+
+@section('content')
+<div class="container">
+    <h1 class="mb-4 text-red-700 font-bold text-3xl">Candidate Applications</h1>
+
+    <div class="mb-4">
+        <a href="{{ route('admin.election.index') }}" class="btn btn-outline-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Election Management
+        </a>
+    </div>
+
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">All Candidate Applications</h5>
+        </div>
+        <div class="card-body">
+            @if(isset($candidates) && count($candidates) > 0)
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Position</th>
+                                <th>Applied On</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($candidates as $candidate)
+                                <tr>
+                                    <td>
+                                        @if($candidate->user)
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3">
+                                                    @if($candidate->user->profile_photo_path)
+                                                        <img src="{{ asset('storage/' . $candidate->user->profile_photo_path) }}" 
+                                                             alt="{{ $candidate->user->name }}" class="rounded-circle" 
+                                                             width="40" height="40">
+                                                    @else
+                                                        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                                             style="width: 40px; height: 40px;">
+                                                            {{ strtoupper(substr($candidate->user->name, 0, 1)) }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <div>
+                                                    <div class="font-weight-bold">{{ $candidate->user->name }}</div>
+                                                    <small>{{ $candidate->user->email }}</small>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <span class="text-danger">User not found</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($candidate->position)
+                                            {{ $candidate->position->title }}
+                                        @else
+                                            <span class="text-danger">Position not found</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ $candidate->created_at->format('M d, Y - h:i A') }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ $candidate->status === 'approved' ? 'success' : 
+                                            ($candidate->status === 'pending' ? 'warning' : 'danger') }}">
+                                            {{ ucfirst($candidate->status) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url('/admin/election/view-candidate/'.$candidate->id) }}" class="btn btn-info btn-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                            </svg>
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="alert alert-info">
+                    <p>There are currently no candidate applications.</p>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+@endsection 
