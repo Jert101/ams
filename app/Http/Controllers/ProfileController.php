@@ -30,6 +30,24 @@ class ProfileController extends Controller
      */
     public function updateProfile(Request $request): RedirectResponse
     {
+        // Debug information
+        Log::info('Profile update started', [
+            'user_id' => $request->user()->id,
+            'is_admin' => $request->user()->isAdmin(),
+            'has_file' => $request->hasFile('profile_photo'),
+            'method' => $request->method(),
+            'content_type' => $request->header('Content-Type')
+        ]);
+        
+        if ($request->hasFile('profile_photo')) {
+            Log::info('Profile photo details', [
+                'original_name' => $request->file('profile_photo')->getClientOriginalName(),
+                'mime_type' => $request->file('profile_photo')->getMimeType(),
+                'size' => $request->file('profile_photo')->getSize(),
+                'error' => $request->file('profile_photo')->getError()
+            ]);
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $request->user()->id],
@@ -48,66 +66,69 @@ class ProfileController extends Controller
         // Handle profile photo upload - only for admin users
         if ($request->hasFile('profile_photo') && $user->isAdmin()) {
             try {
-                // Check if the storage directory exists and is writable
-                $storageDirectory = storage_path('app/public/profile-photos');
+                Log::info('Admin is uploading a profile photo');
                 
-                if (!file_exists($storageDirectory)) {
-                    if (!mkdir($storageDirectory, 0755, true)) {
-                        Log::error('Failed to create profile photos directory: ' . $storageDirectory);
-                        return redirect()->route('profile.show')->with('error', 'Failed to create upload directory. Please contact the administrator.');
+                // Create a simplified upload process that uses direct PHP functions
+                $uploadedFile = $request->file('profile_photo');
+                $extension = $uploadedFile->getClientOriginalExtension();
+                $filename = time() . '-' . uniqid() . '.' . $extension;
+                
+                // Define paths
+                $publicPath = public_path('storage/profile-photos');
+                $storagePath = storage_path('app/public/profile-photos');
+                
+                // Ensure directories exist
+                if (!file_exists($publicPath) && !file_exists($storagePath)) {
+                    if (!mkdir($storagePath, 0755, true)) {
+                        Log::error('Failed to create profile photos directory in storage');
+                        return redirect()->route('profile.show')->with('error', 'Failed to create upload directory.');
                     }
                 }
                 
-                if (!is_writable($storageDirectory)) {
-                    Log::error('Profile photos directory is not writable: ' . $storageDirectory);
-                    return redirect()->route('profile.show')->with('error', 'Upload directory is not writable. Please contact the administrator.');
-                }
-                
-                // Check if storage link exists
-                $publicStorageLink = public_path('storage');
-                if (!file_exists($publicStorageLink)) {
-                    Log::error('Public storage link does not exist: ' . $publicStorageLink);
-                    return redirect()->route('profile.show')->with('error', 'Storage link is missing. Please run "php artisan storage:link".');
-                }
-                
-                // Delete old photo if exists and it's not the default
-                if ($user->profile_photo_path && 
-                    $user->profile_photo_path !== 'kofa.png' && 
-                    $user->profile_photo_path !== '0' &&
-                    $user->profile_photo_path !== 0 &&
-                    !empty($user->profile_photo_path)) {
-                    try {
-                        if (Storage::disk('public')->exists($user->profile_photo_path)) {
-                            Storage::disk('public')->delete($user->profile_photo_path);
+                // Copy to both locations to ensure it works in both environments
+                if ($uploadedFile->move($storagePath, $filename)) {
+                    Log::info('File successfully moved to storage path: ' . $storagePath . '/' . $filename);
+                    
+                    // If symlink doesn't exist, we'll manually copy to public directory as well
+                    if (!is_link(public_path('storage'))) {
+                        if (!file_exists($publicPath)) {
+                            mkdir($publicPath, 0755, true);
                         }
-                    } catch (Exception $e) {
-                        Log::warning('Failed to delete old profile photo: ' . $e->getMessage());
-                        // Continue anyway
+                        copy($storagePath . '/' . $filename, $publicPath . '/' . $filename);
+                        Log::info('File also copied to public path: ' . $publicPath . '/' . $filename);
                     }
+                    
+                    // Update user's profile photo path
+                    $relativePath = 'profile-photos/' . $filename;
+                    $user->profile_photo_path = $relativePath;
+                    
+                    Log::info('User profile_photo_path updated to: ' . $relativePath);
+                } else {
+                    throw new Exception('Failed to move uploaded file');
                 }
-                
-                // Store the new photo
-                $path = $request->file('profile_photo')->store('profile-photos', 'public');
-                
-                if (!$path) {
-                    throw new Exception('Failed to store profile photo');
-                }
-                
-                $user->profile_photo_path = $path;
-                
-                // Log success
-                Log::info('Profile photo uploaded successfully for user ID: ' . $user->id . ' to path: ' . $path);
                 
             } catch (Exception $e) {
-                Log::error('Profile photo upload error: ' . $e->getMessage());
+                Log::error('Profile photo upload error: ' . $e->getMessage(), [
+                    'exception' => $e,
+                    'trace' => $e->getTraceAsString()
+                ]);
                 return redirect()->route('profile.show')->with('error', 'Failed to upload profile photo: ' . $e->getMessage());
             }
+        } else {
+            Log::info('No profile photo uploaded or user is not admin', [
+                'has_file' => $request->hasFile('profile_photo'),
+                'is_admin' => $user->isAdmin()
+            ]);
         }
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
 
+        Log::info('Saving user changes', [
+            'dirty_attributes' => $user->getDirty()
+        ]);
+        
         $user->save();
 
         return redirect()->route('profile.show')->with('status', 'profile-updated');

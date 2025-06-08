@@ -237,8 +237,18 @@ class User extends Authenticatable
             return $this->profile_photo_path;
         }
         
-        // Try multiple ways to access the storage
+        // Try to find the file in both possible locations
         $storageUrl = asset('storage/' . $this->profile_photo_path);
+        
+        // Check if the file exists in public/storage first
+        if (file_exists(public_path('storage/' . $this->profile_photo_path))) {
+            return $storageUrl;
+        }
+        
+        // Check if it exists directly in public/storage without the symlink
+        if (file_exists(public_path($this->profile_photo_path))) {
+            return asset($this->profile_photo_path);
+        }
         
         // For shared hosting workaround - check if we should use the storage.php proxy
         if (file_exists(public_path('storage.php')) && !is_link(public_path('storage'))) {
@@ -247,7 +257,15 @@ class User extends Authenticatable
             return $scheme . '://' . $host . '/storage.php?path=' . $this->profile_photo_path;
         }
         
-        // Otherwise, it's a path in the storage
-        return $storageUrl;
+        // If we still can't find the file, log the issue and return the default
+        \Log::warning('Profile photo not found for user: ' . $this->id, [
+            'profile_photo_path' => $this->profile_photo_path,
+            'checked_paths' => [
+                'public/storage/' . $this->profile_photo_path,
+                'public/' . $this->profile_photo_path
+            ]
+        ]);
+        
+        return asset('kofa.png');
     }
 }
