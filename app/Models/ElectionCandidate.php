@@ -50,7 +50,15 @@ class ElectionCandidate extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+        // Try a different approach to the relationship
+        // First argument: related model
+        // Second argument: foreign key on this model
+        // Third argument: primary key on related model
+        return $this->belongsTo(User::class, 'user_id', 'user_id')
+            ->withDefault([
+                'name' => 'Unknown User',
+                'email' => 'No Email Available'
+            ]);
     }
 
     /**

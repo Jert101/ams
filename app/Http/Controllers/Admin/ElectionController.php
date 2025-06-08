@@ -370,18 +370,58 @@ class ElectionController extends Controller
      */
     public function listCandidates()
     {
-        // Get all candidates with their user and position information
-        // Force the correct relationship loading with user_id column
-        $candidates = ElectionCandidate::with(['user' => function($query) {
-            $query->select('user_id', 'name', 'email', 'profile_photo_path');
-        }, 'position'])->get();
+        // Log directly to file to avoid DB connection issues
+        $logMessage = "Starting listCandidates method\n";
+        file_put_contents(storage_path('logs/debug.log'), $logMessage, FILE_APPEND);
         
-        // Make sure each candidate has the candidate_name accessor available
-        $candidates->each(function($candidate) {
-            $candidate->candidate_name; // Touch the accessor to ensure it's loaded
-        });
-        
-        return view('admin.election.candidates', compact('candidates'));
+        try {
+            // Get all candidates with their user and position information
+            // Force the correct relationship loading with user_id column
+            $candidates = ElectionCandidate::with(['user' => function($query) {
+                $query->select('user_id', 'name', 'email', 'profile_photo_path');
+            }, 'position'])->get();
+            
+            // Log the candidates and their user_id values
+            $debugInfo = "Found " . count($candidates) . " candidates.\n";
+            foreach ($candidates as $candidate) {
+                $debugInfo .= "Candidate #" . $candidate->id . " - user_id: " . $candidate->user_id . "\n";
+            }
+            file_put_contents(storage_path('logs/debug.log'), $debugInfo, FILE_APPEND);
+            
+            // Try to directly get users from database
+            $userIds = $candidates->pluck('user_id')->toArray();
+            $userIdsList = implode(',', $userIds);
+            $users = \DB::table('users')->whereIn('user_id', $userIds)->get();
+            
+            $userDebug = "User lookup - Found " . count($users) . " users for user_ids: " . $userIdsList . "\n";
+            if (count($users) > 0) {
+                foreach ($users as $user) {
+                    $userDebug .= "User #" . $user->user_id . " - name: " . $user->name . "\n";
+                }
+            }
+            file_put_contents(storage_path('logs/debug.log'), $userDebug, FILE_APPEND);
+            
+            // Make each candidate's user_id directly available in the view
+            $candidates->each(function($candidate) use ($users) {
+                $candidate->candidate_name; // Touch the accessor to ensure it's loaded
+                $candidate->debug_info = [
+                    'candidate_id' => $candidate->id,
+                    'user_id' => $candidate->user_id,
+                    'candidate_name' => $candidate->candidate_name,
+                    'has_user' => $candidate->user ? true : false
+                ];
+            });
+            
+            return view('admin.election.candidates', compact('candidates'));
+        } catch (\Exception $e) {
+            // Log any exceptions
+            $errorMsg = "Error in listCandidates: " . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n";
+            file_put_contents(storage_path('logs/debug.log'), $errorMsg, FILE_APPEND);
+            
+            // Create an empty collection if there's an error
+            $candidates = collect([]);
+            return view('admin.election.candidates', compact('candidates'))->with('error', 'Database error: ' . $e->getMessage());
+        }
     }
 
     /**
