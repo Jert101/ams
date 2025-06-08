@@ -330,7 +330,7 @@
                 </div>
                 </div>
 
-            <form action="{{ route('admin.election.settings') }}" method="POST" class="mt-4">
+            <form action="{{ route('admin.election.update-settings') }}" method="POST" class="mt-4">
                 @csrf
                 <div class="mb-4 flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
                     <div class="form-check form-switch">

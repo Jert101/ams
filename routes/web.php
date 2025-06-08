@@ -393,6 +393,8 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'verified', 'role:Admin'])->group(function () {
     Route::get('/admin/election', [ElectionController::class, 'index'])->name('admin.election.index');
     Route::post('/admin/election/update-settings', [ElectionController::class, 'updateSettings'])->name('admin.election.update-settings');
+    // Add alias route for compatibility with existing views
+    Route::post('/admin/election/settings', [ElectionController::class, 'updateSettings'])->name('admin.election.settings');
     Route::post('/admin/election/change-status', [ElectionController::class, 'changeStatus'])->name('admin.election.change-status');
     
     // Election Positions
