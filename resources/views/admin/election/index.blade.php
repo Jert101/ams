@@ -754,7 +754,7 @@
                     <p class="text-gray-700">There are <strong>{{ count($candidates) }}</strong> candidate applications in the system.</p>
                     
                     <div class="mt-4">
-                        <a href="{{ route('admin.election.candidates') }}" class="btn btn-primary">
+                        <a href="{{ url('/admin/election/candidates') }}" class="btn btn-primary">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                             </svg>
