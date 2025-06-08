@@ -228,24 +228,25 @@
                                                             Approved
                                                         </span>
                                                     @else
-                                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                            Pending
-                                                        </span>
-                                                    @endif
+                                                                                    @else
+                                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                                Pending
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="text-xs text-gray-500 ml-11">
+                                                        <p class="truncate">{{ $user['email'] }}</p>
+                                                        <p class="mt-1">{{ $user['role']['name'] ?? 'No Role' }}</p>
+                                                    </div>
                                                 </div>
-                                                <div class="text-xs text-gray-500 ml-11">
-                                                    <p class="truncate">{{ $user['email'] }}</p>
-                                                    <p class="mt-1">{{ $user['role']['name'] ?? 'No Role' }}</p>
-                                                </div>
-                                            </div>
-                                        @endforeach
+                                            @endforeach
+                                        </div>
                                     </div>
-                                </div>
-                            @else
-                                <div class="text-center py-4 sm:py-6">
-                                    <p class="text-gray-500">No users found</p>
-                                </div>
-                            @endif
+                                @else
+                                    <div class="text-center py-4 sm:py-6">
+                                        <p class="text-gray-500">No users found</p>
+                                    </div>
+                                @endif
                         </div>
                     </div>
                 </div>

@@ -26,7 +26,7 @@ class ElectionController extends Controller
         
         $positions = ElectionPosition::where('election_settings_id', $electionSetting->id)->get();
         $roles = Role::all();
-        
+            
         // Get all candidates with their user and position information
         // Fixed relationship using 'id' instead of 'user_id'
         $candidates = ElectionCandidate::with(['user' => function($query) {

@@ -2,188 +2,10 @@
 
 @section('styles')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-    /* Responsive fixes for mobile screens */
-    @media (max-width: 768px) {
-        .container {
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
-        }
-        
-        h1 {
-            font-size: 1.5rem !important;
-            margin-bottom: 1rem !important;
-        }
-        
-        .card-header {
-            padding: 0.75rem;
-        }
-        
-        .card-body {
-            padding: 1rem;
-        }
-        
-        .election-phase-indicator {
-            margin-top: 0.5rem;
-        }
-        
-        .timeline-dot {
-            width: 12px;
-            height: 12px;
-            margin-right: 4px;
-        }
-        
-        .input-group {
-            flex-direction: column;
-        }
-        
-        .input-group > .form-control {
-            width: 100%;
-            border-radius: 0.375rem !important;
-            margin-bottom: 0.5rem;
-        }
-        
-        .input-group > .input-group-text {
-            width: 100%;
-            border-radius: 0.375rem !important;
-            justify-content: center;
-        }
-        
-        .badge {
-            font-size: 0.7rem;
-            padding: 0.3rem 0.5rem;
-        }
-        
-        .d-flex.justify-content-between {
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        
-        .election-progress {
-            height: 6px;
-            margin: 0.75rem 0;
-        }
-        
-        .form-check-input {
-            width: 2.5em !important;
-            height: 1.25em !important;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .grid.grid-cols-1.md\:grid-cols-2 {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .p-4.bg-gray-50 {
-            padding: 0.75rem;
-        }
-        
-        .text-sm {
-            font-size: 0.75rem !important;
-        }
-        
-        .badge {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.65rem;
-        }
-        
-        .election-phase-indicator {
-            width: 100%;
-            margin-top: 0.5rem;
-            text-align: center;
-        }
-        
-        .card-header h5 {
-            font-size: 1rem;
-        }
-        
-        .d-flex.justify-content-between.text-sm {
-            font-size: 0.7rem !important;
-        }
-    }
-    
-    /* Mobile-specific styles for forms */
-    @media (max-width: 768px) {
-        .custom-modal-content {
-            width: 95%;
-            margin: 5% auto;
-            padding: 15px;
-        }
-        
-        .custom-modal-header {
-            padding: 12px 15px;
-            margin: -15px -15px 15px -15px;
-        }
-        
-        .custom-modal-title {
-            font-size: 1.1rem;
-        }
-        
-        .custom-close {
-            font-size: 24px;
-        }
-        
-        .form-control, .form-select {
-            font-size: 16px; /* Prevents iOS zoom */
-        }
-        
-        .input-group.flex-nowrap {
-            flex-wrap: wrap !important;
-        }
-        
-        .input-group.flex-nowrap > .form-control {
-            border-radius: 0.375rem !important;
-            margin-bottom: 0.5rem;
-        }
-        
-        .input-group.flex-nowrap > .input-group-text {
-            width: 100%;
-            justify-content: center;
-            border-radius: 0.375rem !important;
-        }
-        
-        .form-text {
-            font-size: 0.75rem;
-        }
-        
-        .form-check-label {
-            font-size: 0.875rem;
-        }
-        
-        .btn {
-            width: 100%;
-            margin-bottom: 0.5rem;
-            padding: 0.5rem 1rem;
-        }
-        
-        .custom-modal-footer {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .me-2 {
-            margin-right: 0 !important;
-        }
-    }
-    
-    @media (min-width: 769px) {
-        .custom-modal-footer {
-            display: flex;
-            justify-content: flex-end;
-        }
-        
-        .custom-modal-footer .btn {
-            width: auto;
-        }
-    }
-</style>
 @endsection
 
 @section('content')
-<div class="container mx-auto">
+<div class="container">
     <h1 class="mb-4 text-red-700 font-bold text-3xl">Election Management</h1>
 
     <!-- Display Validation Errors -->
@@ -217,10 +39,10 @@
         /* Modal Content */
         .custom-modal-content {
             background-color: #fefefe;
-            margin: 10% auto;
+            margin: 5% auto;
             padding: 20px;
             border: 0;
-            width: 90%;
+            width: 80%;
             max-width: 800px;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
@@ -251,7 +73,7 @@
         .custom-modal-header {
             background-color: #b91c1c;
             color: white;
-            padding: 15px;
+            padding: 15px 20px;
             border-radius: 10px 10px 0 0;
             margin: -20px -20px 20px -20px;
             display: flex;
@@ -280,7 +102,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
             overflow: hidden;
-            margin-bottom: 1.5rem;
         }
         
         .card:hover {
@@ -449,45 +270,6 @@
             background: linear-gradient(90deg, #b91c1c 0%, #facc15 100%);
             transition: width 0.5s ease;
         }
-        
-        /* Mobile responsive adjustments */
-        @media (max-width: 768px) {
-            .d-flex.justify-content-between.align-items-center {
-                flex-direction: column;
-                align-items: flex-start !important;
-            }
-            
-            .election-phase-indicator {
-                margin-top: 10px;
-            }
-            
-            .grid-cols-1.md\:grid-cols-2 {
-                display: grid;
-                grid-template-columns: 1fr;
-            }
-            
-            .input-group {
-                display: flex;
-                flex-direction: column;
-            }
-            
-            .input-group > * {
-                margin-right: 0 !important;
-                margin-bottom: 8px;
-                width: 100%;
-                text-align: center;
-            }
-            
-            .d-flex.justify-content-between {
-                flex-wrap: wrap;
-            }
-            
-            .timeline-indicators {
-                font-size: 0.7rem;
-                justify-content: space-between;
-                width: 100%;
-            }
-        }
     </style>
 
     <!-- Election Settings -->
@@ -508,7 +290,7 @@
                         </svg>
                         {{ ucfirst($electionSetting->status) }} Phase
                     </span>
-                </div>
+        </div>
             </div>
         </div>
         
@@ -528,7 +310,7 @@
                     @endphp
                     <div class="election-progress-bar" style="width: {{ $progressPercentage }}%"></div>
                 </div>
-                <div class="d-flex justify-content-between text-sm text-gray-600 mt-1 timeline-indicators">
+                <div class="d-flex justify-content-between text-sm text-gray-600 mt-1">
                     <div>
                         <span class="timeline-dot {{ $electionSetting->status !== 'inactive' ? 'active' : 'inactive' }}"></span>
                         Setup
@@ -546,20 +328,18 @@
                         Results
                     </div>
                 </div>
-            </div>
+                </div>
 
             <form action="{{ route('admin.election.update-settings') }}" method="POST" class="mt-4">
                 @csrf
-                <div class="mb-4 flex flex-wrap items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                <div class="mb-4 flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="is_enabled" name="is_enabled" value="1" {{ $electionSetting->is_enabled ? 'checked' : '' }} style="width: 3em; height: 1.5em;">
                     </div>
-                    <div>
-                        <label class="form-check-label font-semibold" for="is_enabled">
-                            {{ $electionSetting->is_enabled ? 'Election System is Enabled' : 'Election System is Disabled' }}
-                        </label>
-                        <div class="text-sm text-gray-500">{{ $electionSetting->is_enabled ? 'The election system is currently active and accessible to users.' : 'The election system is currently disabled and not accessible to users.' }}</div>
-                    </div>
+                    <label class="form-check-label font-semibold" for="is_enabled">
+                        {{ $electionSetting->is_enabled ? 'Election System is Enabled' : 'Election System is Disabled' }}
+                    </label>
+                    <div class="text-sm text-gray-500 ml-2">{{ $electionSetting->is_enabled ? 'The election system is currently active and accessible to users.' : 'The election system is currently disabled and not accessible to users.' }}</div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
@@ -572,23 +352,23 @@
                         </h6>
                         <div class="mb-3">
                             <label for="candidacy_start_date" class="form-label text-sm font-medium text-gray-700">Start Date</label>
-                            <div class="input-group flex-col sm:flex-row">
-                                <input type="datetime-local" class="form-control" id="candidacy_start_date" name="candidacy_start_date" value="{{ $electionSetting->candidacy_start_date ? $electionSetting->candidacy_start_date->format('Y-m-d\TH:i') : '' }}">
-                                @if($electionSetting->candidacy_start_date)
+                        <div class="input-group">
+                            <input type="datetime-local" class="form-control" id="candidacy_start_date" name="candidacy_start_date" value="{{ $electionSetting->candidacy_start_date ? $electionSetting->candidacy_start_date->format('Y-m-d\TH:i') : '' }}">
+                            @if($electionSetting->candidacy_start_date)
                                     <span class="input-group-text countdown-timer text-sm" data-target-date="{{ $electionSetting->candidacy_start_date->toISOString() }}">{{ now()->diffForHumans($electionSetting->candidacy_start_date ?? now(), ['parts' => 1]) }}</span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="mb-1">
-                            <label for="candidacy_end_date" class="form-label text-sm font-medium text-gray-700">End Date</label>
-                            <div class="input-group flex-col sm:flex-row">
-                                <input type="datetime-local" class="form-control" id="candidacy_end_date" name="candidacy_end_date" value="{{ $electionSetting->candidacy_end_date ? $electionSetting->candidacy_end_date->format('Y-m-d\TH:i') : '' }}">
-                                @if($electionSetting->candidacy_end_date)
-                                    <span class="input-group-text countdown-timer text-sm" data-target-date="{{ $electionSetting->candidacy_end_date->toISOString() }}">{{ now()->diffForHumans($electionSetting->candidacy_end_date ?? now(), ['parts' => 1]) }}</span>
-                                @endif
-                            </div>
+                            @endif
                         </div>
                     </div>
+                        <div class="mb-1">
+                            <label for="candidacy_end_date" class="form-label text-sm font-medium text-gray-700">End Date</label>
+                        <div class="input-group">
+                            <input type="datetime-local" class="form-control" id="candidacy_end_date" name="candidacy_end_date" value="{{ $electionSetting->candidacy_end_date ? $electionSetting->candidacy_end_date->format('Y-m-d\TH:i') : '' }}">
+                            @if($electionSetting->candidacy_end_date)
+                                    <span class="input-group-text countdown-timer text-sm" data-target-date="{{ $electionSetting->candidacy_end_date->toISOString() }}">{{ now()->diffForHumans($electionSetting->candidacy_end_date ?? now(), ['parts' => 1]) }}</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
 
                     <div class="p-4 bg-gray-50 rounded-lg">
                         <h6 class="font-semibold mb-3 text-gray-700 flex items-center">
@@ -599,20 +379,20 @@
                         </h6>
                         <div class="mb-3">
                             <label for="voting_start_date" class="form-label text-sm font-medium text-gray-700">Start Date</label>
-                            <div class="input-group flex-col sm:flex-row">
-                                <input type="datetime-local" class="form-control" id="voting_start_date" name="voting_start_date" value="{{ $electionSetting->voting_start_date ? $electionSetting->voting_start_date->format('Y-m-d\TH:i') : '' }}">
-                                @if($electionSetting->voting_start_date)
+                        <div class="input-group">
+                            <input type="datetime-local" class="form-control" id="voting_start_date" name="voting_start_date" value="{{ $electionSetting->voting_start_date ? $electionSetting->voting_start_date->format('Y-m-d\TH:i') : '' }}">
+                            @if($electionSetting->voting_start_date)
                                     <span class="input-group-text countdown-timer text-sm" data-target-date="{{ $electionSetting->voting_start_date->toISOString() }}">{{ now()->diffForHumans($electionSetting->voting_start_date ?? now(), ['parts' => 1]) }}</span>
-                                @endif
-                            </div>
+                            @endif
                         </div>
+                    </div>
                         <div class="mb-1">
                             <label for="voting_end_date" class="form-label text-sm font-medium text-gray-700">End Date</label>
-                            <div class="input-group flex-col sm:flex-row">
-                                <input type="datetime-local" class="form-control" id="voting_end_date" name="voting_end_date" value="{{ $electionSetting->voting_end_date ? $electionSetting->voting_end_date->format('Y-m-d\TH:i') : '' }}">
-                                @if($electionSetting->voting_end_date)
+                        <div class="input-group">
+                            <input type="datetime-local" class="form-control" id="voting_end_date" name="voting_end_date" value="{{ $electionSetting->voting_end_date ? $electionSetting->voting_end_date->format('Y-m-d\TH:i') : '' }}">
+                            @if($electionSetting->voting_end_date)
                                     <span class="input-group-text countdown-timer text-sm" data-target-date="{{ $electionSetting->voting_end_date->toISOString() }}">{{ now()->diffForHumans($electionSetting->voting_end_date ?? now(), ['parts' => 1]) }}</span>
-                                @endif
+                            @endif
                             </div>
                         </div>
                     </div>
@@ -776,50 +556,50 @@
 
     <!-- Positions Management -->
     <div class="card shadow-lg mb-5 border-0">
-        <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0 font-bold flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
                 Election Positions
             </h5>
-            <div class="flex flex-wrap gap-2">
-                <button type="button" class="btn btn-primary text-sm" onclick="document.getElementById('customAddPositionModal').style.display='block'">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="flex space-x-2">
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('customAddPositionModal').style.display='block'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                     Add New Position
                 </button>
                 <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle text-sm" type="button" id="quickActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="quickActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
                         </svg>
                         Quick Actions
                     </button>
                     <ul class="dropdown-menu shadow" aria-labelledby="quickActionsDropdown">
                         <li>
-                            <a href="{{ route('admin.election.test-add-position') }}" class="dropdown-item text-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <a href="{{ route('admin.election.test-add-position') }}" class="dropdown-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
-                                Test Form
-                            </a>
+                    Test Form
+                </a>
                         </li>
                         <li>
-                            <form action="{{ route('admin.election.position.store') }}" method="POST" class="d-inline">
-                                @csrf
-                                <input type="hidden" name="title" value="Quick Test Position">
-                                <input type="hidden" name="description" value="This is a test position created with the quick button.">
-                                <input type="hidden" name="eligible_roles[]" value="Member">
-                                <input type="hidden" name="max_votes_per_voter" value="1">
-                                <button type="submit" class="dropdown-item text-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <form action="{{ route('admin.election.position.store') }}" method="POST" class="d-inline">
+                    @csrf
+                    <input type="hidden" name="title" value="Quick Test Position">
+                    <input type="hidden" name="description" value="This is a test position created with the quick button.">
+                    <input type="hidden" name="eligible_roles[]" value="Member">
+                    <input type="hidden" name="max_votes_per_voter" value="1">
+                                <button type="submit" class="dropdown-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                                     </svg>
                                     Quick Add Test Position
-                                </button>
-                            </form>
+                    </button>
+                </form>
                         </li>
                     </ul>
                 </div>
@@ -827,16 +607,16 @@
         </div>
         <div class="card-body">
             @if($positions->isEmpty())
-                <div class="text-center py-4 sm:py-5">
-                    <div class="mb-3 sm:mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                         </svg>
                     </div>
-                    <h3 class="text-lg sm:text-xl font-semibold mb-2">No Positions Defined</h3>
-                    <p class="text-gray-500 text-sm sm:text-base mb-3 sm:mb-4">Create a position to start the election process.</p>
-                    <button type="button" class="btn btn-primary text-sm" onclick="document.getElementById('customAddPositionModal').style.display='block'">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <h3 class="text-xl font-semibold mb-2">No Positions Defined</h3>
+                    <p class="text-gray-500 mb-4">Create a position to start the election process.</p>
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('customAddPositionModal').style.display='block'">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
                         Add First Position
@@ -844,29 +624,29 @@
                 </div>
                 
                 <!-- Inline Position Form for Direct Access -->
-                <div class="card border-0 shadow-sm mt-4 sm:mt-5 mb-4 bg-gray-50">
+                <div class="card border-0 shadow-sm mt-5 mb-4 bg-gray-50">
                     <div class="card-header bg-gray-100 border-0">
-                        <h5 class="mb-0 font-semibold text-gray-700 text-sm sm:text-base">Add Position (Direct Form)</h5>
+                        <h5 class="mb-0 font-semibold text-gray-700">Add Position (Direct Form)</h5>
                     </div>
-                    <div class="card-body p-3 sm:p-4">
+                    <div class="card-body">
                         <form action="{{ route('admin.election.position.store') }}" method="POST">
                             @csrf
                             <div class="mb-3">
-                                <label for="direct_title" class="form-label font-medium text-sm sm:text-base">Position Title</label>
+                                <label for="direct_title" class="form-label font-medium">Position Title</label>
                                 <input type="text" class="form-control" id="direct_title" name="title" required placeholder="E.g., President, Secretary, Treasurer">
                             </div>
                             <div class="mb-3">
-                                <label for="direct_description" class="form-label font-medium text-sm sm:text-base">Description</label>
+                                <label for="direct_description" class="form-label font-medium">Description</label>
                                 <textarea class="form-control" id="direct_description" name="description" rows="3" required placeholder="Describe the role and responsibilities..."></textarea>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label font-medium text-sm sm:text-base">Eligible Roles</label>
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                <label class="form-label font-medium">Eligible Roles</label>
+                                <div class="row">
                                     @foreach($roles as $role)
-                                        <div class="mb-2">
+                                        <div class="col-md-3 mb-2">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="eligible_roles[]" value="{{ $role->name }}" id="direct_role_{{ $role->id }}">
-                                                <label class="form-check-label text-sm" for="direct_role_{{ $role->id }}">
+                                                <label class="form-check-label" for="direct_role_{{ $role->id }}">
                                                     {{ $role->name }}
                                                 </label>
                                             </div>
@@ -875,11 +655,11 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="direct_max_votes" class="form-label font-medium text-sm sm:text-base">Maximum Votes Per Voter</label>
+                                <label for="direct_max_votes" class="form-label font-medium">Maximum Votes Per Voter</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="direct_max_votes" name="max_votes_per_voter" min="1" value="1" required>
+                                <input type="number" class="form-control" id="direct_max_votes" name="max_votes_per_voter" min="1" value="1" required>
                                     <span class="input-group-text">vote(s)</span>
-                                </div>
+                            </div>
                             </div>
                             <button type="submit" class="btn btn-primary">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1094,58 +874,75 @@
     </div>
 </div>
 
-<!-- Add Position Modal -->
+<!-- Custom Add Position Modal -->
 <div id="customAddPositionModal" class="custom-modal">
     <div class="custom-modal-content">
         <div class="custom-modal-header">
-            <h5 class="custom-modal-title">Add New Election Position</h5>
+            <h5 class="custom-modal-title">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add New Position
+            </h5>
             <span class="custom-close" onclick="document.getElementById('customAddPositionModal').style.display='none'">&times;</span>
         </div>
-        
-        <form action="{{ route('admin.election.position.store') }}" method="POST">
+        <form action="{{ route('admin.election.position.store') }}" method="POST" id="addPositionForm" onsubmit="return validateForm()">
             @csrf
-            <div class="mb-3">
-                <label for="title" class="form-label font-medium">Position Title</label>
-                <input type="text" class="form-control" id="title" name="title" required placeholder="E.g., President, Secretary, Treasurer">
+            <div class="mb-4">
+                <label for="title" class="form-label font-semibold">Position Title</label>
+                <input type="text" class="form-control" id="title" name="title" required placeholder="E.g., KofA Leader, Secretary, Treasurer">
+            </div>
+            <div class="mb-4">
+                <label for="description" class="form-label font-semibold">Position Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required placeholder="Describe the duties and responsibilities of this position..."></textarea>
             </div>
             
-            <div class="mb-3">
-                <label for="description" class="form-label font-medium">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="3" required placeholder="Describe the role and responsibilities..."></textarea>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label font-medium">Eligible Roles</label>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
-                    @foreach($roles as $role)
-                        <div class="mb-2">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="eligible_roles[]" value="{{ $role->name }}" id="role_{{ $role->id }}">
-                                <label class="form-check-label" for="role_{{ $role->id }}">
-                                    {{ $role->name }}
-                                </label>
-                            </div>
+            <div class="card shadow-sm border-0 rounded-lg mb-4 bg-gray-50">
+                <div class="card-header bg-gray-100 border-0">
+                    <h6 class="mb-0 font-semibold">Position Eligibility</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-gray-600 text-sm mb-3">Select which roles are eligible to apply for this position. These roles must be already assigned to users.</p>
+                    <div class="mb-3">
+                        <label class="form-label font-medium text-gray-700">Eligible Roles (Required)</label>
+                        <div class="row mt-2">
+                            @foreach($roles as $role)
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="eligible_roles[]" value="{{ $role->name }}" id="role_{{ $role->id }}">
+                                        <label class="form-check-label" for="role_{{ $role->id }}">
+                                            {{ $role->name }}
+                                        </label>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
-                    @endforeach
+                        <div class="form-text text-gray-500 mt-2">Users must have one of these roles to be eligible to apply for this position.</div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="mb-3">
-                <label for="max_votes_per_voter" class="form-label font-medium">Maximum Votes Per Voter</label>
-                <div class="input-group flex-nowrap">
+
+            <div class="mb-4">
+                <label for="max_votes_per_voter" class="form-label font-semibold">Maximum Votes Per Voter</label>
+                <div class="input-group">
                     <input type="number" class="form-control" id="max_votes_per_voter" name="max_votes_per_voter" min="1" value="1" required>
                     <span class="input-group-text">vote(s)</span>
                 </div>
-                <div class="form-text">Number of candidates a voter can select for this position</div>
+                <div class="form-text text-gray-500">Number of candidates each voter can select for this position.</div>
             </div>
             
             <div class="custom-modal-footer">
-                <button type="button" class="btn btn-secondary me-2" onclick="document.getElementById('customAddPositionModal').style.display='none'">Cancel</button>
+                <button type="button" class="btn btn-light" onclick="document.getElementById('customAddPositionModal').style.display='none'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Cancel
+                </button>
                 <button type="submit" class="btn btn-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    Add Position
+                    Create Position
                 </button>
             </div>
         </form>
@@ -1467,33 +1264,6 @@
         } catch (error) {
             console.error('Error setting up Pusher:', error);
         }
-    });
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        // Fix for iOS scrolling within modals
-        const modals = document.querySelectorAll('.custom-modal');
-        
-        modals.forEach(modal => {
-            modal.addEventListener('touchmove', function(e) {
-                const modalContent = modal.querySelector('.custom-modal-content');
-                const touch = e.touches[0];
-                const startY = touch.clientY;
-                
-                // Check if we're not scrolling inside the modal content
-                if (!modalContent.contains(document.elementFromPoint(touch.clientX, touch.clientY))) {
-                    e.preventDefault();
-                }
-            });
-        });
-        
-        // Close modal when clicking outside on mobile
-        modals.forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        });
     });
 </script>
 
