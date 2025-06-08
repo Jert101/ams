@@ -88,11 +88,34 @@ class ElectionCandidate extends Model
      */
     public function getCandidateNameAttribute()
     {
-        // Make sure to load the user relationship if it hasn't been loaded
-        if (!$this->relationLoaded('user')) {
-            $this->load('user');
+        // First try the standard relationship
+        if ($this->user) {
+            return $this->user->name;
         }
         
-        return $this->user ? $this->user->name : 'Unknown';
+        // If that fails, try to load it
+        if (!$this->relationLoaded('user')) {
+            try {
+                $this->load('user');
+                if ($this->user) {
+                    return $this->user->name;
+                }
+            } catch (\Exception $e) {
+                // Silently ignore relationship loading errors
+            }
+        }
+        
+        // If that still fails, try a direct database query
+        try {
+            $user = \DB::table('users')->where('user_id', $this->user_id)->first();
+            if ($user) {
+                return $user->name;
+            }
+        } catch (\Exception $e) {
+            // Silently ignore database errors
+        }
+        
+        // Default fallback
+        return 'Unknown';
     }
 } 

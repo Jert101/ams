@@ -34,23 +34,52 @@
                             @foreach($candidates as $candidate)
                                 <tr>
                                     <td>
+                                        @php
+                                            // Direct approach to get user data when relationship fails
+                                            $userName = 'Unknown';
+                                            $userEmail = '';
+                                            $profilePath = null;
+                                            $initial = 'U';
+                                            
+                                            // Try to get user data through the relationship
+                                            if ($candidate->user) {
+                                                $userName = $candidate->user->name;
+                                                $userEmail = $candidate->user->email;
+                                                $profilePath = $candidate->user->profile_photo_path;
+                                                $initial = strtoupper(substr($userName, 0, 1));
+                                            } 
+                                            // If that fails, try a direct database query
+                                            else {
+                                                try {
+                                                    $user = DB::table('users')->where('user_id', $candidate->user_id)->first();
+                                                    if ($user) {
+                                                        $userName = $user->name;
+                                                        $userEmail = $user->email;
+                                                        $profilePath = $user->profile_photo_path;
+                                                        $initial = strtoupper(substr($userName, 0, 1));
+                                                    }
+                                                } catch (\Exception $e) {
+                                                    // Silently handle database errors
+                                                }
+                                            }
+                                        @endphp
                                         <div class="d-flex align-items-center">
                                             <div class="me-3">
-                                                @if($candidate->user && $candidate->user->profile_photo_path)
-                                                    <img src="{{ asset('storage/' . $candidate->user->profile_photo_path) }}" 
-                                                         alt="{{ $candidate->candidate_name }}" class="rounded-circle" 
+                                                @if($profilePath)
+                                                    <img src="{{ asset('storage/' . $profilePath) }}" 
+                                                         alt="{{ $userName }}" class="rounded-circle" 
                                                          width="40" height="40">
                                                 @else
                                                     <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" 
                                                          style="width: 40px; height: 40px;">
-                                                        {{ strtoupper(substr($candidate->candidate_name, 0, 1)) }}
+                                                        {{ $initial }}
                                                     </div>
                                                 @endif
                                             </div>
                                             <div>
-                                                <div class="font-weight-bold">{{ $candidate->candidate_name }}</div>
-                                                @if($candidate->user)
-                                                    <small>{{ $candidate->user->email }}</small>
+                                                <div class="font-weight-bold">{{ $userName }}</div>
+                                                @if($userEmail)
+                                                    <small>{{ $userEmail }}</small>
                                                 @endif
                                             </div>
                                         </div>
@@ -108,7 +137,7 @@
                                                             <form action="{{ route('admin.election.reject-candidate', $candidate->id) }}" method="POST">
                                                                 @csrf
                                                                 <div class="modal-body">
-                                                                    <p>Are you sure you want to reject the candidacy application of <strong>{{ $candidate->candidate_name }}</strong> for <strong>{{ $candidate->position->title }}</strong>?</p>
+                                                                    <p>Are you sure you want to reject the candidacy application of <strong>{{ $userName }}</strong> for <strong>{{ $candidate->position->title }}</strong>?</p>
                                                                     <div class="mb-3">
                                                                         <label for="rejection_reason" class="form-label">Rejection Reason:</label>
                                                                         <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3" required></textarea>

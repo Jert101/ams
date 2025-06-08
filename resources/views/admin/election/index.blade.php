@@ -781,7 +781,29 @@
                             <tbody>
                                 @foreach($candidates->take(3) as $candidate)
                                     <tr>
-                                        <td>{{ $candidate->candidate_name }}</td>
+                                        <td>
+                                            @php
+                                                // Direct approach to get user data when relationship fails
+                                                $userName = 'Unknown';
+                                                
+                                                // Try to get user data through the relationship
+                                                if ($candidate->user) {
+                                                    $userName = $candidate->user->name;
+                                                } 
+                                                // If that fails, try a direct database query
+                                                else {
+                                                    try {
+                                                        $user = DB::table('users')->where('user_id', $candidate->user_id)->first();
+                                                        if ($user) {
+                                                            $userName = $user->name;
+                                                        }
+                                                    } catch (\Exception $e) {
+                                                        // Silently handle database errors
+                                                    }
+                                                }
+                                            @endphp
+                                            {{ $userName }}
+                                        </td>
                                         <td>{{ $candidate->position ? $candidate->position->title : 'Unknown' }}</td>
                                         <td>{{ $candidate->created_at->format('M d, Y') }}</td>
                                     </tr>
