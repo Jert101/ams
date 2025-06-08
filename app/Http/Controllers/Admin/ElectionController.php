@@ -522,14 +522,11 @@ class ElectionController extends Controller
         try {
             $electionSetting = ElectionSetting::getActiveOrCreate();
             
-            // Check if the column exists
-            if (isset($electionSetting->auto_approve_candidates)) {
-                $electionSetting->auto_approve_candidates = !$electionSetting->auto_approve_candidates;
-            } else {
-                // If the column doesn't exist yet, set it to false (default is true)
-                $electionSetting->auto_approve_candidates = false;
-            }
+            // Get value from checkbox (will be 1 if checked, null if unchecked)
+            $autoApprove = request()->has('auto_approve_candidates');
             
+            // Set the value based on the checkbox
+            $electionSetting->auto_approve_candidates = $autoApprove;
             $electionSetting->save();
             
             return redirect()->back()->with('success', 'Auto-approval setting has been ' . 

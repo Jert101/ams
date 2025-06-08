@@ -11,36 +11,73 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+require '../vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
 echo "<h1>Fix Auto-Approval Column</h1>";
 echo "<p>This script will check if the auto_approve_candidates column exists in the election_settings table and add it if needed.</p>";
 
 try {
-    // Load Laravel application
-    require_once __DIR__ . '/../vendor/autoload.php';
-    $app = require_once __DIR__ . '/../bootstrap/app.php';
-    $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
-    
-    // Check if the column exists
-    $columnExists = \Illuminate\Support\Facades\Schema::hasColumn('election_settings', 'auto_approve_candidates');
-    
-    if ($columnExists) {
+    // Load Laravel database configuration
+    $app = require_once '../bootstrap/app.php';
+    $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+    $kernel->bootstrap();
+
+    echo "<div style='margin-bottom: 10px; padding: 10px; background-color: #f0f8ff; border: 1px solid #ccc;'>";
+    echo "<h3>Database Connection Test</h3>";
+    try {
+        // Test the database connection
+        DB::connection()->getPdo();
+        echo "<p style='color: green;'>✅ Database connection successful: " . DB::connection()->getDatabaseName() . "</p>";
+    } catch (\Exception $e) {
+        echo "<div style='color: red; padding: 10px; background-color: #fff0f0; border: 1px solid #d0a0a0; margin: 10px 0;'>";
+        echo "❌ Database connection failed: " . $e->getMessage();
+        echo "</div>";
+        
+        echo "<h3>Troubleshooting Tips</h3>";
+        echo "<ul>";
+        echo "<li>Make sure your MySQL server is running</li>";
+        echo "<li>Check your database credentials in .env file</li>";
+        echo "<li>For InfinityFree hosting, ensure your database connection settings are correct</li>";
+        echo "</ul>";
+        
+        exit;
+    }
+    echo "</div>";
+
+    // Check if column exists
+    $hasColumn = false;
+    try {
+        $hasColumn = Schema::hasColumn('election_settings', 'auto_approve_candidates');
+        echo "<p>Column check complete.</p>";
+    } catch (\Exception $e) {
+        echo "<div style='color: red; padding: 10px; background-color: #fff0f0; border: 1px solid #d0a0a0; margin: 10px 0;'>";
+        echo "❌ Error checking for column: " . $e->getMessage();
+        echo "</div>";
+        exit;
+    }
+
+    if ($hasColumn) {
         echo "<div style='color: green; padding: 10px; background-color: #f0fff0; border: 1px solid #a0d0a0; margin: 10px 0;'>";
-        echo "✅ The auto_approve_candidates column already exists in the election_settings table.";
+        echo "✅ The 'auto_approve_candidates' column already exists in the election_settings table.";
         echo "</div>";
         
         // Check if there are any records in the table
-        $settingsCount = \Illuminate\Support\Facades\DB::table('election_settings')->count();
+        $settingsCount = DB::table('election_settings')->count();
         echo "<p>Found {$settingsCount} election settings records.</p>";
         
         if ($settingsCount > 0) {
             // Check if any settings have null value for auto_approve_candidates
-            $nullCount = \Illuminate\Support\Facades\DB::table('election_settings')
+            $nullCount = DB::table('election_settings')
                 ->whereNull('auto_approve_candidates')
                 ->count();
             
             if ($nullCount > 0) {
                 // Update null values to true
-                \Illuminate\Support\Facades\DB::table('election_settings')
+                DB::table('election_settings')
                     ->whereNull('auto_approve_candidates')
                     ->update(['auto_approve_candidates' => true]);
                 
@@ -52,7 +89,7 @@ try {
             }
             
             // Show current values
-            $settings = \Illuminate\Support\Facades\DB::table('election_settings')->get();
+            $settings = DB::table('election_settings')->get();
             echo "<h2>Current Election Settings</h2>";
             echo "<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>";
             echo "<tr><th>ID</th><th>Status</th><th>Auto-Approve Candidates</th></tr>";
@@ -69,24 +106,18 @@ try {
         echo "⚠️ The auto_approve_candidates column does not exist in the election_settings table.";
         echo "</div>";
         
-        // Add the column
-        \Illuminate\Support\Facades\Schema::table('election_settings', function ($table) {
-            $table->boolean('auto_approve_candidates')->default(true);
-        });
-        
-        echo "<div style='color: green; padding: 10px; background-color: #f0fff0; border: 1px solid #a0d0a0; margin: 10px 0;'>";
-        echo "✅ Added auto_approve_candidates column to the election_settings table with default value true.";
-        echo "</div>";
-        
-        // Check if it was added successfully
-        $columnExists = \Illuminate\Support\Facades\Schema::hasColumn('election_settings', 'auto_approve_candidates');
-        if ($columnExists) {
+        // Add the column if it doesn't exist
+        try {
+            Schema::table('election_settings', function ($table) {
+                $table->boolean('auto_approve_candidates')->default(false);
+            });
+            
             echo "<div style='color: green; padding: 10px; background-color: #f0fff0; border: 1px solid #a0d0a0; margin: 10px 0;'>";
-            echo "✅ Column was added successfully.";
+            echo "✅ Added 'auto_approve_candidates' column to the election_settings table successfully.";
             echo "</div>";
-        } else {
+        } catch (\Exception $e) {
             echo "<div style='color: red; padding: 10px; background-color: #fff0f0; border: 1px solid #d0a0a0; margin: 10px 0;'>";
-            echo "❌ Failed to add the column.";
+            echo "❌ Error adding column: " . $e->getMessage();
             echo "</div>";
         }
     }
@@ -140,14 +171,13 @@ try {
         }
     }
     
+    echo "<p><a href='/admin/election' class='btn btn-primary'>Return to Election Management</a></p>";
+
 } catch (\Exception $e) {
     echo "<div style='color: red; padding: 10px; background-color: #fff0f0; border: 1px solid #d0a0a0; margin: 10px 0;'>";
     echo "❌ Error: " . $e->getMessage();
     echo "</div>";
-    
-    echo "<pre>";
-    echo $e->getTraceAsString();
-    echo "</pre>";
+    echo "<p><a href='/admin/election'>Return to Election Management</a></p>";
 }
 
 echo "<h2>Next Steps</h2>";
@@ -157,5 +187,4 @@ echo "<li>If the route was not found, make sure the web.php file contains the co
 echo "<li>After fixing the issues, try using the auto-approval toggle button again.</li>";
 echo "</ol>";
 
-echo "<p><a href='/admin/election' style='display: inline-block; padding: 10px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px;'>Return to Election Management</a></p>";
 echo "<p><a href='" . $_SERVER['PHP_SELF'] . "' style='display: inline-block; padding: 10px 15px; background-color: #28a745; color: white; text-decoration: none; border-radius: 4px;'>Run Script Again</a></p>"; 

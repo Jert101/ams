@@ -745,9 +745,16 @@
                 </h5>
                 <form action="{{ route('admin.election.toggle-auto-approval') }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'btn-success' : 'btn-secondary' }} btn-sm">
-                        {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'Auto-Approval Enabled' : 'Auto-Approval Disabled' }}
-                    </button>
+                    <div class="mb-4 flex items-center gap-2 p-3 bg-gray-50 rounded-lg mt-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="auto_approve_candidates" name="auto_approve_candidates" value="1" {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'checked' : '' }} style="width: 3em; height: 1.5em;">
+                        </div>
+                        <label class="form-check-label font-semibold" for="auto_approve_candidates">
+                            {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'Auto-Approval Enabled' : 'Auto-Approval Disabled' }}
+                        </label>
+                        <div class="text-sm text-gray-500 ml-2">{{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'Candidate applications will be automatically approved.' : 'Candidate applications require manual approval.' }}</div>
+                        <button type="submit" class="btn btn-sm btn-primary ml-auto">Save</button>
+                    </div>
                 </form>
             </div>
         </div>
