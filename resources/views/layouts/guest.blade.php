@@ -15,15 +15,65 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
         <!-- Scripts -->
-        <!-- Using asset helpers for production environment -->
-        <link rel="stylesheet" href="{{ asset('build/assets/app-CoOQjfJF.css') }}">
-        <script src="{{ asset('build/assets/app-DQS8sAPH.js') }}" defer></script>
+        <!-- Using absolute URLs for production environment -->
+        <link rel="stylesheet" href="/build/assets/app-CoOQjfJF.css">
+        <script src="/build/assets/app-DQS8sAPH.js" defer></script>
 
         <!-- Auth Fix CSS -->
-        <link rel="stylesheet" href="{{ asset('css/auth-fix.css') }}">
+        <link rel="stylesheet" href="/css/auth-fix.css">
         
         <!-- Global Responsive CSS -->
-        <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
+        <link href="/css/responsive.css" rel="stylesheet">
+        
+        <!-- Fallback CSS in case of asset loading issues -->
+        <style>
+            /* Basic fallback styles */
+            .py-4 {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+            .bg-white {
+                background-color: #ffffff;
+            }
+            .shadow-md {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            .rounded-lg {
+                border-radius: 0.5rem;
+            }
+            .px-6 {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+            .py-4 {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+            .text-center {
+                text-align: center;
+            }
+            .w-full {
+                width: 100%;
+            }
+            .mt-6 {
+                margin-top: 1.5rem;
+            }
+            .text-sm {
+                font-size: 0.875rem;
+            }
+            .text-gray-700 {
+                color: #4a5568;
+            }
+            .btn-primary {
+                background-color: #3b82f6;
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 0.25rem;
+                font-weight: 600;
+                display: inline-block;
+                text-decoration: none;
+            }
+        </style>
 
         <style>
             body {
