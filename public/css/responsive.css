@@ -65,6 +65,45 @@ img {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Improved mobile table styles */
+.table-mobile-friendly {
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .table-mobile-friendly thead {
+    display: none;
+  }
+  
+  .table-mobile-friendly tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .table-mobile-friendly tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    text-align: right;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .table-mobile-friendly tbody td:last-child {
+    border-bottom: none;
+  }
+  
+  .table-mobile-friendly tbody td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    float: left;
+    text-align: left;
+  }
+}
+
 /* Card responsiveness */
 .card {
   height: 100%;
@@ -79,6 +118,24 @@ img {
 /* Responsive flex utilities */
 .flex-wrap {
   flex-wrap: wrap;
+}
+
+/* Enhanced button container for mobile */
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .button-container {
+    flex-direction: column;
+  }
+  
+  .button-container > * {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 /* Responsive grid system enhancement */
@@ -137,16 +194,24 @@ input, select, textarea {
 
 /* Hide/show elements based on screen size */
 .hide-on-mobile {
-  display: none;
+  display: none !important;
+}
+
+.show-on-mobile {
+  display: block !important;
 }
 
 @media (min-width: 768px) {
   .hide-on-mobile {
-    display: block;
+    display: block !important;
+  }
+  
+  .show-on-mobile {
+    display: none !important;
   }
   
   .hide-on-desktop {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -250,18 +315,21 @@ input, select, textarea {
   }
 }
 
-/* Enhanced visibility for small screens */
+/* Additional mobile optimizations */
 @media (max-width: 480px) {
   body {
     font-size: 14px;
+    line-height: 1.4;
   }
   
   h1 {
-    font-size: var(--font-size-lg);
+    font-size: 1.75rem !important;
+    margin-bottom: 1rem !important;
   }
   
   h2 {
-    font-size: var(--font-size-md);
+    font-size: 1.25rem !important;
+    margin-bottom: 0.75rem !important;
   }
   
   .container {
@@ -269,17 +337,38 @@ input, select, textarea {
     padding-right: 0.75rem;
   }
   
-  .card {
-    padding: 0.75rem;
+  .card, .bg-white {
+    padding: 1rem !important;
   }
   
   .button-container {
-    display: flex;
-    flex-direction: column;
     gap: 0.5rem;
   }
   
   .button-container > * {
-    width: 100%;
+    font-size: 0.875rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  /* Fix sidebar toggle position */
+  .sidebar-toggle {
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 9999;
+  }
+  
+  /* Ensure main content is properly spaced from top */
+  .content-wrapper {
+    padding-top: 3rem;
+  }
+  
+  /* Prevent tables from breaking layout */
+  .overflow-x-auto {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    width: calc(100% + 1.5rem);
   }
 } 

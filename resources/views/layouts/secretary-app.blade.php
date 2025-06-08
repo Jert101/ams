@@ -159,46 +159,36 @@
                 }
             }
             
+            /* Overlay for mobile sidebar */
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 25;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            
+            .sidebar-overlay.show {
+                display: block;
+                opacity: 1;
+            }
+            
+            /* Fix for header on mobile */
             @media (max-width: 640px) {
-                .content-wrapper {
-                    padding: 3.5rem 0.75rem 1rem 0.75rem;
-                }
-                
                 .user-profile-header {
                     flex-direction: column;
                     align-items: flex-start;
                 }
                 
                 .user-profile-info {
+                    margin-left: 0;
                     margin-top: 0.5rem;
-                    margin-left: 0 !important;
                 }
-                
-                header h2 {
-                    font-size: 1.25rem;
-                }
-            }
-            
-            .sidebar-toggle {
-                display: none;
-            }
-            
-            /* Custom scrollbar */
-            ::-webkit-scrollbar {
-                width: 6px;
-            }
-            
-            ::-webkit-scrollbar-track {
-                background: #f1f1f1;
-            }
-            
-            ::-webkit-scrollbar-thumb {
-                background: #d1d5db;
-                border-radius: 3px;
-            }
-            
-            ::-webkit-scrollbar-thumb:hover {
-                background: #9ca3af;
             }
         </style>
         
@@ -213,6 +203,9 @@
             </svg>
         </button>
         
+        <!-- Sidebar Overlay (for mobile) -->
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+        
         <!-- Sidebar - Fixed position on the left -->
         <div class="sidebar-container" id="sidebar">
             @include('layouts.sidebar')
@@ -220,97 +213,95 @@
         
         <!-- Main Content - With appropriate margin to accommodate sidebar -->
         <div class="content-wrapper">
-            <div class="container mx-auto px-4 py-4 w-full">
-                <!-- Page Heading -->
-                @isset($header)
-                    <header class="bg-white shadow-sm border-b border-yellow-400">
-                        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                            <div class="flex justify-between items-center flex-wrap">
-                                <h2 class="font-semibold text-xl text-indigo-700 leading-tight mb-2 sm:mb-0">
-                                    {{ $header }}
-                                </h2>
-                                
-                                <!-- User Profile -->
-                                <div class="flex items-center user-profile-header">
-                                    <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ Auth::user()->name }}" />
-                                    <div class="ml-2 user-profile-info">
-                                        <div class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</div>
-                                        <div class="text-xs text-gray-500">{{ Auth::user()->role->name ?? 'Secretary' }}</div>
-                                    </div>
+            <!-- Page Heading -->
+            @isset($header)
+                <header class="bg-white shadow-sm border-b border-yellow-400">
+                    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                        <div class="flex justify-between items-center flex-wrap">
+                            <h2 class="font-semibold text-xl text-indigo-700 leading-tight mb-2 sm:mb-0">
+                                {{ $header }}
+                            </h2>
+                            
+                            <!-- User Profile -->
+                            <div class="flex items-center user-profile-header">
+                                <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ Auth::user()->name }}" />
+                                <div class="ml-2 user-profile-info">
+                                    <div class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</div>
+                                    <div class="text-xs text-gray-500">{{ Auth::user()->role->name ?? 'Secretary' }}</div>
                                 </div>
                             </div>
                         </div>
-                    </header>
-                @else
-                    <header class="bg-white shadow-sm border-b border-yellow-400 mb-6">
-                        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                            <div class="flex justify-between items-center flex-wrap">
-                                <h2 class="font-semibold text-xl text-indigo-700 leading-tight mb-2 sm:mb-0">
-                                    Secretary Dashboard
-                                </h2>
-                                
-                                <!-- User Profile -->
-                                <div class="flex items-center user-profile-header">
-                                    <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ Auth::user()->name }}" />
-                                    <div class="ml-2 user-profile-info">
-                                        <div class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</div>
-                                        <div class="text-xs text-gray-500">{{ Auth::user()->role->name ?? 'Secretary' }}</div>
-                                    </div>
+                    </div>
+                </header>
+            @else
+                <header class="bg-white shadow-sm border-b border-yellow-400 mb-6">
+                    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                        <div class="flex justify-between items-center flex-wrap">
+                            <h2 class="font-semibold text-xl text-indigo-700 leading-tight mb-2 sm:mb-0">
+                                Secretary Dashboard
+                            </h2>
+                            
+                            <!-- User Profile -->
+                            <div class="flex items-center user-profile-header">
+                                <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ Auth::user()->name }}" />
+                                <div class="ml-2 user-profile-info">
+                                    <div class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</div>
+                                    <div class="text-xs text-gray-500">{{ Auth::user()->role->name ?? 'Secretary' }}</div>
                                 </div>
                             </div>
                         </div>
-                    </header>
-                @endisset
+                    </div>
+                </header>
+            @endisset
 
-                <!-- Page Content -->
-                <main class="py-6 px-4">
-                    @yield('content')
-                </main>
-            </div>
+            <!-- Page Content -->
+            <main class="py-6 px-4">
+                @yield('content')
+            </main>
         </div>
 
+        <!-- Scripts -->
+        <script>
+            // Sidebar toggle functionality
+            document.addEventListener('DOMContentLoaded', function() {
+                const sidebarToggle = document.getElementById('sidebar-toggle');
+                const sidebar = document.getElementById('sidebar');
+                const sidebarOverlay = document.getElementById('sidebar-overlay');
+                const contentWrapper = document.querySelector('.content-wrapper');
+                
+                function toggleSidebar() {
+                    sidebar.classList.toggle('show');
+                    sidebarOverlay.classList.toggle('show');
+                    document.body.classList.toggle('overflow-hidden');
+                }
+                
+                sidebarToggle.addEventListener('click', toggleSidebar);
+                
+                // Close sidebar when clicking outside
+                sidebarOverlay.addEventListener('click', function() {
+                    if (sidebar.classList.contains('show')) {
+                        toggleSidebar();
+                    }
+                });
+                
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 1024 && sidebar.classList.contains('show')) {
+                        sidebar.classList.remove('show');
+                        sidebarOverlay.classList.remove('show');
+                        document.body.classList.remove('overflow-hidden');
+                    }
+                });
+            });
+        </script>
+        
+        <!-- Responsive Tables Script -->
+        <script src="{{ asset('js/responsive-tables.js') }}"></script>
+        
         <!-- Livewire Scripts -->
         @livewireScripts
         
         <!-- Additional Scripts -->
         @stack('scripts')
-        
-        <!-- Sidebar Toggle Script -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const sidebarToggle = document.getElementById('sidebar-toggle');
-                const sidebar = document.getElementById('sidebar');
-                const contentWrapper = document.querySelector('.content-wrapper');
-                
-                sidebarToggle.addEventListener('click', function() {
-                    sidebar.classList.toggle('show');
-                });
-                
-                // Close sidebar when clicking outside of it
-                document.addEventListener('click', function(event) {
-                    if (!sidebar.contains(event.target) && 
-                        !sidebarToggle.contains(event.target) && 
-                        sidebar.classList.contains('show')) {
-                        sidebar.classList.remove('show');
-                    }
-                });
-                
-                // Close sidebar on window resize if screen becomes larger
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth > 1024) {
-                        sidebar.classList.remove('show');
-                    }
-                });
-                
-                // Dropdown toggles
-                const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-                dropdownToggles.forEach(function(toggle) {
-                    toggle.addEventListener('click', function() {
-                        const dropdown = this.nextElementSibling;
-                        dropdown.classList.toggle('show');
-                    });
-                });
-            });
-        </script>
     </body>
 </html> 

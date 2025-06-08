@@ -1,12 +1,12 @@
 @extends('layouts.secretary-app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-[#B22234] mb-6">Secretary Dashboard</h1>
+<div class="container mx-auto px-4 py-6">
+    <h1 class="text-3xl font-bold text-[#B22234] mb-4 md:mb-6">Secretary Dashboard</h1>
     
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
         <!-- Attendance Summary Card -->
-        <div class="bg-white p-6 rounded-lg shadow border border-[#FFD700]">
+        <div class="bg-white p-4 md:p-6 rounded-lg shadow border border-[#FFD700]">
             <div class="flex items-start justify-between">
                 <div>
                     <h2 class="text-lg font-medium text-[#B22234]">Attendance Summary</h2>
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Consecutive Absences Card -->
-        <div class="bg-white p-6 rounded-lg shadow border border-[#FFD700]">
+        <div class="bg-white p-4 md:p-6 rounded-lg shadow border border-[#FFD700]">
             <div class="flex items-start justify-between">
                 <div>
                     <h2 class="text-lg font-medium text-[#B22234]">Consecutive Absences</h2>
@@ -63,7 +63,7 @@
         </div>
 
         <!-- Recent Notifications Card -->
-        <div class="bg-white p-6 rounded-lg shadow border border-[#FFD700]">
+        <div class="bg-white p-4 md:p-6 rounded-lg shadow border border-[#FFD700]">
             <div class="flex items-start justify-between">
                 <div>
                     <h2 class="text-lg font-medium text-[#B22234]">Recent Notifications</h2>
@@ -92,9 +92,9 @@
     </div>
     
     <!-- Quick Actions -->
-    <div class="bg-white p-6 rounded-lg shadow border border-[#FFD700] mb-8">
-        <h2 class="text-xl font-medium text-[#B22234] mb-4">Quick Actions</h2>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white p-4 md:p-6 rounded-lg shadow border border-[#FFD700] mb-6">
+        <h2 class="text-xl font-medium text-[#B22234] mb-3 md:mb-4">Quick Actions</h2>
+        <div class="button-container">
             <a href="{{ route('secretary.reports.index') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#B22234] hover:bg-[#8B0000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FFD700]">
                 Generate Reports
             </a>
@@ -111,11 +111,11 @@
     </div>
     
     <!-- Recent Attendance -->
-    <div class="bg-white p-6 rounded-lg shadow border border-[#FFD700] mb-8">
-        <h2 class="text-xl font-medium text-[#B22234] mb-4">Recent Attendance</h2>
+    <div class="bg-white p-4 md:p-6 rounded-lg shadow border border-[#FFD700] mb-6">
+        <h2 class="text-xl font-medium text-[#B22234] mb-3 md:mb-4">Recent Attendance</h2>
         @if(isset($recentEvents) && count($recentEvents) > 0)
             <div class="overflow-x-auto">
-                <table class="w-full border-collapse">
+                <table class="w-full border-collapse table-mobile-friendly">
                     <thead>
                         <tr class="bg-gray-50">
                             <th class="px-4 py-2 text-left text-gray-700">Date</th>
@@ -129,12 +129,12 @@
                     <tbody>
                         @foreach($recentEvents as $event)
                             <tr class="border-t">
-                                <td class="px-4 py-2 text-gray-700">{{ \Carbon\Carbon::parse($event->date)->format('M d, Y') }}</td>
-                                <td class="px-4 py-2 text-gray-700">{{ $event->title }}</td>
-                                <td class="px-4 py-2 text-green-600">{{ $event->present_count ?? 0 }}</td>
-                                <td class="px-4 py-2 text-red-600">{{ $event->absent_count ?? 0 }}</td>
-                                <td class="px-4 py-2 text-blue-600">{{ $event->excused_count ?? 0 }}</td>
-                                <td class="px-4 py-2 text-[#B22234] font-medium">{{ $event->attendance_rate ?? '0%' }}</td>
+                                <td class="px-4 py-2 text-gray-700" data-label="Date">{{ \Carbon\Carbon::parse($event->date)->format('M d, Y') }}</td>
+                                <td class="px-4 py-2 text-gray-700" data-label="Event">{{ $event->title }}</td>
+                                <td class="px-4 py-2 text-green-600" data-label="Present">{{ $event->present_count ?? 0 }}</td>
+                                <td class="px-4 py-2 text-red-600" data-label="Absent">{{ $event->absent_count ?? 0 }}</td>
+                                <td class="px-4 py-2 text-blue-600" data-label="Excused">{{ $event->excused_count ?? 0 }}</td>
+                                <td class="px-4 py-2 text-[#B22234] font-medium" data-label="Rate">{{ $event->attendance_rate ?? '0%' }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -146,11 +146,11 @@
     </div>
     
     <!-- Members with Consecutive Absences -->
-    <div class="bg-white p-6 rounded-lg shadow border border-[#FFD700]">
-        <h2 class="text-xl font-medium text-[#B22234] mb-4">Members with Consecutive Absences</h2>
+    <div class="bg-white p-4 md:p-6 rounded-lg shadow border border-[#FFD700]">
+        <h2 class="text-xl font-medium text-[#B22234] mb-3 md:mb-4">Members with Consecutive Absences</h2>
         @if(isset($membersWithConsecutiveAbsences) && count($membersWithConsecutiveAbsences) > 0)
             <div class="overflow-x-auto">
-                <table class="w-full border-collapse">
+                <table class="w-full border-collapse table-mobile-friendly">
                     <thead>
                         <tr class="bg-gray-50">
                             <th class="px-4 py-2 text-left text-gray-700">Name</th>
@@ -164,18 +164,18 @@
                     <tbody>
                         @foreach($membersWithConsecutiveAbsences as $member)
                             <tr class="border-t">
-                                <td class="px-4 py-2 text-gray-700">{{ $member->name }}</td>
-                                <td class="px-4 py-2 text-gray-700">{{ $member->email }}</td>
-                                <td class="px-4 py-2 text-gray-700">{{ $member->phone ?? 'N/A' }}</td>
-                                <td class="px-4 py-2">
+                                <td class="px-4 py-2 text-gray-700" data-label="Name">{{ $member->name }}</td>
+                                <td class="px-4 py-2 text-gray-700" data-label="Email">{{ $member->email }}</td>
+                                <td class="px-4 py-2 text-gray-700" data-label="Phone">{{ $member->phone ?? 'N/A' }}</td>
+                                <td class="px-4 py-2" data-label="Consecutive Absences">
                                     @if($member->consecutive_absences >= 4)
                                         <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">{{ $member->consecutive_absences }}</span>
                                     @else
                                         <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">{{ $member->consecutive_absences }}</span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-2 text-gray-700">{{ $member->last_notification_sent_at ? \Carbon\Carbon::parse($member->last_notification_sent_at)->format('M d, Y') : 'Never' }}</td>
-                                <td class="px-4 py-2">
+                                <td class="px-4 py-2 text-gray-700" data-label="Last Notification">{{ $member->last_notification_sent_at ? \Carbon\Carbon::parse($member->last_notification_sent_at)->format('M d, Y') : 'Never' }}</td>
+                                <td class="px-4 py-2" data-label="Actions">
                                     <a href="{{ route('secretary.notifications.create', ['user_id' => $member->id]) }}" class="text-[#B22234] hover:text-[#8B0000]">Send Notification</a>
                                 </td>
                             </tr>

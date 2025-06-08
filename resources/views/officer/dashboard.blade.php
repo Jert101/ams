@@ -1,8 +1,8 @@
 @extends('layouts.admin-app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-[#B22234] mb-6">Officer Dashboard</h1>
+<div class="container mx-auto px-4 py-6">
+    <h1 class="text-3xl font-bold text-[#B22234] mb-4 md:mb-6">Officer Dashboard</h1>
     
     <!-- React Dashboard -->
     <div 
@@ -20,10 +20,10 @@
     ></div>
     
     <!-- Fallback HTML Content (displayed if React fails) -->
-    <div id="officerdashboard-fallback-content" style="display: none;" class="space-y-6">
+    <div id="officerdashboard-fallback-content" style="display: none;" class="space-y-4 md:space-y-6">
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-white rounded-lg shadow p-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white rounded-lg shadow p-4 md:p-6">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
                         <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -37,7 +37,7 @@
                 </div>
             </div>
             
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="bg-white rounded-lg shadow p-4 md:p-6">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
                         <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -51,7 +51,7 @@
                 </div>
             </div>
             
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="bg-white rounded-lg shadow p-4 md:p-6">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
                         <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -65,7 +65,7 @@
                 </div>
             </div>
             
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="bg-white rounded-lg shadow p-4 md:p-6">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
                         <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -81,11 +81,11 @@
         </div>
         
         <!-- Main Content -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
             <div>
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-bold mb-4">Quick Actions</h3>
-                    <div class="grid grid-cols-1 gap-3">
+                <div class="bg-white rounded-lg shadow p-4 md:p-6">
+                    <h3 class="text-lg font-bold mb-3 md:mb-4">Quick Actions</h3>
+                    <div class="button-container">
                         <a href="/officer/scan" class="flex items-center justify-center px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
@@ -110,16 +110,16 @@
                 </div>
                 
                 @if(isset($upcomingEvents) && count($upcomingEvents) > 0)
-                <div class="bg-white rounded-lg shadow p-6 mt-6">
-                    <div class="flex justify-between items-center mb-4">
+                <div class="bg-white rounded-lg shadow p-4 md:p-6 mt-4 md:mt-6">
+                    <div class="flex justify-between items-center mb-3 md:mb-4">
                         <h3 class="text-lg font-bold">Upcoming Events</h3>
                         <a href="/officer/events" class="text-sm text-blue-600 hover:text-blue-900">
                             View All
                         </a>
                     </div>
-                    <div class="space-y-4">
+                    <div class="space-y-3 md:space-y-4">
                         @foreach($upcomingEvents as $event)
-                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                        <div class="border border-gray-200 rounded-lg p-3 md:p-4 hover:bg-gray-50">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <h3 class="font-medium text-gray-900">{{ $event['name'] }}</h3>
@@ -146,8 +146,8 @@
             
             <div class="lg:col-span-2">
                 @if(isset($todayEvent) && $todayEvent)
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-bold mb-4">Current Event</h3>
+                <div class="bg-white rounded-lg shadow p-4 md:p-6">
+                    <h3 class="text-lg font-bold mb-3 md:mb-4">Current Event</h3>
                     <div class="space-y-3">
                         <div>
                             <h3 class="text-lg font-semibold text-gray-900">{{ $todayEvent['name'] }}</h3>
@@ -170,18 +170,18 @@
                         @endif
                     </div>
                     
-                    <div class="mt-6 grid grid-cols-3 gap-4 text-center">
-                        <div class="p-3 bg-green-50 rounded-lg">
-                            <p class="text-3xl font-bold text-green-600">{{ $todayEvent['attendanceStats']['present'] ?? 0 }}</p>
-                            <p class="text-green-700 font-medium">Present</p>
+                    <div class="mt-4 md:mt-6 grid grid-cols-3 gap-2 md:gap-4 text-center">
+                        <div class="p-2 md:p-3 bg-green-50 rounded-lg">
+                            <p class="text-xl md:text-3xl font-bold text-green-600">{{ $todayEvent['attendanceStats']['present'] ?? 0 }}</p>
+                            <p class="text-green-700 font-medium text-sm md:text-base">Present</p>
                         </div>
-                        <div class="p-3 bg-red-50 rounded-lg">
-                            <p class="text-3xl font-bold text-red-600">{{ $todayEvent['attendanceStats']['absent'] ?? 0 }}</p>
-                            <p class="text-red-700 font-medium">Absent</p>
+                        <div class="p-2 md:p-3 bg-red-50 rounded-lg">
+                            <p class="text-xl md:text-3xl font-bold text-red-600">{{ $todayEvent['attendanceStats']['absent'] ?? 0 }}</p>
+                            <p class="text-red-700 font-medium text-sm md:text-base">Absent</p>
                         </div>
-                        <div class="p-3 bg-yellow-50 rounded-lg">
-                            <p class="text-3xl font-bold text-yellow-600">{{ $todayEvent['attendanceStats']['excused'] ?? 0 }}</p>
-                            <p class="text-yellow-700 font-medium">Excused</p>
+                        <div class="p-2 md:p-3 bg-yellow-50 rounded-lg">
+                            <p class="text-xl md:text-3xl font-bold text-yellow-600">{{ $todayEvent['attendanceStats']['excused'] ?? 0 }}</p>
+                            <p class="text-yellow-700 font-medium text-sm md:text-base">Excused</p>
                         </div>
                     </div>
                     
@@ -193,61 +193,50 @@
                 </div>
                 @endif
                 
-                <div class="bg-white rounded-lg shadow p-6 {{ isset($todayEvent) && $todayEvent ? 'mt-6' : '' }}">
-                    <div class="flex justify-between items-center mb-4">
+                <div class="bg-white rounded-lg shadow p-4 md:p-6 {{ isset($todayEvent) && $todayEvent ? 'mt-4 md:mt-6' : '' }}">
+                    <div class="flex justify-between items-center mb-3 md:mb-4">
                         <h3 class="text-lg font-bold">Recent Attendances</h3>
                         <a href="/officer/attendances" class="text-sm text-blue-600 hover:text-blue-900">
                             View All
                         </a>
                     </div>
-                    
                     @if(isset($recentAttendances) && count($recentAttendances) > 0)
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Member
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Event
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Date
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status
-                                    </th>
+                        <table class="w-full border-collapse table-mobile-friendly">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-4 py-2 text-left text-gray-700">Member</th>
+                                    <th class="px-4 py-2 text-left text-gray-700">Event</th>
+                                    <th class="px-4 py-2 text-left text-gray-700">Date</th>
+                                    <th class="px-4 py-2 text-left text-gray-700">Status</th>
+                                    <th class="px-4 py-2 text-left text-gray-700">Verified</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody>
                                 @foreach($recentAttendances as $attendance)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">
-                                            {{ $attendance['user']['name'] ?? 'Unknown' }}
-                                        </div>
+                                <tr class="border-t">
+                                    <td class="px-4 py-2 text-gray-700" data-label="Member">{{ $attendance['member_name'] }}</td>
+                                    <td class="px-4 py-2 text-gray-700" data-label="Event">{{ $attendance['event_name'] }}</td>
+                                    <td class="px-4 py-2 text-gray-700" data-label="Date">{{ date('M j, Y', strtotime($attendance['date'])) }}</td>
+                                    <td class="px-4 py-2" data-label="Status">
+                                        @if($attendance['status'] === 'present')
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Present</span>
+                                        @elseif($attendance['status'] === 'absent')
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">Absent</span>
+                                        @elseif($attendance['status'] === 'excused')
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">Excused</span>
+                                        @endif
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">
-                                            {{ $attendance['event']['name'] ?? 'Unknown Event' }}
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-500">
-                                            {{ isset($attendance['created_at']) ? date('M j, Y', strtotime($attendance['created_at'])) : 'N/A' }}
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @php
-                                            $statusClass = 'bg-gray-100 text-gray-800';
-                                            if ($attendance['status'] === 'present') $statusClass = 'bg-green-100 text-green-800';
-                                            else if ($attendance['status'] === 'absent') $statusClass = 'bg-red-100 text-red-800';
-                                            else if ($attendance['status'] === 'excused') $statusClass = 'bg-yellow-100 text-yellow-800';
-                                        @endphp
-                                        <span class="px-2 py-1 text-xs rounded-full {{ $statusClass }}">
-                                            {{ ucfirst($attendance['status']) }}
-                                        </span>
+                                    <td class="px-4 py-2 text-center" data-label="Verified">
+                                        @if($attendance['verified'])
+                                        <svg class="h-5 w-5 text-green-500 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                        </svg>
+                                        @else
+                                        <svg class="h-5 w-5 text-yellow-500 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                        </svg>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach
@@ -255,13 +244,23 @@
                         </table>
                     </div>
                     @else
-                    <div class="text-center py-6">
-                        <p class="text-gray-500">No recent attendances found</p>
-                    </div>
+                    <div class="text-gray-500 py-4 text-center">No recent attendances</div>
                     @endif
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- JavaScript to show fallback content if React fails to load -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        const reactRoot = document.querySelector('[data-react-root]');
+        if (reactRoot && !reactRoot.hasChildNodes()) {
+            document.getElementById('officerdashboard-fallback-content').style.display = 'block';
+        }
+    }, 1000); // Give React 1 second to load
+});
+</script>
 @endsection
