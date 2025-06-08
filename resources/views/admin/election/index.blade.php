@@ -743,22 +743,30 @@
                     </svg>
                     Candidate Management
                 </h5>
-                <form action="{{ route('admin.election.toggle-auto-approval') }}" method="POST">
-                    @csrf
-                    <div class="mb-4 d-flex align-items-center p-3 bg-light rounded-lg mt-3">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="auto_approve_candidates" name="auto_approve_candidates" value="1" {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'checked' : '' }} style="width: 3em; height: 1.5em;">
-                        </div>
-                        <label class="form-check-label fw-bold ms-2" for="auto_approve_candidates">
-                            {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'Auto-Approval Enabled' : 'Auto-Approval Disabled' }}
-                        </label>
-                        <div class="text-muted small ms-3">{{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'Candidate applications will be automatically approved.' : 'Candidate applications require manual approval.' }}</div>
-                        <button type="submit" class="btn btn-danger ms-auto">Save</button>
-                    </div>
-                </form>
             </div>
         </div>
         <div class="card-body">
+            <div class="mb-4">
+                <div class="d-flex align-items-center p-3 bg-light rounded mb-3">
+                    <div>
+                        <span class="fw-bold">Auto-Approval Status:</span>
+                        <span class="ms-2 badge {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'bg-success' : 'bg-secondary' }}">
+                            {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+                    <div class="text-muted small ms-3">
+                        {{ isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates ? 'Candidate applications will be automatically approved.' : 'Candidate applications require manual approval.' }}
+                    </div>
+                    <div class="ms-auto">
+                        @if(isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates)
+                            <a href="{{ route('admin.election.set-auto-approval', 'disable') }}" class="btn btn-danger">Disable Auto-Approval</a>
+                        @else
+                            <a href="{{ route('admin.election.set-auto-approval', 'enable') }}" class="btn btn-success">Enable Auto-Approval</a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            
             @if(isset($candidates) && count($candidates) > 0)
                 <div class="mb-4">
                     <p class="text-gray-700">There are <strong>{{ count($candidates) }}</strong> candidate applications in the system.</p>

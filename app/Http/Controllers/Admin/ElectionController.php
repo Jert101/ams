@@ -553,4 +553,45 @@ class ElectionController extends Controller
             return redirect()->back()->with('error', 'There was an error changing the auto-approval setting. Database migration may be pending.');
         }
     }
+
+    /**
+     * Set auto-approval setting directly
+     */
+    public function setAutoApproval($status)
+    {
+        try {
+            $electionSetting = ElectionSetting::getActiveOrCreate();
+            
+            // Convert status to boolean (1, true, "true", "on", "yes", "enable" => true)
+            $enable = in_array(strtolower($status), ['1', 'true', 'on', 'yes', 'enable']);
+            
+            // Log the request
+            \Log::info('Setting auto-approval directly', [
+                'status_param' => $status,
+                'interpreted_as' => $enable ? 'true' : 'false'
+            ]);
+            
+            // Direct SQL update as a fallback approach
+            try {
+                \DB::statement('UPDATE election_settings SET auto_approve_candidates = ? WHERE id = ?', [
+                    $enable ? 1 : 0,
+                    $electionSetting->id
+                ]);
+                \Log::info('Direct SQL update completed');
+            } catch (\Exception $e) {
+                \Log::error('Direct SQL update failed: ' . $e->getMessage());
+            }
+            
+            // Also try the Eloquent way
+            $electionSetting->auto_approve_candidates = $enable;
+            $electionSetting->save();
+            
+            return redirect()->route('admin.election.index')
+                ->with('success', 'Auto-approval has been ' . ($enable ? 'enabled' : 'disabled'));
+        } catch (\Exception $e) {
+            \Log::error('Error setting auto-approval: ' . $e->getMessage());
+            return redirect()->route('admin.election.index')
+                ->with('error', 'Failed to update auto-approval setting: ' . $e->getMessage());
+        }
+    }
 } 

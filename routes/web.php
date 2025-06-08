@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Services\MailService;
+use App\Http\Controllers\Admin\ElectionController;
 
 // Custom Profile Routes
 Route::middleware(['auth', 'verified', 'approved'])->group(function () {
@@ -388,28 +389,33 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/election/candidate/{candidate}', [App\Http\Controllers\ElectionController::class, 'viewCandidate'])->name('election.candidate');
 });
 
-// Admin election routes
-Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/election', [App\Http\Controllers\Admin\ElectionController::class, 'index'])->name('election.index');
-    Route::post('/election/settings', [App\Http\Controllers\Admin\ElectionController::class, 'updateSettings'])->name('election.settings');
-    Route::post('/election/status', [App\Http\Controllers\Admin\ElectionController::class, 'changeStatus'])->name('election.change-status');
-    Route::post('/election/position', [App\Http\Controllers\Admin\ElectionController::class, 'storePosition'])->name('election.position.store');
-    Route::put('/election/position/{position}', [App\Http\Controllers\Admin\ElectionController::class, 'updatePosition'])->name('election.position.update');
-    Route::delete('/election/position/{position}', [App\Http\Controllers\Admin\ElectionController::class, 'deletePosition'])->name('election.position.delete');
-    Route::get('/election/results', [App\Http\Controllers\Admin\ElectionController::class, 'results'])->name('election.results');
-    Route::get('/election/archives', [App\Http\Controllers\Admin\ElectionController::class, 'archives'])->name('election.archives');
-    Route::get('/election/archives/{archive}', [App\Http\Controllers\Admin\ElectionController::class, 'viewArchive'])->name('election.archive');
-    Route::post('/election/send-notifications', [App\Http\Controllers\Admin\ElectionController::class, 'sendWinnerNotifications'])->name('election.send-notifications');
+// Election Management
+Route::middleware(['auth:sanctum', 'verified', 'admin'])->group(function () {
+    Route::get('/admin/election', [ElectionController::class, 'index'])->name('admin.election.index');
+    Route::post('/admin/election/update-settings', [ElectionController::class, 'updateSettings'])->name('admin.election.update-settings');
+    Route::post('/admin/election/change-status', [ElectionController::class, 'changeStatus'])->name('admin.election.change-status');
     
-    // Candidate management
-    Route::get('/election/candidates', [App\Http\Controllers\Admin\ElectionController::class, 'listCandidates'])->name('election.candidates');
-    Route::get('/election/view-candidate/{id}', [App\Http\Controllers\Admin\ElectionController::class, 'viewCandidate'])->name('election.candidate');
-    Route::post('/election/approve-candidate/{id}', [App\Http\Controllers\Admin\ElectionController::class, 'approveCandidate'])->name('election.approve-candidate');
-    Route::post('/election/reject-candidate/{id}', [App\Http\Controllers\Admin\ElectionController::class, 'rejectCandidate'])->name('election.reject-candidate');
-    Route::post('/election/toggle-auto-approval', [App\Http\Controllers\Admin\ElectionController::class, 'toggleAutoApproval'])->name('admin.election.toggle-auto-approval');
+    // Election Positions
+    Route::post('/admin/election/position/store', [ElectionController::class, 'storePosition'])->name('admin.election.position.store');
+    Route::post('/admin/election/position/{position}/update', [ElectionController::class, 'updatePosition'])->name('admin.election.position.update');
+    Route::delete('/admin/election/position/{position}/delete', [ElectionController::class, 'deletePosition'])->name('admin.election.position.delete');
     
-    // Test route for debugging
-    Route::get('/election/test-add-position', [App\Http\Controllers\Admin\ElectionController::class, 'testAddPosition'])->name('election.test-add-position');
+    // Election Results & Archives
+    Route::get('/admin/election/results', [ElectionController::class, 'results'])->name('admin.election.results');
+    Route::get('/admin/election/archives', [ElectionController::class, 'archives'])->name('admin.election.archives');
+    Route::get('/admin/election/archives/{archive}', [ElectionController::class, 'viewArchive'])->name('admin.election.archive');
+    
+    // Candidate Management
+    Route::get('/admin/election/candidates', [ElectionController::class, 'listCandidates'])->name('admin.election.candidates');
+    Route::get('/admin/election/candidates/{id}', [ElectionController::class, 'viewCandidate'])->name('admin.election.candidate');
+    Route::post('/admin/election/candidates/{id}/approve', [ElectionController::class, 'approveCandidate'])->name('admin.election.candidate.approve');
+    Route::post('/admin/election/candidates/{id}/reject', [ElectionController::class, 'rejectCandidate'])->name('admin.election.candidate.reject');
+    
+    // Replace the toggle route with a direct set route
+    Route::get('/admin/election/set-auto-approval/{status}', [ElectionController::class, 'setAutoApproval'])->name('admin.election.set-auto-approval');
+    
+    // Notifications
+    Route::post('/admin/election/send-notifications', [ElectionController::class, 'sendWinnerNotifications'])->name('admin.election.send-notifications');
 });
 
 // Add the following route for the memory bank management page
