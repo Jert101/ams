@@ -586,11 +586,12 @@ class ElectionController extends Controller
             $electionSetting->auto_approve_candidates = $enable;
             $electionSetting->save();
             
-            return redirect()->route('admin.election.index')
+            // Use a direct URL redirect instead of a named route
+            return redirect('/admin/election')
                 ->with('success', 'Auto-approval has been ' . ($enable ? 'enabled' : 'disabled'));
         } catch (\Exception $e) {
             \Log::error('Error setting auto-approval: ' . $e->getMessage());
-            return redirect()->route('admin.election.index')
+            return redirect('/admin/election')
                 ->with('error', 'Failed to update auto-approval setting: ' . $e->getMessage());
         }
     }

@@ -759,9 +759,9 @@
                     </div>
                     <div class="ms-auto">
                         @if(isset($electionSetting->auto_approve_candidates) && $electionSetting->auto_approve_candidates)
-                            <a href="{{ route('admin.election.set-auto-approval', 'disable') }}" class="btn btn-danger">Disable Auto-Approval</a>
+                            <a href="/admin/election/set-auto-approval/disable" class="btn btn-danger">Disable Auto-Approval</a>
                         @else
-                            <a href="{{ route('admin.election.set-auto-approval', 'enable') }}" class="btn btn-success">Enable Auto-Approval</a>
+                            <a href="/admin/election/set-auto-approval/enable" class="btn btn-success">Enable Auto-Approval</a>
                         @endif
                     </div>
                 </div>

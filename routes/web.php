@@ -411,7 +411,7 @@ Route::middleware(['auth:sanctum', 'verified', 'admin'])->group(function () {
     Route::post('/admin/election/candidates/{id}/approve', [ElectionController::class, 'approveCandidate'])->name('admin.election.candidate.approve');
     Route::post('/admin/election/candidates/{id}/reject', [ElectionController::class, 'rejectCandidate'])->name('admin.election.candidate.reject');
     
-    // Replace the toggle route with a direct set route
+    // Auto-approval setting
     Route::get('/admin/election/set-auto-approval/{status}', [ElectionController::class, 'setAutoApproval'])->name('admin.election.set-auto-approval');
     
     // Notifications
