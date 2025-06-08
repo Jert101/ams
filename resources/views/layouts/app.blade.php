@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'KofA Attendance Monitoring System') }}</title>
@@ -39,7 +39,6 @@
             body {
                 font-family: 'Figtree', sans-serif;
                 background-color: #f3f4f6;
-                overflow-x: hidden;
             }
             
             /* Sidebar styles */
@@ -51,10 +50,8 @@
                 width: 250px;
                 background-color: #b91c1c;
                 color: white;
-                z-index: 40;
+                z-index: 30;
                 transition: transform 0.3s ease;
-                overflow-y: auto;
-                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             }
             
             /* Content styles */
@@ -62,15 +59,12 @@
                 margin-left: 250px;
                 padding: 1rem;
                 transition: margin-left 0.3s ease;
-                min-height: 100vh;
             }
             
             /* Mobile styles */
             @media (max-width: 768px) {
                 .sidebar {
                     transform: translateX(-100%);
-                    width: 85%;
-                    max-width: 300px;
                 }
                 
                 .sidebar.show {
@@ -79,65 +73,26 @@
                 
                 .main-content {
                     margin-left: 0;
-                    padding-top: 3.5rem;
-                }
-                
-                /* Add overlay when sidebar is open */
-                .sidebar-overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background-color: rgba(0,0,0,0.5);
-                    z-index: 35;
-                    display: none;
-                }
-                
-                .sidebar-overlay.show {
-                    display: block;
                 }
             }
             
             /* Toggle button */
             .sidebar-toggle {
                 position: fixed;
-                top: 0.75rem;
-                left: 0.75rem;
-                z-index: 45;
+                top: 1rem;
+                left: 1rem;
+                z-index: 40;
                 display: none;
                 background-color: #b91c1c;
                 color: white;
                 border: none;
                 border-radius: 0.375rem;
                 padding: 0.5rem;
-                width: 2.5rem;
-                height: 2.5rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
             
             @media (max-width: 768px) {
                 .sidebar-toggle {
-                    display: flex;
-                }
-            }
-            
-            /* Print styles */
-            @media print {
-                .sidebar, .sidebar-toggle {
-                    display: none !important;
-                }
-                
-                .main-content {
-                    margin-left: 0 !important;
-                    padding: 0 !important;
-                }
-                
-                body {
-                    background-color: white !important;
+                    display: block;
                 }
             }
             
@@ -479,29 +434,15 @@
     </head>
     <body class="font-sans antialiased">
         <!-- Mobile Sidebar Toggle Button -->
-        <button id="sidebarToggle" class="sidebar-toggle">
-            <i class="bi bi-list text-xl"></i>
+        <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle Sidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
         </button>
         
-        <!-- Sidebar Overlay (for mobile) -->
-        <div id="sidebarOverlay" class="sidebar-overlay"></div>
-        
         <!-- Sidebar -->
-        <div id="sidebar" class="sidebar">
-            <div class="p-4">
-                <div class="flex items-center justify-between mb-6">
-                    <a href="/" class="flex items-center">
-                        <img src="{{ asset('kofa.png') }}" alt="Logo" class="h-10 w-10 mr-2">
-                        <span class="text-white font-bold text-xl">KofA AMS</span>
-                    </a>
-                    <button id="closeSidebar" class="text-white md:hidden">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
-                
-                <!-- Sidebar navigation links -->
-                @include('layouts.navigation')
-            </div>
+        <div class="sidebar" id="sidebar">
+            @include('layouts.sidebar')
         </div>
         
         <!-- Main Content -->
@@ -587,29 +528,24 @@
             });
         </script>
         
-        <!-- JavaScript for Sidebar Toggle -->
+        <!-- Sidebar Toggle Script -->
         <script>
-            $(document).ready(function() {
-                // Toggle sidebar
-                $('#sidebarToggle').click(function() {
-                    $('#sidebar').toggleClass('show');
-                    $('#sidebarOverlay').toggleClass('show');
-                    $('body').toggleClass('overflow-hidden');
-                });
+            document.addEventListener('DOMContentLoaded', function() {
+                const sidebarToggle = document.getElementById('sidebar-toggle');
+                const sidebar = document.getElementById('sidebar');
                 
-                // Close sidebar
-                $('#closeSidebar, #sidebarOverlay').click(function() {
-                    $('#sidebar').removeClass('show');
-                    $('#sidebarOverlay').removeClass('show');
-                    $('body').removeClass('overflow-hidden');
-                });
+                if (sidebarToggle) {
+                    sidebarToggle.addEventListener('click', function() {
+                        sidebar.classList.toggle('show');
+                    });
+                }
                 
-                // Close sidebar on window resize (if in mobile view and window width becomes larger)
-                $(window).resize(function() {
-                    if ($(window).width() > 768) {
-                        $('#sidebar').removeClass('show');
-                        $('#sidebarOverlay').removeClass('show');
-                        $('body').removeClass('overflow-hidden');
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function(event) {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target) && sidebar.classList.contains('show')) {
+                            sidebar.classList.remove('show');
+                        }
                     }
                 });
             });

@@ -538,8 +538,8 @@
             /* Mobile responsiveness enhancements */
             @media (max-width: 768px) {
                 .container {
-                    padding-left: 0.75rem;
-                    padding-right: 0.75rem;
+                    padding-left: 1rem;
+                    padding-right: 1rem;
                 }
                 
                 .text-3xl {
@@ -548,12 +548,11 @@
                 }
                 
                 h1, .h1 {
-                    font-size: 1.5rem;
-                    margin-bottom: 0.75rem;
+                    font-size: 1.75rem;
                 }
                 
                 h2, .h2 {
-                    font-size: 1.25rem;
+                    font-size: 1.5rem;
                 }
                 
                 /* Table adjustments for small screens */
@@ -565,132 +564,74 @@
                     width: 100%;
                 }
                 
-                /* Responsive tables with data-labels */
-                table.mobile-responsive thead {
-                    display: none;
+                .table-responsive thead {
+                    display: none; /* Hide table headers on small screens */
                 }
                 
-                table.mobile-responsive tbody tr {
-                    display: block;
+                .table-responsive tr {
                     margin-bottom: 1rem;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 0.375rem;
-                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+                    display: block;
+                    border-bottom: 2px solid #e5e7eb;
                 }
                 
-                table.mobile-responsive tbody td {
-                    display: flex;
-                    justify-content: space-between;
+                .table-responsive td {
+                    display: block;
                     text-align: right;
-                    padding: 0.5rem 0.75rem;
-                    border-bottom: 1px solid #f3f4f6;
+                    padding: 0.5rem;
+                    position: relative;
+                    border-bottom: 1px dotted #e5e7eb;
                 }
                 
-                table.mobile-responsive tbody td:last-child {
-                    border-bottom: none;
+                .table-responsive td:last-child {
+                    border-bottom: 0;
                 }
                 
-                table.mobile-responsive tbody td:before {
+                .table-responsive td::before {
                     content: attr(data-label);
+                    position: absolute;
+                    left: 0.5rem;
                     font-weight: 600;
-                    float: left;
                     text-align: left;
-                    color: #4b5563;
+                }
+                
+                /* Cards and forms */
+                .card {
+                    border-radius: 0.375rem;
+                }
+                
+                .form-control {
+                    font-size: 1rem;
+                    padding: 0.625rem;
                 }
                 
                 /* Fix buttons on mobile */
                 .btn {
-                    padding: 0.4rem 0.75rem;
+                    padding: 0.5rem 0.75rem;
                     font-size: 0.875rem;
                 }
                 
-                /* Card layouts for tables on mobile */
-                .admin-card {
-                    background-color: white;
-                    border-radius: 0.5rem;
-                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-                    padding: 1rem;
-                    margin-bottom: 0.75rem;
-                }
-                
-                .admin-card-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 0.75rem;
-                    font-weight: 600;
-                }
-                
-                .admin-card-body {
-                    font-size: 0.875rem;
-                }
-                
-                /* Improved form controls */
-                input[type="text"],
-                input[type="email"],
-                input[type="password"],
-                input[type="number"],
-                select,
-                textarea {
-                    font-size: 16px !important; /* Prevent zoom on iOS */
-                    padding: 0.5rem;
-                    width: 100%;
-                }
-                
-                /* Improved spacing in forms */
-                .form-group {
-                    margin-bottom: 0.75rem;
-                }
-                
-                /* Stack form elements on mobile */
-                .mobile-stack {
-                    display: flex;
-                    flex-direction: column;
-                }
-                
-                /* Improve buttons on mobile */
                 .btn-group {
                     display: flex;
-                    flex-wrap: wrap;
-                    gap: 0.5rem;
-                }
-                
-                /* Fix modals on mobile */
-                .modal-content {
-                    margin: 0.5rem;
-                    width: calc(100% - 1rem);
-                }
-            }
-            
-            /* Phone specific enhancements */
-            @media (max-width: 480px) {
-                /* Smaller text for data tables */
-                .table-cell-content {
-                    font-size: 0.75rem;
-                }
-                
-                /* Compact cards */
-                .compact-card {
-                    padding: 0.5rem;
-                }
-                
-                /* Adjust action buttons */
-                .action-buttons {
-                    display: flex;
-                    justify-content: space-between;
+                    flex-direction: column;
                     width: 100%;
                 }
                 
-                /* Simplified badges */
-                .badge {
-                    padding: 0.15rem 0.4rem;
-                    font-size: 0.7rem;
+                .btn-group > .btn {
+                    margin-bottom: 0.25rem;
+                    border-radius: 0.25rem !important;
                 }
                 
-                /* Full width buttons */
-                .btn-mobile-full {
-                    width: 100%;
-                    margin-bottom: 0.5rem;
+                /* Adjust modals */
+                .modal-header {
+                    padding: 0.75rem 1rem;
+                }
+                
+                .modal-body {
+                    padding: 1rem;
+                }
+                
+                .modal-footer {
+                    padding: 0.75rem 1rem;
                 }
             }
             

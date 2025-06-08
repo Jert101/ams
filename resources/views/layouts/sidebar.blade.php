@@ -73,42 +73,12 @@
                 /* Mobile enhancements */
                 @media (max-width: 768px) {
                     .sidebar-link {
-                        padding: 0.875rem 0.5rem;
+                        padding: 0.75rem 0.5rem;
                         margin-bottom: 0.25rem;
-                        border-radius: 0.375rem;
-                        transition: background-color 0.2s ease;
-                    }
-                    
-                    .sidebar-link:active {
-                        background-color: rgba(0, 0, 0, 0.05);
                     }
                     
                     nav.space-y-1 > div {
-                        margin-bottom: 1.25rem;
-                    }
-                    
-                    /* Improve touch targets */
-                    .sidebar-link svg {
-                        width: 1.25rem;
-                        height: 1.25rem;
-                    }
-                    
-                    /* Add visual separation */
-                    .sidebar-section {
-                        padding-bottom: 0.75rem;
-                        margin-bottom: 0.75rem;
-                        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-                    }
-                    
-                    /* Reduced font size for long text */
-                    .sidebar-link span {
-                        font-size: 0.9375rem;
-                    }
-                    
-                    /* Badge positioning */
-                    .notification-badge {
-                        padding: 0.125rem 0.375rem;
-                        font-size: 0.6875rem;
+                        margin-bottom: 1rem;
                     }
                 }
             </style>
