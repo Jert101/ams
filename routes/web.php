@@ -390,7 +390,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Election Management
-Route::middleware(['auth:sanctum', 'verified', 'admin'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:Admin'])->group(function () {
     Route::get('/admin/election', [ElectionController::class, 'index'])->name('admin.election.index');
     Route::post('/admin/election/update-settings', [ElectionController::class, 'updateSettings'])->name('admin.election.update-settings');
     Route::post('/admin/election/change-status', [ElectionController::class, 'changeStatus'])->name('admin.election.change-status');
