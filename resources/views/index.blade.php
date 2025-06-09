@@ -46,9 +46,9 @@
                                     <i class="bi bi-person-plus me-2"></i> Register
                                 </a>
                             @endif
-                            <button id="pwa-install-button" class="btn btn-warning btn-lg px-4 py-3 fw-semibold animate__animated animate__pulse animate__infinite">
+                            <a href="{{ route('mobile.app.download') }}" class="btn btn-warning btn-lg px-4 py-3 fw-semibold animate__animated animate__pulse animate__infinite">
                                 <i class="bi bi-download me-2"></i> Download App
-                            </button>
+                            </a>
                         @endauth
                     @endif
                 </div>
@@ -212,9 +212,9 @@
                         <a href="{{ route('register') }}" class="btn btn-light btn-lg px-5 py-3 fw-bold">
                             Get Started Today <i class="bi bi-arrow-right ms-2"></i>
                         </a>
-                        <button id="pwa-install-button-cta" class="btn btn-warning btn-lg px-5 py-3 fw-bold">
+                        <a href="{{ route('mobile.app.download') }}" class="btn btn-warning btn-lg px-5 py-3 fw-bold">
                             <i class="bi bi-download me-2"></i> Download Our App
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

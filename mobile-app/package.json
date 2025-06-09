@@ -1,0 +1,22 @@
+{
+  "name": "ckp-kofa-mobile",
+  "version": "1.0.0",
+  "description": "CKP-KofA Network Mobile App",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run copy-web && npx cap sync",
+    "copy-web": "mkdir -p www && cp -r ../public/* www/",
+    "add-android": "npx cap add android",
+    "add-ios": "npx cap add ios",
+    "open-android": "npx cap open android",
+    "open-ios": "npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^5.5.1",
+    "@capacitor/core": "^5.5.1",
+    "@capacitor/ios": "^5.5.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^5.5.1"
+  }
+} 

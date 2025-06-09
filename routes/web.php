@@ -501,4 +501,9 @@ Route::get('/pwa-instructions', function () {
     return view('pwa-instructions');
 })->name('pwa.instructions');
 
+// Mobile App Download page
+Route::get('/mobile-app', function () {
+    return view('mobile-app-download');
+})->name('mobile.app.download');
+
 require __DIR__.'/auth.php';
