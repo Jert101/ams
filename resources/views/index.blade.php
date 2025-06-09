@@ -228,6 +228,7 @@
             <a href="{{ asset('downloads/ckp-kofa-app.apk') }}" class="btn btn-success">Direct APK Download</a>
             <a href="{{ url('/test-download.php') }}" class="btn btn-info">Test APK Access</a>
             <a href="{{ url('/download-apk.php') }}" class="btn btn-warning">PHP Download Script</a>
+            <a href="{{ url('/upload-apk.php') }}" class="btn btn-danger">Upload APK</a>
         </div>
     </div>
 </div>
