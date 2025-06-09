@@ -46,6 +46,9 @@
                                     <i class="bi bi-person-plus me-2"></i> Register
                                 </a>
                             @endif
+                            <button id="pwa-install-button" class="btn btn-warning btn-lg px-4 py-3 fw-semibold animate__animated animate__pulse animate__infinite">
+                                <i class="bi bi-download me-2"></i> Download App
+                            </button>
                         @endauth
                     @endif
                 </div>
@@ -205,9 +208,14 @@
                 <div class="cta-content">
                     <h2 class="fw-bold text-white mb-4">Ready to Transform Your Ministry?</h2>
                     <p class="lead text-white mb-4">Join hundreds of parishes using KofA AMS to elevate their ministry</p>
-                    <a href="{{ route('register') }}" class="btn btn-light btn-lg px-5 py-3 fw-bold">
-                        Get Started Today <i class="bi bi-arrow-right ms-2"></i>
-                    </a>
+                    <div class="d-flex flex-wrap gap-3 justify-content-center">
+                        <a href="{{ route('register') }}" class="btn btn-light btn-lg px-5 py-3 fw-bold">
+                            Get Started Today <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                        <button id="pwa-install-button-cta" class="btn btn-warning btn-lg px-5 py-3 fw-bold">
+                            <i class="bi bi-download me-2"></i> Download Our App
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -223,6 +231,183 @@
         let scrollPosition = window.pageYOffset;
         parallax.style.transform = 'translateY(' + scrollPosition * 0.5 + 'px)';
     });
+    
+    // PWA Installation
+    let deferredPrompt;
+    const installButton = document.getElementById('pwa-install-button');
+    const installButtonCta = document.getElementById('pwa-install-button-cta');
+    
+    // Initially hide the buttons
+    if (installButton) {
+        installButton.style.display = 'none';
+    }
+    if (installButtonCta) {
+        installButtonCta.style.display = 'none';
+    }
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later
+        deferredPrompt = e;
+        
+        // Show the install buttons
+        if (installButton) {
+            installButton.style.display = 'inline-flex';
+            
+            installButton.addEventListener('click', showInstallPrompt);
+        }
+        
+        if (installButtonCta) {
+            installButtonCta.style.display = 'inline-flex';
+            
+            installButtonCta.addEventListener('click', showInstallPrompt);
+        }
+    });
+    
+    function showInstallPrompt() {
+        if (!deferredPrompt) {
+            // If no install prompt is available, show the installation instructions
+            showInstallInstructions();
+            return;
+        }
+        
+        // Show the install prompt
+        deferredPrompt.prompt();
+        
+        // Wait for the user to respond to the prompt
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+                // Hide buttons after installation
+                if (installButton) installButton.style.display = 'none';
+                if (installButtonCta) installButtonCta.style.display = 'none';
+            } else {
+                console.log('User dismissed the install prompt');
+            }
+            deferredPrompt = null;
+        });
+    }
+    
+    // If app is already installed, hide the buttons
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        if (installButton) installButton.style.display = 'none';
+        if (installButtonCta) installButtonCta.style.display = 'none';
+    });
+    
+    // Show download buttons immediately for browsers that might not support beforeinstallprompt
+    setTimeout(() => {
+        // If the beforeinstallprompt event didn't fire after 3 seconds,
+        // show the buttons anyway with fallback behavior
+        if (!deferredPrompt) {
+            if (installButton) {
+                installButton.style.display = 'inline-flex';
+                installButton.addEventListener('click', showInstallInstructions);
+            }
+            
+            if (installButtonCta) {
+                installButtonCta.style.display = 'inline-flex';
+                installButtonCta.addEventListener('click', showInstallInstructions);
+            }
+        }
+    }, 3000);
+    
+    function showInstallInstructions() {
+        // Create a modal with installation instructions
+        const modal = document.createElement('div');
+        modal.className = 'pwa-install-modal';
+        modal.innerHTML = `
+            <div class="pwa-install-modal-content">
+                <span class="pwa-install-modal-close">&times;</span>
+                <h2>Install CKP-KofA App</h2>
+                <p>To install our app on your device:</p>
+                
+                <div class="pwa-install-instructions">
+                    <h4>On Android:</h4>
+                    <ol>
+                        <li>Open this website in Chrome</li>
+                        <li>Tap the menu button (three dots)</li>
+                        <li>Select "Add to Home screen"</li>
+                    </ol>
+                    
+                    <h4>On iPhone/iPad:</h4>
+                    <ol>
+                        <li>Open this website in Safari</li>
+                        <li>Tap the Share button</li>
+                        <li>Scroll down and select "Add to Home Screen"</li>
+                    </ol>
+                    
+                    <h4>On Desktop:</h4>
+                    <ol>
+                        <li>Open this website in Chrome, Edge or other supported browser</li>
+                        <li>Look for the install icon in the address bar</li>
+                        <li>Click on it and follow the instructions</li>
+                    </ol>
+                </div>
+                
+                <a href="{{ route('pwa.instructions') }}" class="btn btn-primary mt-3">More Information</a>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Style the modal
+        const style = document.createElement('style');
+        style.textContent = `
+            .pwa-install-modal {
+                position: fixed;
+                z-index: 9999;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .pwa-install-modal-content {
+                background-color: white;
+                padding: 30px;
+                border-radius: 10px;
+                max-width: 500px;
+                width: 90%;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            .pwa-install-modal-close {
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            .pwa-install-instructions {
+                margin: 20px 0;
+                text-align: left;
+            }
+            .pwa-install-instructions h4 {
+                margin-top: 15px;
+                color: #b91c1c;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Close modal functionality
+        const closeBtn = modal.querySelector('.pwa-install-modal-close');
+        closeBtn.addEventListener('click', () => {
+            document.body.removeChild(modal);
+            document.head.removeChild(style);
+        });
+        
+        // Close when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+                document.head.removeChild(style);
+            }
+        });
+    }
     
     // Counter animation
     document.addEventListener('DOMContentLoaded', function() {

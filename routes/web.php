@@ -496,4 +496,9 @@ if (app()->environment('local')) {
     });
 }
 
+// PWA Instructions page
+Route::get('/pwa-instructions', function () {
+    return view('pwa-instructions');
+})->name('pwa.instructions');
+
 require __DIR__.'/auth.php';
