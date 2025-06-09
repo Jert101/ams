@@ -21,7 +21,7 @@
                                     <i class="bi bi-android2 display-1 text-success mb-3"></i>
                                     <h3>Android App</h3>
                                     <p class="mb-4">Download our Android application</p>
-                                    <a href="{{ asset('downloads/ckp-kofa-app.apk') }}" class="btn btn-success btn-lg w-100">
+                                    <a href="{{ url('/direct-download.php') }}" class="btn btn-success btn-lg w-100">
                                         <i class="bi bi-download me-2"></i> Download APK
                                     </a>
                                     <p class="mt-3 small text-muted">Version 1.0.0</p>
