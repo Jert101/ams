@@ -7,6 +7,15 @@
 
         <title>{{ config('app.name', 'KofA Attendance Monitoring System') }}</title>
 
+        <!-- PWA Meta Tags -->
+        <meta name="theme-color" content="#000000">
+        <meta name="description" content="CKP-KofA Network">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="CKP-KofA">
+        <link rel="manifest" href="{{ asset('manifest.json') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/icons/icon-192x192.png') }}">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
@@ -29,11 +38,14 @@
             }
         </script>
         
-        <!-- jQuery (needed for some Bootstrap components) -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        
         <!-- Global Responsive CSS -->
         <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
+        
+        <!-- PWA CSS -->
+        <link href="{{ asset('css/pwa.css') }}" rel="stylesheet">
+        
+        <!-- jQuery (needed for some Bootstrap components) -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         
         <style>
             body {

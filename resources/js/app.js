@@ -1,5 +1,6 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
+import './pwa'; // Import PWA registration script
 
 window.Alpine = Alpine;
 Alpine.start();
