@@ -1,17 +1,20 @@
 <?php
-// Simple direct download script - no error checking
-$file = __DIR__ . '/downloads/ckp-kofa-app.apk';
+// Simple direct download script that uses GitHub as the primary source
+$localFile = __DIR__ . '/downloads/ckp-kofa-app.apk';
+$githubUrl = 'https://github.com/Jert101/ams/raw/main/public/downloads/ckp-kofa-app.apk';
 
-// Force download regardless of file existence
+// Set headers for APK download
 header('Content-Type: application/vnd.android.package-archive');
 header('Content-Disposition: attachment; filename="ckp-kofa-app.apk"');
-if (file_exists($file)) {
-    header('Content-Length: ' . filesize($file));
-    readfile($file);
-} else {
-    // If file doesn't exist locally, try to serve from GitHub as fallback
-    $githubUrl = 'https://github.com/Jert101/ams/raw/main/public/downloads/ckp-kofa-app.apk';
-    header('Location: ' . $githubUrl);
+
+// Try to use local file if it exists
+if (file_exists($localFile)) {
+    header('Content-Length: ' . filesize($localFile));
+    readfile($localFile);
+    exit;
 }
+
+// Otherwise redirect to GitHub
+header('Location: ' . $githubUrl);
 exit;
 ?> 
