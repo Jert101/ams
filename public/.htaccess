@@ -19,3 +19,15 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Add MIME type for APK files
+<IfModule mod_mime.c>
+    AddType application/vnd.android.package-archive .apk
+</IfModule>
+
+# Allow access to APK files
+<Files ~ "\.apk$">
+    Order allow,deny
+    Allow from all
+    Satisfy any
+</Files>

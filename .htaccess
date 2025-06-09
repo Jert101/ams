@@ -30,7 +30,15 @@ DirectoryIndex index.php
     AddType text/css .css
     AddType application/javascript .js
     AddType image/svg+xml .svg
+    AddType application/vnd.android.package-archive .apk
 </IfModule>
+
+# Allow access to APK files
+<Files ~ "\.apk$">
+    Order allow,deny
+    Allow from all
+    Satisfy any
+</Files>
 
 # Enable compression for better performance
 <IfModule mod_deflate.c>

@@ -25,6 +25,9 @@
                                         <i class="bi bi-download me-2"></i> Download APK
                                     </a>
                                     <p class="mt-3 small text-muted">Version 1.0.0</p>
+                                    <a href="{{ url('/download-apk.php') }}" class="btn btn-outline-success btn-sm w-100 mt-2">
+                                        <i class="bi bi-download me-2"></i> Alternative Download
+                                    </a>
                                 </div>
                             </div>
                         </div>
