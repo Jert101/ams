@@ -21,3 +21,11 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Ignore large files
+mobile-app/tools/jdk17.msi
+
+# Ignore build artifacts
+mobile-app/android/app/build/
+mobile-app/android/build/
+mobile-app/android/app/ckp-kofa-keystore.jks
