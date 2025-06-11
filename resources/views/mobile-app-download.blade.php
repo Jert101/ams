@@ -21,9 +21,17 @@
                                     <i class="bi bi-android2 display-1 text-success mb-3"></i>
                                     <h3>Android App</h3>
                                     <p class="mb-4">Download our Android application</p>
-                                    <a href="{{ url('/direct-download.php') }}" class="btn btn-success btn-lg w-100">
+                                    <a href="{{ url('/simple-download.php') }}" class="btn btn-success btn-lg w-100 mb-2">
                                         <i class="bi bi-download me-2"></i> Download APK
                                     </a>
+                                    <div class="mt-2 small">
+                                        Alternative downloads:
+                                        <div class="mt-1">
+                                            <a href="{{ url('/direct-download.php') }}" class="btn btn-outline-success btn-sm">Method 1</a>
+                                            <a href="{{ asset('downloads/ckp-kofa-app.apk') }}" class="btn btn-outline-success btn-sm">Method 2</a>
+                                            <a href="{{ url('/ckp-kofa-app.apk') }}" class="btn btn-outline-success btn-sm">Method 3</a>
+                                        </div>
+                                    </div>
                                     <p class="mt-3 small text-muted">Version 1.0.0</p>
                                 </div>
                             </div>

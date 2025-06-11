@@ -9,6 +9,10 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+    # Exclude downloads directory from rewrite rules
+    RewriteRule ^downloads/ - [L]
+    RewriteRule ^downloads/.*\.apk$ - [L]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
@@ -31,3 +35,12 @@
     Allow from all
     Satisfy any
 </Files>
+
+# Fix for 403 Forbidden errors
+<IfModule mod_headers.c>
+    <FilesMatch "\.apk$">
+        Header set Content-Type "application/vnd.android.package-archive"
+        Header set Content-Disposition "attachment"
+        Header unset X-Content-Type-Options
+    </FilesMatch>
+</IfModule>

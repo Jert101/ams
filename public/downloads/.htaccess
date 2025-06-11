@@ -1,0 +1,13 @@
+# Allow access to APK files
+<FilesMatch "\.apk$">
+    Order Allow,Deny
+    Allow from all
+    Header set Content-Type application/vnd.android.package-archive
+    Header set Content-Disposition attachment
+</FilesMatch>
+
+# Allow directory browsing
+Options +Indexes
+
+# Set proper MIME type for APK files
+AddType application/vnd.android.package-archive .apk 
