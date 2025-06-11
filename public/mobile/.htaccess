@@ -1,0 +1,30 @@
+# Allow direct access to APK files
+<FilesMatch "\.apk$">
+    Order allow,deny
+    Allow from all
+    Satisfy Any
+    
+    # Set proper MIME type for APK files
+    AddType application/vnd.android.package-archive .apk
+    
+    # Set correct headers
+    <IfModule mod_headers.c>
+        Header set Content-Type "application/vnd.android.package-archive"
+        Header set Content-Disposition "attachment"
+    </IfModule>
+</FilesMatch>
+
+# Prevent directory listing
+Options -Indexes
+
+# Remove PHP extension from URLs
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Allow direct access to actual files
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    
+    # Redirect /mobile/download to /mobile/download.php
+    RewriteRule ^download$ download.php [L]
+</IfModule> 
