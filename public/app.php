@@ -47,11 +47,14 @@ if (!isset($_GET['download'])) {
     // Check various possible locations for the APK file
     $possibleLocations = [
         __DIR__ . '/mobile/apk/ckp-kofa-app.apk',
+        __DIR__ . '/mobile/apk/base.apk',
         __DIR__ . '/downloads/ckp-kofa-app.apk',
         __DIR__ . '/app-direct.apk',
         __DIR__ . '/ckp-kofa-app.apk',
+        __DIR__ . '/base.apk',
         dirname(__DIR__) . '/public/mobile/apk/ckp-kofa-app.apk',
-        dirname(__DIR__) . '/app/apk/app-debug-androidTest.apk'
+        dirname(__DIR__) . '/public/mobile/apk/base.apk',
+        dirname(__DIR__) . '/app/apk/base.apk'
     ];
     
     $foundFile = null;
@@ -92,11 +95,14 @@ if (!isset($_GET['download'])) {
 // Download mode - try all possible locations
 $possibleLocations = [
     __DIR__ . '/mobile/apk/ckp-kofa-app.apk',
+    __DIR__ . '/mobile/apk/base.apk',
     __DIR__ . '/downloads/ckp-kofa-app.apk',
     __DIR__ . '/app-direct.apk',
     __DIR__ . '/ckp-kofa-app.apk',
+    __DIR__ . '/base.apk',
     dirname(__DIR__) . '/public/mobile/apk/ckp-kofa-app.apk',
-    dirname(__DIR__) . '/app/apk/app-debug-androidTest.apk'
+    dirname(__DIR__) . '/public/mobile/apk/base.apk',
+    dirname(__DIR__) . '/app/apk/base.apk'
 ];
 
 $foundFile = null;

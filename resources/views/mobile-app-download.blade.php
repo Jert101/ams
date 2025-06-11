@@ -28,7 +28,7 @@
                                         Alternative download methods:
                                         <div class="mt-1">
                                             <a href="{{ url('/app.php?download=1') }}" class="btn btn-outline-success btn-sm">Direct Download</a>
-                                            <a href="{{ url('/ckp-kofa-app.apk') }}" class="btn btn-outline-success btn-sm">APK File</a>
+                                            <a href="{{ url('/mobile/apk/base.apk') }}" class="btn btn-outline-success btn-sm">Download Base APK</a>
                                         </div>
                                     </div>
                                     <p class="mt-3 small text-muted">Version 1.0.0</p>
