@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download CKP-KofA App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #b91c1c;
+        }
+        .download-button {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .alt-button {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            margin: 5px;
+        }
+        .zip-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .instructions {
+            text-align: left;
+            margin-top: 30px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .instructions h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Download CKP-KofA App</h1>
+    <p>Click one of the buttons below to download the APK file:</p>
+    
+    <div>
+        <a href="app-direct.apk" class="download-button" download="ckp-kofa-app.apk">Download APK (Direct)</a>
+    </div>
+    
+    <p>If the button above doesn't work, try downloading the ZIP file:</p>
+    
+    <div>
+        <a href="app-download.zip" class="zip-button" download>Download ZIP File</a>
+    </div>
+    
+    <p>Other alternatives:</p>
+    
+    <div>
+        <a href="downloads/app.dat" class="alt-button" download="ckp-kofa-app.apk">Option 1: Download .dat file</a>
+        <a href="downloads/ckp-kofa-app.apk" class="alt-button" download>Option 2: Download from downloads folder</a>
+    </div>
+    
+    <div class="instructions">
+        <h3>Instructions for ZIP file</h3>
+        <ol>
+            <li>Download the ZIP file using the blue button above</li>
+            <li>Extract the ZIP file on your device</li>
+            <li>Find the app-debug-androidTest.apk file in the extracted folder</li>
+            <li>Rename it to "ckp-kofa-app.apk" (optional)</li>
+            <li>Install the APK on your Android device</li>
+        </ol>
+    </div>
+    
+    <p><a href="/">Return to Home</a></p>
+    
+    <script>
+        // This will automatically trigger download when the page loads
+        window.onload = function() {
+            setTimeout(function() {
+                document.querySelector('.download-button').click();
+            }, 1000);
+        }
+    </script>
+</body>
+</html> 
