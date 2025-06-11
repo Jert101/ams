@@ -21,18 +21,24 @@
                                     <i class="bi bi-android2 display-1 text-success mb-3"></i>
                                     <h3>Android App</h3>
                                     <p class="mb-4">Download our Android application</p>
+                                    
+                                    <div class="alert alert-info mb-3">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        The mobile app is temporarily unavailable for download.
+                                        <br>
+                                        Please check back later.
+                                    </div>
+                                    
+                                    <!-- Download button disabled
                                     <a href="{{ url('/infinity.php') }}" class="btn btn-success btn-lg w-100 mb-2">
                                         <i class="bi bi-download me-2"></i> Download APK
                                     </a>
+                                    -->
+                                    
                                     <div class="mt-2 small">
-                                        Alternative download methods:
-                                        <div class="mt-1">
-                                            <a href="{{ url('/app.php?download=1') }}" class="btn btn-outline-success btn-sm">Method 1</a>
-                                            <a href="{{ url('/base.apk') }}" class="btn btn-outline-success btn-sm">Method 2</a>
-                                            <a href="{{ url('/infinity.php?debug=1') }}" class="btn btn-outline-success btn-sm">Debug</a>
-                                        </div>
+                                        <p>App version: 1.0.0</p>
+                                        <p>Last updated: {{ date('F j, Y') }}</p>
                                     </div>
-                                    <p class="mt-3 small text-muted">Version 1.0.0</p>
                                 </div>
                             </div>
                         </div>

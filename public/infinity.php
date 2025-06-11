@@ -166,19 +166,23 @@ if (!isset($_GET['download'])) {
         .alt-btn:hover {
             background-color: #5a6268;
         }
+        .alert {
+            background-color: #cce5ff;
+            border: 1px solid #b8daff;
+            color: #004085;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
     <h1>CKP-KofA Mobile App Download</h1>
-    <p>Click the button below to download the Android application:</p>
     
-    <p><a href="infinity.php?download=1" class="btn">Download APK</a></p>
-    
-    <p>If you encounter any issues, try one of these alternatives:</p>
-    <div>
-        <a href="base.apk" class="alt-btn">Direct Link</a>
-        <a href="mobile/apk/base.apk" class="alt-btn">Alternative Link</a>
-        <a href="infinity.php?debug=1" class="alt-btn">Debug Info</a>
+    <div class="alert">
+        <h3>Downloads Temporarily Disabled</h3>
+        <p>The mobile application is currently unavailable for download.</p>
+        <p>Please check back later or contact the administrator for assistance.</p>
     </div>
     
     <p style="margin-top: 40px;"><a href="/">Return to Home</a></p>
@@ -186,6 +190,41 @@ if (!isset($_GET['download'])) {
 </html>';
     exit;
 }
+
+// If download parameter is set, show a message that downloads are disabled
+echo '<!DOCTYPE html>
+<html>
+<head>
+    <title>Download Unavailable</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .alert {
+            background-color: #cce5ff;
+            border: 1px solid #b8daff;
+            color: #004085;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="alert">
+        <h2>Downloads Temporarily Disabled</h2>
+        <p>The mobile application is currently unavailable for download.</p>
+        <p>Please check back later or contact the administrator for assistance.</p>
+    </div>
+    <p><a href="/">Return to Home</a></p>
+</body>
+</html>';
+exit;
 
 // Try to find the APK file in various locations
 $possibleLocations = [
