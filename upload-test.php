@@ -45,8 +45,9 @@ echo "upload_max_filesize: " . ini_get('upload_max_filesize') . "\n";
 echo "post_max_size: " . ini_get('post_max_size') . "\n";
 echo "max_file_uploads: " . ini_get('max_file_uploads') . "\n";
 echo "file_uploads enabled: " . (ini_get('file_uploads') ? 'Yes' : 'No') . "\n";
-echo "Current user: " . get_current_user() . "\n";
-echo "Current script owner: " . fileowner(__FILE__) . "\n";
+echo "Server software: " . $_SERVER['SERVER_SOFTWARE'] . "\n";
+echo "Document root: " . $_SERVER['DOCUMENT_ROOT'] . "\n";
+echo "Script filename: " . $_SERVER['SCRIPT_FILENAME'] . "\n";
 echo "</pre>";
 
 // Check storage directories
