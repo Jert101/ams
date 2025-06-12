@@ -65,110 +65,47 @@ class ProfileController extends Controller
         if ($request->hasFile('profile_photo')) {
             try {
                 Log::info('User is uploading a profile photo');
-                
-                // Add debugging information for paths and permissions
-                Log::info('Path check', [
-                    'public_path' => public_path('storage/profile-photos'),
-                    'storage_path' => storage_path('app/public/profile-photos'),
-                    'directory_exists_public' => file_exists(public_path('storage/profile-photos')),
-                    'directory_exists_storage' => file_exists(storage_path('app/public/profile-photos')),
-                    'is_writable_public' => is_writable(public_path('storage/profile-photos')),
-                    'is_writable_storage' => is_writable(storage_path('app/public/profile-photos'))
-                ]);
-                
-                // Create a simplified upload process that uses direct PHP functions
                 $uploadedFile = $request->file('profile_photo');
-                $extension = $uploadedFile->getClientOriginalExtension();
-                $filename = time() . '-' . uniqid() . '.' . $extension;
-                
-                // Define paths
-                $publicPath = public_path('storage/profile-photos');
-                $storagePath = storage_path('app/public/profile-photos');
-                
-                // Ensure directories exist
-                if (!file_exists($storagePath)) {
-                    Log::info('Creating storage directory: ' . $storagePath);
-                    if (!mkdir($storagePath, 0777, true)) {
-                        $error = error_get_last();
-                        Log::error('Failed to create profile photos directory in storage: ' . ($error ? $error['message'] : 'Unknown error'));
-                        return redirect()->route('profile.show')->with('error', 'Failed to create upload directory in storage.');
-                    }
-                    // Set permissions explicitly after creation
-                    chmod($storagePath, 0777);
-                    Log::info('Storage directory created with permissions: ' . substr(sprintf('%o', fileperms($storagePath)), -4));
-                }
-                
-                if (!file_exists($publicPath)) {
-                    Log::info('Creating public directory: ' . $publicPath);
-                    if (!mkdir($publicPath, 0777, true)) {
-                        $error = error_get_last();
-                        Log::error('Failed to create profile photos directory in public: ' . ($error ? $error['message'] : 'Unknown error'));
-                        return redirect()->route('profile.show')->with('error', 'Failed to create upload directory in public.');
-                    }
-                    // Set permissions explicitly after creation
-                    chmod($publicPath, 0777);
-                    Log::info('Public directory created with permissions: ' . substr(sprintf('%o', fileperms($publicPath)), -4));
-                }
-                
-                // Try to copy the file to both locations
-                $relativePath = 'profile-photos/' . $filename;
-                $success = false;
-                
-                // First try to move to storage
-                if ($uploadedFile->move($storagePath, $filename)) {
-                    Log::info('File successfully moved to storage path: ' . $storagePath . '/' . $filename);
-                    $success = true;
-                    
-                    // Set proper permissions on the file
-                    chmod($storagePath . '/' . $filename, 0644);
-                    
-                    // Copy to public directory
-                    if (copy($storagePath . '/' . $filename, $publicPath . '/' . $filename)) {
-                        Log::info('File copied to public directory: ' . $publicPath . '/' . $filename);
-                        chmod($publicPath . '/' . $filename, 0644);
-                    } else {
-                        $error = error_get_last();
-                        Log::warning('Could not copy to public directory: ' . ($error ? $error['message'] : 'Unknown error'));
-                        
-                        // Try to copy directly to public
-                        if (file_exists($uploadedFile->getPathname())) {
-                            if (copy($uploadedFile->getPathname(), $publicPath . '/' . $filename)) {
-                                Log::info('File copied directly to public directory');
-                                chmod($publicPath . '/' . $filename, 0644);
+                if ($uploadedFile->isValid()) {
+                    $extension = $uploadedFile->getClientOriginalExtension();
+                    $filename = time() . '-' . uniqid() . '.' . $extension;
+                    $storagePath = storage_path('app/public/profile-photos');
+                    $publicPath = public_path('storage/profile-photos');
+                    // Ensure directories exist
+                    foreach ([$storagePath, $publicPath] as $dir) {
+                        if (!file_exists($dir)) {
+                            if (!mkdir($dir, 0777, true)) {
+                                $error = error_get_last();
+                                Log::error('Failed to create directory: ' . $dir . ' - ' . ($error ? $error['message'] : 'Unknown error'));
+                                return redirect()->route('profile.show')->with('error', 'Failed to create upload directory.');
                             }
                         }
                     }
-                } else {
-                    // If storage fails, try public
-                    Log::warning('Failed to move file to storage, trying public directory');
-                    if ($uploadedFile->move($publicPath, $filename)) {
-                        Log::info('File moved to public directory: ' . $publicPath . '/' . $filename);
-                        $success = true;
-                        chmod($publicPath . '/' . $filename, 0644);
-                        
-                        // Try to copy back to storage
-                        if (copy($publicPath . '/' . $filename, $storagePath . '/' . $filename)) {
-                            Log::info('File copied back to storage directory');
-                            chmod($storagePath . '/' . $filename, 0644);
+                    // Try to move to storage
+                    if ($uploadedFile->move($storagePath, $filename)) {
+                        Log::info('File successfully moved to storage path: ' . $storagePath . '/' . $filename);
+                        // Set permissions
+                        chmod($storagePath . '/' . $filename, 0644);
+                        // Copy to public directory
+                        if (copy($storagePath . '/' . $filename, $publicPath . '/' . $filename)) {
+                            Log::info('File copied to public directory: ' . $publicPath . '/' . $filename);
+                            chmod($publicPath . '/' . $filename, 0644);
+                        } else {
+                            $error = error_get_last();
+                            Log::warning('Could not copy to public directory: ' . ($error ? $error['message'] : 'Unknown error'));
                         }
+                        // Only update if upload succeeded
+                        $user->profile_photo_path = 'profile-photos/' . $filename;
+                        Log::info('User profile_photo_path updated to: ' . $user->profile_photo_path);
                     } else {
                         $error = error_get_last();
-                        Log::error('Failed to move file to any location: ' . ($error ? $error['message'] : 'Unknown error'));
-                        throw new Exception('Failed to upload file to any location');
+                        Log::error('Failed to move uploaded file: ' . ($error ? $error['message'] : 'Unknown error'));
+                        return redirect()->route('profile.show')->with('error', 'Failed to upload profile photo.');
                     }
+                } else {
+                    Log::error('Uploaded file is not valid');
+                    return redirect()->route('profile.show')->with('error', 'Uploaded file is not valid.');
                 }
-                
-                if ($success) {
-                    // Update user's profile photo path - ENSURE it's a string, not a number
-                    $user->profile_photo_path = (string)$relativePath;
-                    
-                    Log::info('User profile_photo_path updated to: ' . $relativePath, [
-                        'user_id' => $user->id,
-                        'new_path' => $relativePath,
-                        'path_type' => gettype($relativePath)
-                    ]);
-                }
-                
             } catch (Exception $e) {
                 Log::error('Profile photo upload error: ' . $e->getMessage(), [
                     'exception' => $e,
