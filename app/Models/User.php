@@ -225,48 +225,87 @@ class User extends Authenticatable
             'type' => gettype($this->profile_photo_path)
         ]);
         
-        // Handle empty, null, or invalid profile photo paths
+        // Directly return SVG for any invalid or missing photo
         if (empty($this->profile_photo_path) || 
             $this->profile_photo_path === '0' || 
             $this->profile_photo_path === 0 || 
             $this->profile_photo_path === 'null' ||
             $this->profile_photo_path === 'NULL') {
-            return asset('kofa.png');
+            
+            return $this->generateAvatarSvg();
         }
         
         // Check if it's the default photo
         if ($this->profile_photo_path === 'kofa.png') {
-            return asset('kofa.png');
+            return asset('kofa.png') . '?v=' . time();
         }
         
         // Check if it's a full URL
         if (filter_var($this->profile_photo_path, FILTER_VALIDATE_URL)) {
-            return $this->profile_photo_path;
+            return $this->profile_photo_path . '?v=' . time();
         }
         
-        // Try multiple paths to find the file
+        // Define all possible paths to check
         $paths = [
-            // Direct path in public directory
-            public_path($this->profile_photo_path),
-            // Storage path through symlink
             public_path('storage/' . $this->profile_photo_path),
-            // Original storage path
+            public_path($this->profile_photo_path),
             storage_path('app/public/' . $this->profile_photo_path)
         ];
         
+        // Check if any of these paths exist
+        $fileExists = false;
         foreach ($paths as $path) {
             if (file_exists($path)) {
-                \Log::debug('Found profile photo at: ' . $path);
+                $fileExists = true;
                 break;
             }
         }
         
-        // Even if we can't find the file, we'll return the expected URL
-        // This handles cases where the file exists but PHP can't access it due to permissions
-        if (strpos($this->profile_photo_path, 'profile-photos/') === 0) {
-            return asset('storage/' . $this->profile_photo_path) . '?v=' . time();
-        } else {
-            return asset('storage/profile-photos/' . basename($this->profile_photo_path)) . '?v=' . time();
+        // If file exists, return the URL
+        if ($fileExists) {
+            // Determine whether to use storage/ prefix based on path format
+            if (strpos($this->profile_photo_path, 'profile-photos/') === 0) {
+                return asset('storage/' . $this->profile_photo_path) . '?v=' . time();
+            } else {
+                return asset($this->profile_photo_path) . '?v=' . time();
+            }
         }
+        
+        // If file doesn't exist, generate an SVG avatar
+        return $this->generateAvatarSvg();
+    }
+    
+    /**
+     * Generate an SVG avatar with user's initials.
+     *
+     * @return string
+     */
+    protected function generateAvatarSvg()
+    {
+        // Generate initials from name
+        $name = $this->name ?? 'User';
+        $initials = '';
+        $words = explode(' ', $name);
+        foreach ($words as $word) {
+            if (!empty($word)) {
+                $initials .= strtoupper(substr($word, 0, 1));
+            }
+        }
+        $initials = substr($initials, 0, 2); // Limit to 2 characters
+        
+        // Generate a consistent color based on the user ID
+        $bgColor = '#' . substr(md5($this->user_id ?? 1), 0, 6);
+        
+        // Create SVG
+        $svg = <<<SVG
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="$bgColor"/>
+  <text x="100" y="115" font-family="Arial, sans-serif" font-size="80" font-weight="bold" text-anchor="middle" fill="#ffffff">$initials</text>
+</svg>
+SVG;
+        
+        // Convert to data URI
+        $encoded = base64_encode($svg);
+        return 'data:image/svg+xml;base64,' . $encoded;
     }
 }
