@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile Photo Fix Bookmarklet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .instructions {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Profile Photo Fix Bookmarklet</h1>
+    
+    <div class="instructions">
+        <p><strong>Instructions:</strong></p>
+        <ol>
+            <li>Drag the button below to your bookmarks bar</li>
+            <li>Go to the user edit page where profile photos aren't displaying</li>
+            <li>Click the bookmarklet in your bookmarks bar</li>
+            <li>The profile photo should now appear</li>
+        </ol>
+    </div>
+    
+    <p><a href="javascript:(function(){
+        // Create and inject CSS
+        var style = document.createElement('style');
+        style.textContent = `
+            .profile-photo-container {
+                display: block !important;
+                width: 100px !important;
+                height: 100px !important;
+                border-radius: 50% !important;
+                overflow: hidden !important;
+                margin: 10px 0 !important;
+                background-color: #f0f0f0 !important;
+            }
+            
+            .profile-photo-container img {
+                display: block !important;
+                visibility: visible !important;
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover !important;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Find profile photo sections
+        var sections = Array.from(document.querySelectorAll('label, div'))
+            .filter(function(el) {
+                return el.textContent.includes('Profile Photo');
+            });
+        
+        sections.forEach(function(section) {
+            var parent = section.parentElement;
+            
+            // Look for container
+            var container = parent.querySelector('.profile-photo-container');
+            
+            if (container) {
+                // Style container
+                container.style.display = 'block';
+                container.style.width = '100px';
+                container.style.height = '100px';
+                container.style.borderRadius = '50%';
+                container.style.overflow = 'hidden';
+                
+                // Check for images
+                var img = container.querySelector('img');
+                if (!img || img.style.display === 'none') {
+                    // Add default image
+                    var newImg = document.createElement('img');
+                    newImg.src = '/img/kofa.png';
+                    newImg.alt = 'Profile Photo';
+                    newImg.style.width = '100%';
+                    newImg.style.height = '100%';
+                    newImg.style.objectFit = 'cover';
+                    container.appendChild(newImg);
+                } else {
+                    // Make existing image visible
+                    img.style.display = 'block';
+                    img.style.visibility = 'visible';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    
+                    // Fix path if needed
+                    if (img.src.includes('storage/app/public/profile-photos')) {
+                        var filename = img.src.split('/').pop();
+                        img.src = '/profile-photos/' + filename;
+                    }
+                }
+            } else {
+                // Create container
+                container = document.createElement('div');
+                container.className = 'profile-photo-container';
+                container.style.display = 'block';
+                container.style.width = '100px';
+                container.style.height = '100px';
+                container.style.borderRadius = '50%';
+                container.style.overflow = 'hidden';
+                container.style.backgroundColor = '#f0f0f0';
+                
+                // Add image
+                var img = document.createElement('img');
+                img.src = '/img/kofa.png';
+                img.alt = 'Profile Photo';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                
+                container.appendChild(img);
+                parent.appendChild(container);
+            }
+        });
+        
+        alert('Profile photo fix applied!');
+    })();" class="button">Fix Profile Photos</a></p>
+    
+    <h2>How It Works</h2>
+    <p>This bookmarklet:</p>
+    <ol>
+        <li>Adds CSS to ensure profile photo containers are visible</li>
+        <li>Finds the profile photo section on the page</li>
+        <li>Ensures images are displayed correctly</li>
+        <li>Fixes paths to use /profile-photos/ instead of storage paths</li>
+    </ol>
+    
+    <h2>Troubleshooting</h2>
+    <p>If the fix doesn't work:</p>
+    <ol>
+        <li>Make sure you're on the edit page when clicking the bookmarklet</li>
+        <li>Try refreshing the page and clicking the bookmarklet again</li>
+        <li>Check if the browser console shows any errors (press F12 to open)</li>
+    </ol>
+    
+    <p><a href="/admin/users" class="button">Go to Users Page</a></p>
+</body>
+</html> 

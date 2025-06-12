@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile Photo Fix</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .code {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Profile Photo Fix</h1>
+    
+    <p>This page provides a fix for profile photos on the edit page.</p>
+    
+    <h2>How to Use</h2>
+    
+    <h3>Option 1: Bookmarklet</h3>
+    <p>Drag this link to your bookmarks bar, then click it when you're on the edit page:</p>
+    <p><a href="javascript:(function(){
+        // Create and inject CSS
+        var style = document.createElement('style');
+        style.textContent = `
+            .profile-photo-container {
+                display: block !important;
+                width: 100px !important;
+                height: 100px !important;
+                border-radius: 50% !important;
+                overflow: hidden !important;
+                margin: 10px 0 !important;
+                background-color: #f0f0f0 !important;
+            }
+            
+            .profile-photo-container img {
+                display: block !important;
+                visibility: visible !important;
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover !important;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Find profile photo sections
+        var labels = Array.from(document.querySelectorAll('label'))
+            .filter(function(el) {
+                return el.textContent.includes('Profile Photo');
+            });
+        
+        if (labels.length > 0) {
+            console.log('Found profile photo labels:', labels.length);
+            
+            labels.forEach(function(label) {
+                // Find the container
+                var parent = label.parentElement;
+                var container = parent.querySelector('.profile-photo-container');
+                
+                if (!container) {
+                    // Look for empty div
+                    container = parent.querySelector('div:empty');
+                    
+                    if (container) {
+                        // Add class to container
+                        container.className = 'profile-photo-container';
+                    } else {
+                        // Create container
+                        container = document.createElement('div');
+                        container.className = 'profile-photo-container';
+                        parent.appendChild(container);
+                    }
+                }
+                
+                // Style container
+                container.style.display = 'block';
+                container.style.width = '100px';
+                container.style.height = '100px';
+                container.style.borderRadius = '50%';
+                container.style.overflow = 'hidden';
+                container.style.backgroundColor = '#f0f0f0';
+                container.style.margin = '10px 0';
+                
+                // Check for existing image
+                var img = container.querySelector('img');
+                if (!img) {
+                    // Create image
+                    img = document.createElement('img');
+                    img.src = '/img/kofa.png';
+                    img.alt = 'Profile Photo';
+                    container.appendChild(img);
+                }
+                
+                // Style image
+                img.style.display = 'block';
+                img.style.visibility = 'visible';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                
+                // Add error handler
+                img.onerror = function() {
+                    this.src = '/img/kofa.png';
+                };
+            });
+            
+            alert('Profile photo fix applied!');
+        } else {
+            alert('No profile photo sections found. Make sure you are on the edit page.');
+        }
+    })();" class="button">Fix Profile Photos</a></p>
+    
+    <h3>Option 2: Add to Layout</h3>
+    <p>Add this code to your layout files just before the <code>&lt;/head&gt;</code> tag:</p>
+    <div class="code">&lt;style&gt;
+.profile-photo-container {
+    display: block !important;
+    width: 100px !important;
+    height: 100px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    margin: 10px 0 !important;
+    background-color: #f0f0f0 !important;
+}
+
+.profile-photo-container img {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+&lt;/style&gt;
+&lt;script&gt;
+document.addEventListener('DOMContentLoaded', function() {
+    // Find profile photo sections
+    var labels = Array.from(document.querySelectorAll('label'))
+        .filter(function(el) {
+            return el.textContent.includes('Profile Photo');
+        });
+    
+    labels.forEach(function(label) {
+        // Find the container
+        var parent = label.parentElement;
+        var container = parent.querySelector('.profile-photo-container');
+        
+        if (!container) {
+            // Look for empty div
+            container = parent.querySelector('div:empty');
+            
+            if (container) {
+                // Add class to container
+                container.className = 'profile-photo-container';
+            } else {
+                // Create container
+                container = document.createElement('div');
+                container.className = 'profile-photo-container';
+                parent.appendChild(container);
+            }
+        }
+        
+        // Check for existing image
+        var img = container.querySelector('img');
+        if (!img) {
+            // Create image
+            img = document.createElement('img');
+            img.src = '/img/kofa.png';
+            img.alt = 'Profile Photo';
+            container.appendChild(img);
+        }
+        
+        // Style image
+        img.style.display = 'block';
+        img.style.visibility = 'visible';
+    });
+});
+&lt;/script&gt;</div>
+    
+    <h3>Option 3: Test Now</h3>
+    <p><a href="/admin/users" class="button">Go to Users Page</a></p>
+    
+    <h2>Important Notes</h2>
+    <ol>
+        <li>Make sure your profile photos are in the <code>public/profile-photos/</code> directory</li>
+        <li>The database paths should be <code>profile-photos/filename.jpg</code> (not including "public/")</li>
+        <li>If the fix doesn't work, try clearing your browser cache</li>
+    </ol>
+</body>
+</html> 
