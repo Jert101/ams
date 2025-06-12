@@ -1,0 +1,18 @@
+/* Fix for profile photos on edit page */
+.profile-photo-container {
+    display: block !important;
+    width: 100px !important;
+    height: 100px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    margin: 10px 0 !important;
+    background-color: #f0f0f0 !important;
+}
+
+.profile-photo-container img {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+} 

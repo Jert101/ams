@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Page Profile Photo Fix</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .code {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Edit Page Profile Photo Fix</h1>
+    
+    <p>This page provides a fix for profile photos on the edit page.</p>
+    
+    <h2>How to Use</h2>
+    
+    <h3>Option 1: Bookmarklet (Easiest)</h3>
+    <p>Drag this link to your bookmarks bar, then click it when you're on the edit page:</p>
+    <p><a href="javascript:(function(){
+        // Load CSS
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '/css/edit-page-fix.css?v=' + new Date().getTime();
+        document.head.appendChild(link);
+        
+        // Load JS
+        var script = document.createElement('script');
+        script.src = '/js/edit-page-fix.js?v=' + new Date().getTime();
+        document.head.appendChild(script);
+        
+        // Alert user
+        setTimeout(function() {
+            alert('Profile photo fix applied!');
+        }, 1000);
+    })();" class="button">Fix Edit Page Photos</a></p>
+    
+    <h3>Option 2: Add to Your Layout</h3>
+    <p>Add this code to your layout files just before the <code>&lt;/head&gt;</code> tag:</p>
+    <div class="code">&lt;link rel="stylesheet" href="{{ asset('css/edit-page-fix.css') }}?v={{ time() }}"&gt;
+&lt;script src="{{ asset('js/edit-page-fix.js') }}?v={{ time() }}"&gt;&lt;/script&gt;</div>
+    
+    <h3>Option 3: Test Now</h3>
+    <p>Open the edit page in a new tab:</p>
+    <p><a href="/admin/users" target="_blank" class="button">Go to Users Page</a></p>
+    
+    <h2>Important Notes</h2>
+    <ol>
+        <li>Your profile photos have been moved to the <code>public/profile-photos/</code> directory</li>
+        <li>The database has been updated to use the correct paths</li>
+        <li>If the fix doesn't work, try clearing your browser cache</li>
+    </ol>
+</body>
+</html> 
