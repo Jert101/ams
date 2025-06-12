@@ -51,73 +51,35 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $request->user()->id],
-            'profile_photo' => ['nullable', 'image', 'max:1024'],
+            'profile_photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif,webp,bmp', 'max:2048'],
         ]);
 
         $user = $request->user();
         $user->name = $validated['name'];
         $user->email = $validated['email'];
 
-        // Allow all users to upload profile photos
-        // Previously, only admins could update profile pictures, but now we're allowing all users
-        
-        // Handle profile photo upload - for all users
+        // Handle profile photo upload
         if ($request->hasFile('profile_photo')) {
             try {
-                Log::info('User is uploading a profile photo');
                 $uploadedFile = $request->file('profile_photo');
                 if ($uploadedFile->isValid()) {
                     $extension = $uploadedFile->getClientOriginalExtension();
                     $filename = time() . '-' . uniqid() . '.' . $extension;
-                    $storagePath = storage_path('app/public/profile-photos');
-                    $publicPath = public_path('storage/profile-photos');
-                    // Ensure directories exist
-                    foreach ([$storagePath, $publicPath] as $dir) {
-                        if (!file_exists($dir)) {
-                            if (!mkdir($dir, 0777, true)) {
-                                $error = error_get_last();
-                                Log::error('Failed to create directory: ' . $dir . ' - ' . ($error ? $error['message'] : 'Unknown error'));
-                                return redirect()->route('profile.show')->with('error', 'Failed to create upload directory.');
-                            }
-                        }
+                    $publicPath = public_path('profile-photos');
+                    if (!file_exists($publicPath)) {
+                        mkdir($publicPath, 0777, true);
                     }
-                    // Try to move to storage
-                    if ($uploadedFile->move($storagePath, $filename)) {
-                        Log::info('File successfully moved to storage path: ' . $storagePath . '/' . $filename);
-                        // Set permissions
-                        chmod($storagePath . '/' . $filename, 0644);
-                        // Copy to public directory
-                        if (copy($storagePath . '/' . $filename, $publicPath . '/' . $filename)) {
-                            Log::info('File copied to public directory: ' . $publicPath . '/' . $filename);
-                            chmod($publicPath . '/' . $filename, 0644);
-                        } else {
-                            $error = error_get_last();
-                            Log::warning('Could not copy to public directory: ' . ($error ? $error['message'] : 'Unknown error'));
-                        }
-                        // Only update if upload succeeded
-                        $user->profile_photo_path = 'profile-photos/' . $filename;
-                        Log::info('User profile_photo_path updated to: ' . $user->profile_photo_path);
-                    } else {
-                        $error = error_get_last();
-                        Log::error('Failed to move uploaded file: ' . ($error ? $error['message'] : 'Unknown error'));
-                        return redirect()->route('profile.show')->with('error', 'Failed to upload profile photo.');
-                    }
+                    $uploadedFile->move($publicPath, $filename);
+                    $user->profile_photo_path = 'public/profile-photos/' . $filename;
+                    Log::info('User profile_photo_path updated to: ' . $user->profile_photo_path);
                 } else {
                     Log::error('Uploaded file is not valid');
                     return redirect()->route('profile.show')->with('error', 'Uploaded file is not valid.');
                 }
             } catch (Exception $e) {
-                Log::error('Profile photo upload error: ' . $e->getMessage(), [
-                    'exception' => $e,
-                    'trace' => $e->getTraceAsString()
-                ]);
-                return redirect()->route('profile.show')->with('error', 'Failed to upload profile photo: ' . $e->getMessage());
+                Log::error('Failed to upload profile photo: ' . $e->getMessage());
+                return redirect()->route('profile.show')->with('error', 'Failed to upload profile photo.');
             }
-        } else {
-            Log::info('No profile photo uploaded or user is not admin', [
-                'has_file' => $request->hasFile('profile_photo'),
-                'is_admin' => $user->isAdmin()
-            ]);
         }
 
         if ($user->isDirty('email')) {
@@ -129,8 +91,7 @@ class ProfileController extends Controller
         ]);
         
         $user->save();
-
-        return redirect()->route('profile.show')->with('status', 'profile-updated');
+        return redirect()->route('profile.show')->with('success', 'Profile updated successfully.');
     }
 
     /**
