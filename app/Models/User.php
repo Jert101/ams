@@ -198,10 +198,10 @@ class User extends Authenticatable
      */
     public function getProfilePhotoUrlAttribute()
     {
-        // If the path is empty or 0, use the default
-        if (empty($this->profile_photo_path) || $this->profile_photo_path === "0" || $this->profile_photo_path === 0) {
-            return $this->defaultProfilePhotoUrl();
-        }
+        return $this->profile_photo_path
+            ? asset($this->profile_photo_path)
+            : asset('profile-photos/kofa.png');
+    }
         
         // Return a direct URL to the file - no checking if it exists
         return "/".$this->profile_photo_path."?v=".time();

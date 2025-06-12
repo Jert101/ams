@@ -75,12 +75,12 @@
                         
                         // Add error handler
                         img.onerror = function() {
-                            this.src = "/img/kofa.png";
+                            this.src = "/profile-photos/kofa.png";
                         };
                     } else {
                         // Create a new image
                         var newImg = document.createElement("img");
-                        newImg.src = "/img/kofa.png";
+                        newImg.src = "/profile-photos/kofa.png";
                         newImg.alt = "Profile Photo";
                         newImg.style.width = "100%";
                         newImg.style.height = "100%";
@@ -123,7 +123,7 @@
                         
                         // Add image
                         var img = document.createElement("img");
-                        img.src = "/img/kofa.png";
+                        img.src = "/profile-photos/kofa.png";
                         img.alt = "Profile Photo";
                         img.style.width = "100%";
                         img.style.height = "100%";
@@ -142,4 +142,4 @@
     document.addEventListener("DOMContentLoaded", fixEditPagePhotos);
     setTimeout(fixEditPagePhotos, 500);
     setTimeout(fixEditPagePhotos, 1000);
-})(); 
+})();
