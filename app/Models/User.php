@@ -192,144 +192,29 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the default profile photo URL if no profile photo has been uploaded.
-     *
-     * @return string
-     */
-    protected function defaultProfilePhotoUrl()
-    {
-        return $this->generateSvgAvatar();
-    }
-
-    /**
      * Get the URL for the user's profile photo.
      *
      * @return string
      */
     public function getProfilePhotoUrlAttribute()
     {
-        // Log debug info
-        \Log::debug('Profile photo path', [
-            'user_id' => $this->user_id,
-            'path' => $this->profile_photo_path,
-            'type' => gettype($this->profile_photo_path)
-        ]);
-        
-        // For any problematic values, generate an SVG avatar
+        // If the path is empty or 0, use the default
         if (empty($this->profile_photo_path) || $this->profile_photo_path === "0" || $this->profile_photo_path === 0) {
-            return $this->generateSvgAvatar();
+            return $this->defaultProfilePhotoUrl();
         }
         
-        // Check if it's the default logo
-        if ($this->profile_photo_path === 'kofa.png') {
-            return asset('img/kofa.png') . '?v=' . time();
-        }
-        
-        // EXTENDED FILE PATH CHECKING - Check multiple possible locations and formats
-        
-        // First check if file exists in public directory exactly as stored
-        if (file_exists(public_path($this->profile_photo_path))) {
-            return asset($this->profile_photo_path) . '?v=' . time();
-        }
-        
-        // Check storage paths
-        if (file_exists(storage_path('app/public/' . $this->profile_photo_path))) {
-            return asset('storage/' . $this->profile_photo_path) . '?v=' . time();
-        }
-        
-        // Check common profile photo directories with various extensions
-        $userId = $this->user_id;
-        $possiblePaths = [
-            // Common filename patterns
-            "profile-photos/user-{$userId}.jpg",
-            "profile-photos/user-{$userId}.jpeg",
-            "profile-photos/user-{$userId}.png",
-            "profile-photos/user_{$userId}.jpg",
-            "profile-photos/user_{$userId}.jpeg",
-            "profile-photos/user_{$userId}.png",
-            "profile-photos/{$userId}.jpg",
-            "profile-photos/{$userId}.jpeg",
-            "profile-photos/{$userId}.png",
-            
-            // Check other common directories
-            "images/profiles/user-{$userId}.jpg",
-            "images/profiles/user-{$userId}.jpeg",
-            "images/profiles/user-{$userId}.png",
-            "images/users/{$userId}.jpg",
-            "images/users/{$userId}.jpeg",
-            "images/users/{$userId}.png",
-            "avatars/user-{$userId}.jpg",
-            "avatars/user-{$userId}.jpeg",
-            "avatars/user-{$userId}.png",
-            
-            // Check SVG version too
-            "profile-photos/user-{$userId}.svg",
-        ];
-        
-        // Check each possible path in public directory
-        foreach ($possiblePaths as $path) {
-            if (file_exists(public_path($path))) {
-                return asset($path) . '?v=' . time();
-            }
-            
-            // Also check in storage
-            if (file_exists(storage_path('app/public/' . $path))) {
-                return asset('storage/' . $path) . '?v=' . time();
-            }
-        }
-        
-        // Finally, if we still have a profile_photo_path but can't find the file,
-        // let's just try to use it directly (maybe it's on a different server or CDN)
-        if (!empty($this->profile_photo_path) && $this->profile_photo_path !== '0') {
-            $path = str_replace('\\', '/', $this->profile_photo_path);
-            if (strpos($path, 'http') === 0) {
-                // It's already a full URL
-                return $this->profile_photo_path;
-            } else {
-                // Try both with and without storage prefix
-                if (strpos($path, 'storage/') === 0) {
-                    return asset($path) . '?v=' . time();
-                } else {
-                    return asset('storage/' . $path) . '?v=' . time();
-                }
-            }
-        }
-        
-        // Fallback to SVG avatar if nothing else works
-        return $this->generateSvgAvatar();
+        // Return a direct URL to the file - no checking if it exists
+        return "/".$this->profile_photo_path."?v=".time();
     }
     
     /**
-     * Generate an SVG avatar with user's initials.
+     * Get the default profile photo URL if no profile photo has been uploaded.
      *
      * @return string
      */
-    protected function generateSvgAvatar()
+    protected function defaultProfilePhotoUrl()
     {
-        // Generate initials from name
-        $name = $this->name ?? 'User';
-        $initials = '';
-        $words = explode(' ', $name);
-        foreach ($words as $word) {
-            if (!empty($word)) {
-                $initials .= strtoupper(substr($word, 0, 1));
-            }
-        }
-        $initials = substr($initials, 0, 2); // Limit to 2 characters
-        
-        // Generate a consistent color based on the user ID
-        $bgColor = '#' . substr(md5($this->user_id ?? 1), 0, 6);
-        
-        // Create SVG
-        $svg = <<<SVG
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
-  <rect width="200" height="200" fill="$bgColor"/>
-  <text x="100" y="115" font-family="Arial, sans-serif" font-size="80" font-weight="bold" text-anchor="middle" fill="#ffffff">$initials</text>
-</svg>
-SVG;
-        
-        // Convert to data URI
-        $encoded = base64_encode($svg);
-        return 'data:image/svg+xml;base64,' . $encoded;
+        // Just return kofa.png directly
+        return "/img/kofa.png?v=".time();
     }
 }
