@@ -139,6 +139,13 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        \Log::info('Admin UserController@update called', [
+            'user_id' => $user->user_id ?? null,
+            'request_user_id' => $request->input('user_id'),
+            'has_file' => $request->hasFile('profile_photo'),
+            'all_request' => $request->all()
+        ]);
+
         // Handle QR code generation request
         if ($request->has('generate_qr')) {
             // Check if the user already has a QR code
@@ -190,15 +197,66 @@ class UserController extends Controller
         
         // Handle profile photo upload
         if ($request->hasFile('profile_photo')) {
-            // Delete old photo if exists and it's not the default
-            if ($user->profile_photo_path && $user->profile_photo_path !== 'kofa.png') {
-                Storage::disk('public')->delete($user->profile_photo_path);
+            \Log::info('Profile photo upload detected', [
+                'original_name' => $request->file('profile_photo')->getClientOriginalName(),
+                'mime_type' => $request->file('profile_photo')->getMimeType(),
+                'size' => $request->file('profile_photo')->getSize(),
+                'error' => $request->file('profile_photo')->getError()
+            ]);
+
+            try {
+                // Delete old photo if exists and it's not the default
+                if ($user->profile_photo_path && $user->profile_photo_path !== 'kofa.png') {
+                    \Log::info('Attempting to delete old photo', ['old_path' => $user->profile_photo_path]);
+                    Storage::disk('public')->delete($user->profile_photo_path);
+                }
+                
+                // Check storage path exists and is writable
+                $storagePath = storage_path('app/public/profile-photos');
+                if (!file_exists($storagePath)) {
+                    \Log::info('Creating storage directory', ['path' => $storagePath]);
+                    if (!mkdir($storagePath, 0777, true)) {
+                        $error = error_get_last();
+                        \Log::error('Failed to create directory', ['error' => $error ? $error['message'] : 'Unknown error']);
+                    }
+                }
+                
+                // Store the file
+                $file = $request->file('profile_photo');
+                $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $relativePath = 'profile-photos/' . $filename;
+                
+                if ($file->move($storagePath, $filename)) {
+                    \Log::info('File moved successfully', ['path' => $storagePath . '/' . $filename]);
+                    
+                    // Make a copy in public/storage directory
+                    $publicStoragePath = public_path('storage/profile-photos');
+                    if (!file_exists($publicStoragePath)) {
+                        mkdir($publicStoragePath, 0777, true);
+                    }
+                    
+                    if (copy($storagePath . '/' . $filename, $publicStoragePath . '/' . $filename)) {
+                        \Log::info('File copied to public storage', ['path' => $publicStoragePath . '/' . $filename]);
+                    } else {
+                        \Log::warning('Failed to copy file to public storage');
+                    }
+                    
+                    // Update user data with the relative path
+                    $userData['profile_photo_path'] = $relativePath;
+                    \Log::info('User profile_photo_path will be updated to', ['path' => $relativePath]);
+                } else {
+                    \Log::error('Failed to move uploaded file');
+                    // Do not update profile_photo_path if file move fails
+                }
+            } catch (\Exception $e) {
+                \Log::error('Exception during file upload', [
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
             }
-            
-            $path = $request->file('profile_photo')->store('profile-photos', 'public');
-            $userData['profile_photo_path'] = $path;
         }
 
+        \Log::info('Updating user with data', ['userData' => $userData]);
         $user->update($userData);
 
         return redirect()->route('admin.users.index')
