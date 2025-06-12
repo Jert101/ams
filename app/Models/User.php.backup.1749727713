@@ -196,11 +196,7 @@ class User extends Authenticatable
      *
      * @return string
      */
-    
     protected function defaultProfilePhotoUrl()
-    {
-        return $this->generateSvgAvatar();
-    }
     {
         // Use kofa.png as default profile photo if it exists
         if (file_exists(public_path('kofa.png'))) {
@@ -220,73 +216,7 @@ class User extends Authenticatable
      *
      * @return string
      */
-    
     public function getProfilePhotoUrlAttribute()
-    {
-        // Log debug info
-        \Log::debug('Profile photo path', [
-            'user_id' => $this->user_id,
-            'path' => $this->profile_photo_path,
-            'type' => gettype($this->profile_photo_path)
-        ]);
-        
-        // For any problematic values, generate an SVG avatar
-        if (empty($this->profile_photo_path) || $this->profile_photo_path === "0" || $this->profile_photo_path === 0) {
-            return $this->generateSvgAvatar();
-        }
-        
-        // Check if it's the default logo
-        if ($this->profile_photo_path === 'kofa.png') {
-            return asset('img/kofa.png') . '?v=' . time();
-        }
-        
-        // Check if file exists in public directory
-        if (file_exists(public_path($this->profile_photo_path))) {
-            return asset($this->profile_photo_path) . '?v=' . time();
-        }
-        
-        // Check storage paths
-        if (file_exists(storage_path('app/public/' . $this->profile_photo_path))) {
-            return asset('storage/' . $this->profile_photo_path) . '?v=' . time();
-        }
-        
-        // Fallback to SVG avatar
-        return $this->generateSvgAvatar();
-    }
-    
-    /**
-     * Generate an SVG avatar with user's initials.
-     *
-     * @return string
-     */
-    protected function generateSvgAvatar()
-    {
-        // Generate initials from name
-        $name = $this->name ?? 'User';
-        $initials = '';
-        $words = explode(' ', $name);
-        foreach ($words as $word) {
-            if (!empty($word)) {
-                $initials .= strtoupper(substr($word, 0, 1));
-            }
-        }
-        $initials = substr($initials, 0, 2); // Limit to 2 characters
-        
-        // Generate a consistent color based on the user ID
-        $bgColor = '#' . substr(md5($this->user_id ?? 1), 0, 6);
-        
-        // Create SVG
-        $svg = <<<SVG
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
-  <rect width="200" height="200" fill="$bgColor"/>
-  <text x="100" y="115" font-family="Arial, sans-serif" font-size="80" font-weight="bold" text-anchor="middle" fill="#ffffff">$initials</text>
-</svg>
-SVG;
-        
-        // Convert to data URI
-        $encoded = base64_encode($svg);
-        return 'data:image/svg+xml;base64,' . $encoded;
-    }
     {
         $path = $this->profile_photo_path;
         
@@ -305,6 +235,8 @@ SVG;
         // Add cache-busting parameter
         return url($path) . "?v=" . time();
     }
+        
+        // Check if it's the default photo
         if ($this->profile_photo_path === 'kofa.png') {
             return asset('kofa.png') . '?v=' . time();
         }
@@ -349,7 +281,7 @@ SVG;
      *
      * @return string
      */
-    
+    protected function generateAvatarSvg()
     {
         // Generate initials from name
         $name = $this->name ?? 'User';
