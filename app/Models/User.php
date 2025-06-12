@@ -198,13 +198,9 @@ class User extends Authenticatable
      */
     public function getProfilePhotoUrlAttribute()
     {
-        $path = $this->profile_photo_path;
-        if ($path && strpos($path, 'public/') === 0) {
-            $path = substr($path, 7);
-        }
-        return $path
-            ? asset($path)
-            : asset('profile-photos/kofa.png');
+        return $this->profile_photo_path
+            ? asset($this->profile_photo_path)
+            : asset('public/profile-photos/kofa.png');
     }
     
     /**
