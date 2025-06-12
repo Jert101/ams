@@ -1,70 +1,55 @@
 <?php
+// Simple file upload test for InfinityFree
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-echo "<h1>Upload Test</h1>";
-echo "<pre>Upload directory: " . __DIR__ . "/uploads</pre>";
-
-if (!file_exists(__DIR__ . "/uploads")) {
-    if (mkdir(__DIR__ . "/uploads", 0777, true)) {
-        echo "<p>Created uploads directory</p>";
-    } else {
-        echo "<p>Failed to create uploads directory</p>";
-        echo "<p>Error: " . error_get_last()['message'] . "</p>";
-    }
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    echo "<h2>File upload details:</h2>";
-    echo "<pre>";
-    print_r($_FILES);
-    echo "</pre>";
-    
+    echo '<h2>Upload Result</h2>';
     if (isset($_FILES['test_file']) && $_FILES['test_file']['error'] === UPLOAD_ERR_OK) {
-        $uploadfile = __DIR__ . "/uploads/" . basename($_FILES['test_file']['name']);
-        
-        echo "<p>Attempting to move file from {$_FILES['test_file']['tmp_name']} to {$uploadfile}</p>";
-        
-        if (move_uploaded_file($_FILES['test_file']['tmp_name'], $uploadfile)) {
-            echo "<p>File uploaded successfully to: $uploadfile</p>";
-            echo "<p>File exists after upload: " . (file_exists($uploadfile) ? 'Yes' : 'No') . "</p>";
-            echo "<p>File size: " . filesize($uploadfile) . " bytes</p>";
-        } else {
-            echo "<p>Failed to move uploaded file!</p>";
-            echo "<p>Error: " . error_get_last()['message'] . "</p>";
-            echo "<p>Temporary file exists: " . (file_exists($_FILES['test_file']['tmp_name']) ? 'Yes' : 'No') . "</p>";
+        $uploadDir = __DIR__ . '/uploads/';
+        if (!file_exists($uploadDir)) {
+            if (mkdir($uploadDir, 0777, true)) {
+                echo '<p>Created upload directory: ' . htmlspecialchars($uploadDir) . '</p>';
+            } else {
+                echo '<p style="color:red;">Failed to create upload directory!</p>';
+            }
         }
+        if (is_writable($uploadDir)) {
+            $filename = time() . '-' . basename($_FILES['test_file']['name']);
+            $destination = $uploadDir . $filename;
+            if (move_uploaded_file($_FILES['test_file']['tmp_name'], $destination)) {
+                echo '<p style="color:green;">File uploaded successfully!</p>';
+                echo '<p>Saved as: ' . htmlspecialchars($destination) . '</p>';
+                echo '<img src="uploads/' . htmlspecialchars($filename) . '" style="max-width:200px; border:1px solid #ccc;">';
+            } else {
+                echo '<p style="color:red;">Failed to move uploaded file!</p>';
+            }
+        } else {
+            echo '<p style="color:red;">Upload directory is not writable: ' . htmlspecialchars($uploadDir) . '</p>';
+        }
+    } else {
+        echo '<p style="color:red;">';
+        if (isset($_FILES['test_file'])) {
+            echo 'Upload error code: ' . $_FILES['test_file']['error'];
+        } else {
+            echo 'No file uploaded.';
+        }
+        echo '</p>';
     }
 }
-
-// Show server information
-echo "<h2>Server Information</h2>";
-echo "<pre>";
-echo "PHP Version: " . phpversion() . "\n";
-echo "upload_max_filesize: " . ini_get('upload_max_filesize') . "\n";
-echo "post_max_size: " . ini_get('post_max_size') . "\n";
-echo "max_file_uploads: " . ini_get('max_file_uploads') . "\n";
-echo "file_uploads enabled: " . (ini_get('file_uploads') ? 'Yes' : 'No') . "\n";
-echo "Current user: " . get_current_user() . "\n";
-echo "Current script owner: " . fileowner(__FILE__) . "\n";
-echo "</pre>";
-
-// Check storage directories
-echo "<h2>Storage Directories Check</h2>";
-$storagePublic = __DIR__ . "/storage/profile-photos";
-$storageApp = dirname(__DIR__) . "/storage/app/public/profile-photos";
-
-echo "<pre>";
-echo "Public storage path: $storagePublic\n";
-echo "App storage path: $storageApp\n";
-echo "Public directory exists: " . (file_exists($storagePublic) ? 'Yes' : 'No') . "\n";
-echo "App directory exists: " . (file_exists($storageApp) ? 'Yes' : 'No') . "\n";
-echo "Public directory writable: " . (is_writable($storagePublic) ? 'Yes' : 'No') . "\n";
-echo "App directory writable: " . (is_writable($storageApp) ? 'Yes' : 'No') . "\n";
-echo "</pre>";
 ?>
-
-<form method="POST" enctype="multipart/form-data">
-    <input type="file" name="test_file">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Upload Test</title>
+    <style>body{font-family:sans-serif;max-width:500px;margin:40px auto;}input[type=file]{margin-bottom:10px;}</style>
+</head>
+<body>
+<h1>File Upload Test (InfinityFree)</h1>
+<form method="post" enctype="multipart/form-data">
+    <input type="file" name="test_file" required><br>
     <button type="submit">Upload</button>
-</form> 
+</form>
+<p>After uploading, check if the file appears below. If not, your host may block uploads or directory permissions are wrong.</p>
+</body>
+</html> 
