@@ -218,6 +218,13 @@ class User extends Authenticatable
      */
     public function getProfilePhotoUrlAttribute()
     {
+        // Debug logging to help diagnose issues on production
+        \Log::debug('Getting profile photo URL', [
+            'user_id' => $this->user_id,
+            'photo_path' => $this->profile_photo_path,
+            'type' => gettype($this->profile_photo_path)
+        ]);
+        
         // Handle empty, null, or invalid profile photo paths
         if (empty($this->profile_photo_path) || 
             $this->profile_photo_path === '0' || 
@@ -237,35 +244,29 @@ class User extends Authenticatable
             return $this->profile_photo_path;
         }
         
-        // Try to find the file in both possible locations
-        $storageUrl = asset('storage/' . $this->profile_photo_path);
+        // Try multiple paths to find the file
+        $paths = [
+            // Direct path in public directory
+            public_path($this->profile_photo_path),
+            // Storage path through symlink
+            public_path('storage/' . $this->profile_photo_path),
+            // Original storage path
+            storage_path('app/public/' . $this->profile_photo_path)
+        ];
         
-        // Check if the file exists in public/storage first
-        if (file_exists(public_path('storage/' . $this->profile_photo_path))) {
-            return $storageUrl;
+        foreach ($paths as $path) {
+            if (file_exists($path)) {
+                \Log::debug('Found profile photo at: ' . $path);
+                break;
+            }
         }
         
-        // Check if it exists directly in public/storage without the symlink
-        if (file_exists(public_path($this->profile_photo_path))) {
-            return asset($this->profile_photo_path);
+        // Even if we can't find the file, we'll return the expected URL
+        // This handles cases where the file exists but PHP can't access it due to permissions
+        if (strpos($this->profile_photo_path, 'profile-photos/') === 0) {
+            return asset('storage/' . $this->profile_photo_path) . '?v=' . time();
+        } else {
+            return asset('storage/profile-photos/' . basename($this->profile_photo_path)) . '?v=' . time();
         }
-        
-        // For shared hosting workaround - check if we should use the storage.php proxy
-        if (file_exists(public_path('storage.php')) && !is_link(public_path('storage'))) {
-            $host = request()->getHost();
-            $scheme = request()->getScheme();
-            return $scheme . '://' . $host . '/storage.php?path=' . $this->profile_photo_path;
-        }
-        
-        // If we still can't find the file, log the issue and return the default
-        \Log::warning('Profile photo not found for user: ' . $this->id, [
-            'profile_photo_path' => $this->profile_photo_path,
-            'checked_paths' => [
-                'public/storage/' . $this->profile_photo_path,
-                'public/' . $this->profile_photo_path
-            ]
-        ]);
-        
-        return asset('kofa.png');
     }
 }

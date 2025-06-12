@@ -110,43 +110,63 @@ class ProfileController extends Controller
                     Log::info('Public directory created with permissions: ' . substr(sprintf('%o', fileperms($publicPath)), -4));
                 }
                 
-                // Copy to both locations to ensure it works in both environments
+                // Try to copy the file to both locations
+                $relativePath = 'profile-photos/' . $filename;
+                $success = false;
+                
+                // First try to move to storage
                 if ($uploadedFile->move($storagePath, $filename)) {
                     Log::info('File successfully moved to storage path: ' . $storagePath . '/' . $filename);
+                    $success = true;
                     
-                    // Update user's profile photo path
-                    $relativePath = 'profile-photos/' . $filename;
-                    $user->profile_photo_path = $relativePath;
+                    // Set proper permissions on the file
+                    chmod($storagePath . '/' . $filename, 0644);
                     
-                    Log::info('User profile_photo_path updated to: ' . $relativePath);
-                    
-                    // Always make sure the file is in the public directory
-                    if (!file_exists($publicPath)) {
-                        if (!mkdir($publicPath, 0777, true)) {
-                            Log::error('Failed to create public storage directory: ' . $publicPath);
-                            $error = error_get_last();
-                            Log::error('Error: ' . ($error ? $error['message'] : 'Unknown error'));
-                        } else {
-                            chmod($publicPath, 0777); // Ensure permissions are set
-                            Log::info('Created public storage directory: ' . $publicPath);
-                        }
-                    }
-                    
-                    // Copy the file to the public directory
-                    $sourceFile = $storagePath . '/' . $filename;
-                    $destFile = $publicPath . '/' . $filename;
-                    if (copy($sourceFile, $destFile)) {
-                        Log::info('File copied to public directory: ' . $destFile);
-                        // Set permissions on the copied file
-                        chmod($destFile, 0644);
-                        Log::info('Set permissions on public file: ' . $destFile);
+                    // Copy to public directory
+                    if (copy($storagePath . '/' . $filename, $publicPath . '/' . $filename)) {
+                        Log::info('File copied to public directory: ' . $publicPath . '/' . $filename);
+                        chmod($publicPath . '/' . $filename, 0644);
                     } else {
                         $error = error_get_last();
-                        Log::error('Failed to copy file to public directory: ' . $destFile);
-                        Log::error('Error: ' . ($error ? $error['message'] : 'Unknown error'));
+                        Log::warning('Could not copy to public directory: ' . ($error ? $error['message'] : 'Unknown error'));
+                        
+                        // Try to copy directly to public
+                        if (file_exists($uploadedFile->getPathname())) {
+                            if (copy($uploadedFile->getPathname(), $publicPath . '/' . $filename)) {
+                                Log::info('File copied directly to public directory');
+                                chmod($publicPath . '/' . $filename, 0644);
+                            }
+                        }
                     }
                 } else {
-                    throw new Exception('Failed to move uploaded file');
+                    // If storage fails, try public
+                    Log::warning('Failed to move file to storage, trying public directory');
+                    if ($uploadedFile->move($publicPath, $filename)) {
+                        Log::info('File moved to public directory: ' . $publicPath . '/' . $filename);
+                        $success = true;
+                        chmod($publicPath . '/' . $filename, 0644);
+                        
+                        // Try to copy back to storage
+                        if (copy($publicPath . '/' . $filename, $storagePath . '/' . $filename)) {
+                            Log::info('File copied back to storage directory');
+                            chmod($storagePath . '/' . $filename, 0644);
+                        }
+                    } else {
+                        $error = error_get_last();
+                        Log::error('Failed to move file to any location: ' . ($error ? $error['message'] : 'Unknown error'));
+                        throw new Exception('Failed to upload file to any location');
+                    }
+                }
+                
+                if ($success) {
+                    // Update user's profile photo path - ENSURE it's a string, not a number
+                    $user->profile_photo_path = (string)$relativePath;
+                    
+                    Log::info('User profile_photo_path updated to: ' . $relativePath, [
+                        'user_id' => $user->id,
+                        'new_path' => $relativePath,
+                        'path_type' => gettype($relativePath)
+                    ]);
                 }
                 
             } catch (Exception $e) {
