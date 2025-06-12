@@ -116,31 +116,26 @@ class ProfileController extends Controller
                 if ($uploadedFile->move($storagePath, $filename)) {
                     Log::info('File successfully moved to storage path: ' . $storagePath . '/' . $filename);
                     
-                    // If symlink doesn't exist, we'll manually copy to public directory as well
-                    if (!is_link(public_path('storage'))) {
-                        Log::info('No symlink found, manually copying file to public directory');
-                        
-                        $sourceFile = $storagePath . '/' . $filename;
-                        $destFile = $publicPath . '/' . $filename;
-                        
-                        if (copy($sourceFile, $destFile)) {
-                            Log::info('File successfully copied to public path: ' . $destFile);
-                        } else {
-                            $error = error_get_last();
-                            Log::error('Failed to copy file to public directory: ' . ($error ? $error['message'] : 'Unknown error'));
-                            Log::error('Source file exists: ' . (file_exists($sourceFile) ? 'Yes' : 'No'));
-                            Log::error('Source file readable: ' . (is_readable($sourceFile) ? 'Yes' : 'No'));
-                            Log::error('Destination directory writable: ' . (is_writable(dirname($destFile)) ? 'Yes' : 'No'));
-                        }
-                    } else {
-                        Log::info('Symlink exists from public/storage to storage/app/public');
-                    }
-                    
                     // Update user's profile photo path
                     $relativePath = 'profile-photos/' . $filename;
                     $user->profile_photo_path = $relativePath;
                     
                     Log::info('User profile_photo_path updated to: ' . $relativePath);
+                    
+                    // Always make sure the file is in the public directory
+                    if (!file_exists($publicPath)) {
+                        mkdir($publicPath, 0777, true);
+                        Log::info('Created public storage directory: ' . $publicPath);
+                    }
+                    
+                    // Copy the file to the public directory
+                    $sourceFile = $storagePath . '/' . $filename;
+                    $destFile = $publicPath . '/' . $filename;
+                    if (copy($sourceFile, $destFile)) {
+                        Log::info('File copied to public directory: ' . $destFile);
+                    } else {
+                        Log::error('Failed to copy file to public directory: ' . $destFile);
+                    }
                 } else {
                     throw new Exception('Failed to move uploaded file');
                 }
