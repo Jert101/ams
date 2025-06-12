@@ -68,6 +68,16 @@ class ProfileController extends Controller
             try {
                 Log::info('Admin is uploading a profile photo');
                 
+                // Add debugging information for paths and permissions
+                Log::info('Path check', [
+                    'public_path' => public_path('storage/profile-photos'),
+                    'storage_path' => storage_path('app/public/profile-photos'),
+                    'directory_exists_public' => file_exists(public_path('storage/profile-photos')),
+                    'directory_exists_storage' => file_exists(storage_path('app/public/profile-photos')),
+                    'is_writable_public' => is_writable(public_path('storage/profile-photos')),
+                    'is_writable_storage' => is_writable(storage_path('app/public/profile-photos'))
+                ]);
+                
                 // Create a simplified upload process that uses direct PHP functions
                 $uploadedFile = $request->file('profile_photo');
                 $extension = $uploadedFile->getClientOriginalExtension();
@@ -78,11 +88,28 @@ class ProfileController extends Controller
                 $storagePath = storage_path('app/public/profile-photos');
                 
                 // Ensure directories exist
-                if (!file_exists($publicPath) && !file_exists($storagePath)) {
-                    if (!mkdir($storagePath, 0755, true)) {
-                        Log::error('Failed to create profile photos directory in storage');
-                        return redirect()->route('profile.show')->with('error', 'Failed to create upload directory.');
+                if (!file_exists($storagePath)) {
+                    Log::info('Creating storage directory: ' . $storagePath);
+                    if (!mkdir($storagePath, 0777, true)) {
+                        $error = error_get_last();
+                        Log::error('Failed to create profile photos directory in storage: ' . ($error ? $error['message'] : 'Unknown error'));
+                        return redirect()->route('profile.show')->with('error', 'Failed to create upload directory in storage.');
                     }
+                    // Set permissions explicitly after creation
+                    chmod($storagePath, 0777);
+                    Log::info('Storage directory created with permissions: ' . substr(sprintf('%o', fileperms($storagePath)), -4));
+                }
+                
+                if (!file_exists($publicPath)) {
+                    Log::info('Creating public directory: ' . $publicPath);
+                    if (!mkdir($publicPath, 0777, true)) {
+                        $error = error_get_last();
+                        Log::error('Failed to create profile photos directory in public: ' . ($error ? $error['message'] : 'Unknown error'));
+                        return redirect()->route('profile.show')->with('error', 'Failed to create upload directory in public.');
+                    }
+                    // Set permissions explicitly after creation
+                    chmod($publicPath, 0777);
+                    Log::info('Public directory created with permissions: ' . substr(sprintf('%o', fileperms($publicPath)), -4));
                 }
                 
                 // Copy to both locations to ensure it works in both environments
@@ -91,11 +118,22 @@ class ProfileController extends Controller
                     
                     // If symlink doesn't exist, we'll manually copy to public directory as well
                     if (!is_link(public_path('storage'))) {
-                        if (!file_exists($publicPath)) {
-                            mkdir($publicPath, 0755, true);
+                        Log::info('No symlink found, manually copying file to public directory');
+                        
+                        $sourceFile = $storagePath . '/' . $filename;
+                        $destFile = $publicPath . '/' . $filename;
+                        
+                        if (copy($sourceFile, $destFile)) {
+                            Log::info('File successfully copied to public path: ' . $destFile);
+                        } else {
+                            $error = error_get_last();
+                            Log::error('Failed to copy file to public directory: ' . ($error ? $error['message'] : 'Unknown error'));
+                            Log::error('Source file exists: ' . (file_exists($sourceFile) ? 'Yes' : 'No'));
+                            Log::error('Source file readable: ' . (is_readable($sourceFile) ? 'Yes' : 'No'));
+                            Log::error('Destination directory writable: ' . (is_writable(dirname($destFile)) ? 'Yes' : 'No'));
                         }
-                        copy($storagePath . '/' . $filename, $publicPath . '/' . $filename);
-                        Log::info('File also copied to public path: ' . $publicPath . '/' . $filename);
+                    } else {
+                        Log::info('Symlink exists from public/storage to storage/app/public');
                     }
                     
                     // Update user's profile photo path
