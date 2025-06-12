@@ -168,7 +168,15 @@
                 <div class="flex items-center">
                     <div class="mr-4">
                         <div class="h-24 w-24 rounded-full border-4 border-red-200 shadow-md overflow-hidden">
-                            <img src="{{ $user->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ $user->name }}'s profile photo" class="h-full w-full object-cover">
+                            @php
+                                $photoPath = $user->profile_photo_path;
+                                $photoUrl = empty($photoPath) ? asset('kofa.png') : 
+                                            ($photoPath === 'kofa.png' ? asset('kofa.png') : 
+                                            asset('storage/' . $photoPath));
+                                // Add cache busting parameter
+                                $photoUrl = $photoUrl . '?v=' . time();
+                            @endphp
+                            <img src="{{ $photoUrl }}" alt="{{ $user->name }}'s profile photo" class="h-full w-full object-cover">
                         </div>
                     </div>
                     <div class="flex-1">
