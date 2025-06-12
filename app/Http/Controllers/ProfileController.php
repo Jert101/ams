@@ -124,8 +124,14 @@ class ProfileController extends Controller
                     
                     // Always make sure the file is in the public directory
                     if (!file_exists($publicPath)) {
-                        mkdir($publicPath, 0777, true);
-                        Log::info('Created public storage directory: ' . $publicPath);
+                        if (!mkdir($publicPath, 0777, true)) {
+                            Log::error('Failed to create public storage directory: ' . $publicPath);
+                            $error = error_get_last();
+                            Log::error('Error: ' . ($error ? $error['message'] : 'Unknown error'));
+                        } else {
+                            chmod($publicPath, 0777); // Ensure permissions are set
+                            Log::info('Created public storage directory: ' . $publicPath);
+                        }
                     }
                     
                     // Copy the file to the public directory
@@ -133,8 +139,13 @@ class ProfileController extends Controller
                     $destFile = $publicPath . '/' . $filename;
                     if (copy($sourceFile, $destFile)) {
                         Log::info('File copied to public directory: ' . $destFile);
+                        // Set permissions on the copied file
+                        chmod($destFile, 0644);
+                        Log::info('Set permissions on public file: ' . $destFile);
                     } else {
+                        $error = error_get_last();
                         Log::error('Failed to copy file to public directory: ' . $destFile);
+                        Log::error('Error: ' . ($error ? $error['message'] : 'Unknown error'));
                     }
                 } else {
                     throw new Exception('Failed to move uploaded file');
