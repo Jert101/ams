@@ -58,15 +58,13 @@ class ProfileController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
 
-        // Check if non-admin user is trying to upload a profile photo
-        if ($request->hasFile('profile_photo') && !$user->isAdmin()) {
-            return redirect()->route('profile.show')->with('error', 'Only administrators can update profile pictures.');
-        }
-
-        // Handle profile photo upload - only for admin users
-        if ($request->hasFile('profile_photo') && $user->isAdmin()) {
+        // Allow all users to upload profile photos
+        // Previously, only admins could update profile pictures, but now we're allowing all users
+        
+        // Handle profile photo upload - for all users
+        if ($request->hasFile('profile_photo')) {
             try {
-                Log::info('Admin is uploading a profile photo');
+                Log::info('User is uploading a profile photo');
                 
                 // Add debugging information for paths and permissions
                 Log::info('Path check', [
