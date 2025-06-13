@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile Photo Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-container { margin-bottom: 30px; border: 1px solid #ddd; padding: 15px; border-radius: 5px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        img { max-width: 200px; max-height: 200px; border: 1px solid #ddd; }
+        pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>Profile Photo Test</h1>
+    
+    <div class="test-container">
+        <h2>Direct Image Test</h2>
+        <p>Testing direct access to a profile photo:</p>
+        
+        <div>
+            <h3>1. Direct URL with full domain:</h3>
+            <img src="https://ckpkofa-network.ct.ws/profile-photos/1749806707-684bee7378278.png?v=123456" 
+                 alt="Test image 1" 
+                 onerror="this.parentNode.innerHTML += '<p class=\'error\'>Image failed to load</p>'">
+        </div>
+        
+        <div>
+            <h3>2. Relative URL from root:</h3>
+            <img src="/profile-photos/1749806707-684bee7378278.png?v=123456" 
+                 alt="Test image 2" 
+                 onerror="this.parentNode.innerHTML += '<p class=\'error\'>Image failed to load</p>'">
+        </div>
+        
+        <div>
+            <h3>3. Default image:</h3>
+            <img src="/img/kofa.png" 
+                 alt="Test image 3" 
+                 onerror="this.parentNode.innerHTML += '<p class=\'error\'>Image failed to load</p>'">
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>JavaScript Fix Test</h2>
+        <p>Testing JavaScript fix for profile photos:</p>
+        
+        <div id="js-test">
+            <img src="/profile-photos/1749806707-684bee7378278.png" 
+                 alt="Test image with JS fix" 
+                 class="profile-user-img"
+                 style="display: block; visibility: visible;">
+        </div>
+    </div>
+    
+    <script>
+        // Wait for page to load
+        window.addEventListener('load', function() {
+            console.log('Running profile photo fix test');
+            
+            // Find the test image
+            var testImg = document.querySelector('#js-test img');
+            if (testImg) {
+                console.log('Found test image:', testImg.src);
+                
+                // Try to fix the image
+                var filename = testImg.src.split('/').pop().split('?')[0];
+                testImg.src = 'https://ckpkofa-network.ct.ws/profile-photos/' + filename + '?v=' + new Date().getTime();
+                console.log('Updated image source to:', testImg.src);
+                
+                // Add result message
+                var resultDiv = document.createElement('div');
+                resultDiv.innerHTML = '<p>Attempted to fix image URL to: ' + testImg.src + '</p>';
+                document.getElementById('js-test').appendChild(resultDiv);
+                
+                // Add error handler
+                testImg.onerror = function() {
+                    console.log('Image failed to load, using default');
+                    this.src = '/img/kofa.png';
+                    
+                    var errorDiv = document.createElement('div');
+                    errorDiv.innerHTML = '<p class="error">Image failed to load, using default image</p>';
+                    document.getElementById('js-test').appendChild(errorDiv);
+                };
+                
+                // Add load handler
+                testImg.onload = function() {
+                    var successDiv = document.createElement('div');
+                    successDiv.innerHTML = '<p class="success">Image loaded successfully!</p>';
+                    document.getElementById('js-test').appendChild(successDiv);
+                };
+            }
+        });
+    </script>
+    
+    <div class="test-container">
+        <h2>Recommendations</h2>
+        <ol>
+            <li>Check if the profile-photos directory exists at the root level of your hosting</li>
+            <li>Make sure the directory has the correct permissions (755 or 777)</li>
+            <li>Verify that the image files are actually in the directory</li>
+            <li>Try accessing an image directly through its URL</li>
+        </ol>
+    </div>
+</body>
+</html> 
