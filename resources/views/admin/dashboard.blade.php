@@ -122,7 +122,6 @@
                                     View All
                                 </a>
                             </div>
-                            
                             @if(count($recentUsers) > 0)
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200 table-responsive">
@@ -144,13 +143,21 @@
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
                                             @foreach($recentUsers as $user)
+                                                @php
+                                                    $photoPath = $user['profile_photo_path'] ?? null;
+                                                    $filename = $photoPath ? basename($photoPath) : 'kofa.png';
+                                                    $photoUrl = $photoPath && $photoPath !== 'kofa.png'
+                                                        ? "https://ckpkofa-network.ct.ws/profile-photos/{$filename}?v=" . time()
+                                                        : asset('img/kofa.png');
+                                                    $fallbackSvg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2U1ZTdlYiIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=';
+                                                @endphp
                                                 <tr>
                                                     <td class="px-6 py-4 whitespace-nowrap" data-label="Name">
                                                         <div class="flex items-center">
-                                                            <div class="user-initials">
-                                                                {{ strtoupper(substr($user['name'], 0, 1)) }}
+                                                            <div class="user-avatar relative h-10 w-10 mr-2">
+                                                                <img src="{{ $photoUrl }}" alt="{{ $user['name'] }}" class="h-10 w-10 rounded-full object-cover border-2 border-gray-200 profile-user-img" onerror="this.onerror=null;this.src='{{ $fallbackSvg }}';">
                                                             </div>
-                                                            <div class="ml-4">
+                                                            <div class="ml-2">
                                                                 <div class="text-sm font-medium text-gray-900">{{ $user['name'] }}</div>
                                                             </div>
                                                         </div>
@@ -186,17 +193,21 @@
 
 @push('styles')
 <style>
-    .user-initials {
+    .user-avatar {
         width: 40px;
         height: 40px;
+        overflow: hidden;
         border-radius: 50%;
-        background-color: #4f46e5;
-        color: white;
+        background: #f3f4f6;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
-        font-size: 16px;
+    }
+    .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
     }
 </style>
 @endpush
