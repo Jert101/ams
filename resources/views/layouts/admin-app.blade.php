@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'KofA Attendance Monitoring System') }}</title>
@@ -45,11 +45,18 @@
         <!-- Global Responsive CSS -->
         <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
         
+        <!-- Admin Responsive CSS -->
+        <link href="{{ asset('css/admin-responsive.css') }}" rel="stylesheet">
+        
         <!-- jQuery (needed for some Bootstrap components) -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         
         <!-- Profile Photo Fix Script -->
         <script src="{{ asset('js/profile-photo-fix.js') }}"></script>
+        
+        <!-- Admin Responsive Scripts -->
+        <script src="{{ asset('js/admin-responsive.js') }}"></script>
+        <script src="{{ asset('js/admin-responsive-fix.js') }}"></script>
         
         <!-- Custom CSS -->
         <link rel="stylesheet" href="{{ asset('css/admin.css') }}">

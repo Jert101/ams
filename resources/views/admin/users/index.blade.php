@@ -55,7 +55,7 @@
     
     <div class="bg-white shadow-md rounded-lg overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full bg-white">
+            <table class="min-w-full bg-white table-responsive">
                 <thead>
                     <tr>
                         <th class="py-3 px-6 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
@@ -71,11 +71,11 @@
                 <tbody class="divide-y divide-gray-200">
                     @forelse ($users as $user)
                         <tr>
-                            <td class="py-4 px-6 text-sm font-medium text-gray-900">{{ $user->name }}</td>
-                            <td class="py-4 px-6 text-sm text-gray-500">{{ $user->user_id }}</td>
-                            <td class="py-4 px-6 text-sm text-gray-500">{{ $user->email }}</td>
-                            <td class="py-4 px-6 text-sm text-gray-500">{{ $user->role ? $user->role->name : 'No Role' }}</td>
-                            <td class="py-4 px-6 text-sm text-gray-500">
+                            <td class="py-4 px-6 text-sm font-medium text-gray-900" data-label="Name">{{ $user->name }}</td>
+                            <td class="py-4 px-6 text-sm text-gray-500" data-label="User ID">{{ $user->user_id }}</td>
+                            <td class="py-4 px-6 text-sm text-gray-500" data-label="Email">{{ $user->email }}</td>
+                            <td class="py-4 px-6 text-sm text-gray-500" data-label="Role">{{ $user->role ? $user->role->name : 'No Role' }}</td>
+                            <td class="py-4 px-6 text-sm text-gray-500" data-label="QR Code">
                                 @if($user->qrCode)
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                         <i class="bi bi-check-circle-fill mr-1"></i> Generated
@@ -86,8 +86,8 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="py-4 px-6 text-sm text-gray-500">{{ $user->mobile_number ?? 'N/A' }}</td>
-                            <td class="py-4 px-6 text-sm text-gray-500">
+                            <td class="py-4 px-6 text-sm text-gray-500" data-label="Mobile">{{ $user->mobile_number ?? 'N/A' }}</td>
+                            <td class="py-4 px-6 text-sm text-gray-500" data-label="Status">
                                 @if($user->approval_status === 'approved')
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                         Approved
@@ -98,7 +98,7 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="py-4 px-6 text-sm font-medium">
+                            <td class="py-4 px-6 text-sm font-medium" data-label="Actions">
                                 <div class="flex space-x-2">
                                     <a href="{{ route('admin.users.show', $user) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
                                     <a href="{{ route('admin.users.edit', $user) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>

@@ -133,7 +133,7 @@
                 <div class="mb-8">
                     <h4 class="text-md font-medium mb-4">Current Sunday Mass Schedules</h4>
                     <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white border border-gray-200">
+                        <table class="min-w-full bg-white border border-gray-200 table-responsive">
                             <thead>
                                 <tr>
                                     <th class="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mass</th>
@@ -146,10 +146,10 @@
                                 @forelse($sundaySchedules as $order => $schedules)
                                     @foreach($schedules as $schedule)
                                         <tr>
-                                            <td class="py-2 px-4 border-b border-gray-200">{{ ucfirst($order) }} Mass</td>
-                                            <td class="py-2 px-4 border-b border-gray-200">{{ $schedule->formatted_start_time }} - {{ $schedule->formatted_end_time }}</td>
-                                            <td class="py-2 px-4 border-b border-gray-200">{{ $schedule->formatted_attendance_start_time }} - {{ $schedule->formatted_attendance_end_time }}</td>
-                                            <td class="py-2 px-4 border-b border-gray-200">
+                                            <td class="py-2 px-4 border-b border-gray-200" data-label="Mass">{{ ucfirst($order) }} Mass</td>
+                                            <td class="py-2 px-4 border-b border-gray-200" data-label="Time">{{ $schedule->formatted_start_time }} - {{ $schedule->formatted_end_time }}</td>
+                                            <td class="py-2 px-4 border-b border-gray-200" data-label="Attendance Window">{{ $schedule->formatted_attendance_start_time }} - {{ $schedule->formatted_attendance_end_time }}</td>
+                                            <td class="py-2 px-4 border-b border-gray-200" data-label="Status">
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $schedule->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                                     {{ $schedule->is_active ? 'Active' : 'Inactive' }}
                                                 </span>
@@ -172,7 +172,7 @@
                 <div class="mt-8">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Special Masses</h3>
                     <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white border border-gray-200">
+                        <table class="min-w-full bg-white border border-gray-200 table-responsive">
                             <thead>
                                 <tr>
                                     <th class="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
@@ -186,16 +186,16 @@
                             <tbody>
                                 @forelse($specialMasses as $mass)
                                     <tr>
-                                        <td class="py-2 px-4 border-b border-gray-200">{{ $mass->event->name }}</td>
-                                        <td class="py-2 px-4 border-b border-gray-200">{{ $mass->event->date->format('M d, Y') }}</td>
-                                        <td class="py-2 px-4 border-b border-gray-200">{{ $mass->formatted_start_time }} - {{ $mass->formatted_end_time }}</td>
-                                        <td class="py-2 px-4 border-b border-gray-200">{{ $mass->formatted_attendance_start_time }} - {{ $mass->formatted_attendance_end_time }}</td>
-                                        <td class="py-2 px-4 border-b border-gray-200">
+                                        <td class="py-2 px-4 border-b border-gray-200" data-label="Name">{{ $mass->event->name }}</td>
+                                        <td class="py-2 px-4 border-b border-gray-200" data-label="Date">{{ $mass->event->date->format('M d, Y') }}</td>
+                                        <td class="py-2 px-4 border-b border-gray-200" data-label="Time">{{ $mass->formatted_start_time }} - {{ $mass->formatted_end_time }}</td>
+                                        <td class="py-2 px-4 border-b border-gray-200" data-label="Attendance Window">{{ $mass->formatted_attendance_start_time }} - {{ $mass->formatted_attendance_end_time }}</td>
+                                        <td class="py-2 px-4 border-b border-gray-200" data-label="Status">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $mass->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                                 {{ $mass->is_active ? 'Active' : 'Inactive' }}
                                             </span>
                                         </td>
-                                        <td class="py-2 px-4 border-b border-gray-200">
+                                        <td class="py-2 px-4 border-b border-gray-200" data-label="Actions">
                                             <div class="flex space-x-2">
                                                 <a href="{{ route('admin.mass-schedules.edit', $mass) }}" class="text-blue-600 hover:text-blue-900">Edit</a>
                                                 <form method="POST" action="{{ route('admin.mass-schedules.destroy', $mass) }}" onsubmit="return confirm('Are you sure you want to delete this mass schedule?');">
