@@ -2,18 +2,17 @@
 // move-profile-photos-to-public.php
 // Run this script from the project root (where artisan is)
 
-use Illuminate\Database\Capsule\Manager as DB;
+use App\Models\User;
 
 require __DIR__ . '/vendor/autoload.php';
 
-// Bootstrap Laravel (if not already)
+// Bootstrap Laravel
 $app = require_once __DIR__.'/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
 // Get all users with a profile photo path set (not kofa.png)
-$users = DB::table('users')
-    ->whereNotNull('profile_photo_path')
+$users = User::whereNotNull('profile_photo_path')
     ->where('profile_photo_path', '!=', 'kofa.png')
     ->get();
 
@@ -48,7 +47,8 @@ foreach ($users as $user) {
 
     // Update DB if needed
     if ($user->profile_photo_path !== $filename) {
-        DB::table('users')->where('id', $user->id)->update(['profile_photo_path' => $filename]);
+        $user->profile_photo_path = $filename;
+        $user->save();
         echo "[DB] Updated user {$user->id} profile_photo_path to $filename\n";
     }
 }
