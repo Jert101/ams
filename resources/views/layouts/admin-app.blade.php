@@ -51,6 +51,10 @@
         <!-- Profile Photo Fix Script -->
         <script src="{{ asset('js/profile-photo-fix.js') }}"></script>
         
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/profile-photo-fix.css') }}">
+        
         <style>
             /* Variables */
             :root {

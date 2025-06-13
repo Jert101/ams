@@ -1,0 +1,47 @@
+/* Profile Photo Fix CSS */
+
+/* Ensure profile photos are always visible */
+img.profile-user-img,
+img[alt*="profile photo"],
+img[alt*="profile picture"],
+.rounded-full img {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Add a subtle border to empty profile photos */
+img.profile-user-img:not([src]),
+img.profile-user-img[src=""],
+img[alt*="profile photo"]:not([src]),
+img[alt*="profile photo"][src=""],
+img[alt*="profile picture"]:not([src]),
+img[alt*="profile picture"][src=""] {
+    border: 2px dashed #ccc;
+    background-color: #f8f8f8;
+    min-width: 32px;
+    min-height: 32px;
+}
+
+/* Fix for profile photo containers */
+.rounded-full {
+    overflow: hidden;
+    position: relative;
+}
+
+/* Ensure images in rounded containers fill the space */
+.rounded-full img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Fix for Safari and Firefox */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    img.profile-user-img,
+    img[alt*="profile photo"],
+    img[alt*="profile picture"] {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+} 

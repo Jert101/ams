@@ -210,24 +210,27 @@ class User extends Authenticatable
         // Get the filename from the path
         $filename = basename($this->profile_photo_path);
         
+        // Add cache busting parameter
+        $cacheBuster = '?v=' . time();
+        
         // Check if file exists in root level profile-photos directory
         if (file_exists(base_path('profile-photos/' . $filename))) {
-            return url('profile-photos/' . $filename);
+            return url('profile-photos/' . $filename) . $cacheBuster;
         }
         
         // Check if file exists in public/storage directory (symlinked)
         if (file_exists(public_path('storage/' . $this->profile_photo_path))) {
-            return asset('storage/' . $this->profile_photo_path);
+            return asset('storage/' . $this->profile_photo_path) . $cacheBuster;
         }
         
         // Check if file exists directly in public directory
         if (file_exists(public_path($this->profile_photo_path))) {
-            return asset($this->profile_photo_path);
+            return asset($this->profile_photo_path) . $cacheBuster;
         }
         
         // Check if file exists in public/profile-photos directory
         if (file_exists(public_path('profile-photos/' . $filename))) {
-            return asset('profile-photos/' . $filename);
+            return asset('profile-photos/' . $filename) . $cacheBuster;
         }
         
         // Fallback to default

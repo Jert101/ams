@@ -17,6 +17,11 @@
             )) {
                 console.log("Found profile photo:", img.src);
                 
+                // Save original src for reference
+                if (!img.dataset.originalSrc) {
+                    img.dataset.originalSrc = img.src;
+                }
+                
                 // Fix external domain URLs
                 if (img.src.includes('ckpkofa-network.ct.ws')) {
                     // Extract filename from URL
@@ -24,24 +29,24 @@
                     var filename = urlParts.pop().split('?')[0];
                     
                     // For root level profile-photos directory
-                    img.src = '/ams/profile-photos/' + filename;
+                    img.src = '/profile-photos/' + filename;
                     console.log("Fixed image path to root level:", img.src);
                     
                     // Add error handler for fallbacks
                     img.onerror = function() {
                         console.log("Root path failed, trying public path...");
-                        this.src = '/ams/public/profile-photos/' + filename;
+                        this.src = '/public/profile-photos/' + filename;
                         console.log("Trying public path:", this.src);
                         
                         // Add another error handler for final fallback
                         this.onerror = function() {
                             console.log("Public path failed, trying storage path...");
-                            this.src = '/ams/public/storage/profile-photos/' + filename;
+                            this.src = '/public/storage/profile-photos/' + filename;
                             
                             // Final fallback to default image
                             this.onerror = function() {
                                 console.log("All paths failed, using default image");
-                                this.src = '/ams/public/img/kofa.png';
+                                this.src = '/public/img/kofa.png';
                             };
                         };
                     };
@@ -49,19 +54,42 @@
                 // Also fix storage URLs to use root path
                 else if (img.src.includes('/storage/profile-photos/') || img.src.includes('/public/profile-photos/')) {
                     var filename = img.src.split('/').pop().split('?')[0];
-                    img.src = '/ams/profile-photos/' + filename;
+                    img.src = '/profile-photos/' + filename;
                     console.log("Converted to root path:", img.src);
                     
                     // Add error handler for fallback
                     img.onerror = function() {
                         console.log("Root path failed, using default image");
-                        this.src = '/ams/public/img/kofa.png';
+                        this.src = '/public/img/kofa.png';
                     };
                 }
                 
                 // Make sure image is visible
                 img.style.display = "block";
                 img.style.visibility = "visible";
+                
+                // Prevent image from being hidden later
+                img.addEventListener('error', function() {
+                    if (this.src !== '/public/img/kofa.png' && this.dataset.originalSrc) {
+                        console.log("Image error detected, trying original src:", this.dataset.originalSrc);
+                        this.src = this.dataset.originalSrc;
+                    }
+                });
+                
+                // Monitor for style changes that might hide the image
+                var observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.attributeName === 'style') {
+                            if (img.style.display === 'none' || img.style.visibility === 'hidden') {
+                                console.log("Image was hidden, making visible again");
+                                img.style.display = "block";
+                                img.style.visibility = "visible";
+                            }
+                        }
+                    });
+                });
+                
+                observer.observe(img, { attributes: true });
             }
         });
     }
@@ -78,6 +106,9 @@
     
     // And run again after a longer delay to catch any late-loading images
     setTimeout(fixProfilePhotos, 2000);
+    
+    // Run periodically to ensure images stay visible
+    setInterval(fixProfilePhotos, 5000);
     
     // Add a MutationObserver to watch for dynamically added images
     var observer = new MutationObserver(function(mutations) {
