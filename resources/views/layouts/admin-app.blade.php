@@ -48,6 +48,9 @@
         <!-- jQuery (needed for some Bootstrap components) -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         
+        <!-- Profile Photo Fix Script -->
+        <script src="{{ asset('js/profile-photo-fix.js') }}"></script>
+        
         <style>
             /* Variables */
             :root {

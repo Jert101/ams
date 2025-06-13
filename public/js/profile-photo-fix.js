@@ -2,59 +2,54 @@
 (function() {
     // Function to fix profile photos
     function fixProfilePhotos() {
-        // Find the profile photo section
-        var profileSections = Array.from(document.querySelectorAll("label, div"))
-            .filter(function(el) {
-                return el.textContent.includes("Profile Photo");
-            });
+        // Find all profile photo images
+        var profilePhotos = document.querySelectorAll('img');
         
-        profileSections.forEach(function(section) {
-            // Find the container
-            var parent = section.parentElement;
-            var container = parent.querySelector(".profile-photo-container");
-            
-            if (container) {
-                // Check for existing images
-                var img = container.querySelector("img");
-                if (img) {
-                    // Make sure image is visible
-                    img.style.display = "block";
-                    img.style.visibility = "visible";
-                    img.style.width = "100%";
-                    img.style.height = "100%";
-                    img.style.objectFit = "cover";
+        profilePhotos.forEach(function(img) {
+            // Check if the image is a profile photo
+            if (img.src && (
+                img.src.includes('profile-photos') || 
+                img.classList.contains('profile-user-img') ||
+                img.alt && img.alt.includes('profile photo')
+            )) {
+                console.log("Found profile photo:", img.src);
+                
+                // Fix external domain URLs
+                if (img.src.includes('ckpkofa-network.ct.ws/profile-photos')) {
+                    // Extract filename from URL
+                    var filename = img.src.split('/').pop().split('?')[0];
                     
-                    // Add error handler
+                    // First try to load from local storage path
+                    img.src = '/storage/profile-photos/' + filename;
+                    console.log("Fixed image path to storage:", img.src);
+                    
+                    // Add error handler to try public path if storage fails
                     img.onerror = function() {
-                        this.src = "/img/kofa.png";
+                        this.src = '/profile-photos/' + filename;
+                        console.log("Trying public path:", this.src);
+                        
+                        // Add another error handler for final fallback
+                        this.onerror = function() {
+                            this.src = '/img/kofa.png';
+                            console.log("Using default image");
+                        };
                     };
-                } else {
-                    // Create default image
-                    var newImg = document.createElement("img");
-                    newImg.src = "/img/kofa.png";
-                    newImg.alt = "Profile Photo";
-                    newImg.style.width = "100%";
-                    newImg.style.height = "100%";
-                    newImg.style.objectFit = "cover";
-                    
-                    // Add to container
-                    container.appendChild(newImg);
                 }
                 
-                // Make container visible
-                container.style.display = "block";
-                container.style.width = "100px";
-                container.style.height = "100px";
-                container.style.borderRadius = "50%";
-                container.style.overflow = "hidden";
+                // Make sure image is visible
+                img.style.display = "block";
+                img.style.visibility = "visible";
             }
         });
     }
     
-    // Run the fix
-    fixProfilePhotos();
+    // Run the fix when DOM is loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixProfilePhotos);
+    } else {
+        fixProfilePhotos();
+    }
     
-    // Also run after DOM loaded and with a delay
-    document.addEventListener("DOMContentLoaded", fixProfilePhotos);
-    setTimeout(fixProfilePhotos, 500);
+    // Also run after a short delay to catch dynamically loaded images
+    setTimeout(fixProfilePhotos, 1000);
 })();
