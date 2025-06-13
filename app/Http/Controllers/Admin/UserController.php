@@ -207,60 +207,32 @@ class UserController extends Controller
         }
         
         // Handle profile photo upload
-        if (
-            $request->hasFile('profile_photo') &&
-            $request->file('profile_photo')->isValid()
-        ) {
+        if ($request->hasFile('profile_photo')) {
             \Log::info('Profile photo upload detected', [
                 'original_name' => $request->file('profile_photo')->getClientOriginalName(),
                 'mime_type' => $request->file('profile_photo')->getMimeType(),
                 'size' => $request->file('profile_photo')->getSize(),
-                'error' => $request->file('profile_photo')->getError(),
-                'tmp_path' => $request->file('profile_photo')->getRealPath(),
+                'error' => $request->file('profile_photo')->getError()
             ]);
 
             try {
                 // Delete old photo if exists and it's not the default
                 if ($user->profile_photo_path && $user->profile_photo_path !== 'kofa.png') {
                     \Log::info('Attempting to delete old photo', ['old_path' => $user->profile_photo_path]);
-                    // Try both public and storage
-                    $publicPath = public_path($user->profile_photo_path);
-                    if (file_exists($publicPath)) {
-                        unlink($publicPath);
-                        \Log::info('Deleted old photo from public', ['path' => $publicPath]);
-                    }
+                    Storage::disk('public')->delete($user->profile_photo_path);
                 }
-
+                
                 // Store the file
                 $file = $request->file('profile_photo');
                 $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
                 $relativePath = 'profile-photos/' . $filename;
-
+                
                 // Save directly to public/profile-photos
                 $publicProfilePhotosPath = public_path('profile-photos');
                 if (!file_exists($publicProfilePhotosPath)) {
                     mkdir($publicProfilePhotosPath, 0777, true);
-                    \Log::info('Created public/profile-photos directory', ['path' => $publicProfilePhotosPath]);
                 }
-                $fromPath = $file->getRealPath();
-                $toPath = $publicProfilePhotosPath . '/' . $filename;
-                $moved = $file->move($publicProfilePhotosPath, $filename);
-                \Log::info('Attempted to move uploaded file', [
-                    'from' => $fromPath,
-                    'to' => $toPath,
-                    'moved' => $moved ? 'yes' : 'no',
-                ]);
-
-                // Check if file exists after move
-                if (file_exists($toPath)) {
-                    \Log::info('Profile photo successfully saved', ['path' => $toPath]);
-                } else {
-                    \Log::error('Profile photo move failed', [
-                        'path' => $toPath,
-                        'dir_writable' => is_writable($publicProfilePhotosPath),
-                        'parent_writable' => is_writable(dirname($publicProfilePhotosPath)),
-                    ]);
-                }
+                $file->move($publicProfilePhotosPath, $filename);
 
                 // Update user data with the relative path
                 $userData['profile_photo_path'] = $relativePath;

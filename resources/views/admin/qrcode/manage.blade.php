@@ -38,7 +38,7 @@
             <div class="border-b border-gray-200 p-4">
                 <div class="flex items-center mb-3">
                     <div class="flex-shrink-0 h-10 w-10 mr-3">
-                        <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
+                        <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" src="{{ asset('storage/profile-photos/' . $filename) }}" alt="{{ $user->name }}" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
                     </div>
                     <div>
                         <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
@@ -129,7 +129,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10">
-                                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
+                                    <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" src="{{ asset('storage/profile-photos/' . $filename) }}" alt="{{ $user->name }}" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
                                 </div>
                                 <div class="ml-4">
                                     <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>

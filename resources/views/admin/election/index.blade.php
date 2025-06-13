@@ -832,9 +832,9 @@
                                                 @endphp
                                                 
                                                 <div class="me-3">
-                                                    @if($candidate->user && $candidate->user->profile_photo_url)
-                                                        <img src="{{ $candidate->user->profile_photo_url }}" alt="{{ $candidate->user->name }}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
-                                                    @endif
+                                                    <img src="{{ $profilePhotoUrl }}" 
+                                                         alt="{{ $candidateName }}" class="rounded-circle" 
+                                                         width="40" height="40">
                                                 </div>
                                                 <div>
                                                     {{ $candidateName }}

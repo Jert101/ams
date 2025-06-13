@@ -56,7 +56,13 @@
             <div class="flex flex-col sm:flex-row">
                 <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md mr-8 flex-shrink-0 mx-auto sm:mx-0 mb-4 sm:mb-0">
                     <!-- User Profile Image -->
-                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-24 h-24 rounded-full object-cover" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
+                    @if($user->profile_photo_path)
+                        <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover" />
+                    @else
+                        <div class="w-full h-full bg-gradient-to-r from-gray-300 to-gray-200 flex items-center justify-center text-xl font-bold text-white">
+                            {{ strtoupper(substr($user->name, 0, 1)) }}{{ strtoupper(substr(explode(' ', $user->name)[1] ?? '', 0, 1)) }}
+                        </div>
+                    @endif
                 </div>
                 <div class="flex-1 sm:ml-4">
                     <h3 class="text-xl font-bold text-gray-800 text-center sm:text-left auto-text-size mb-1" data-max-size="text-xl" data-min-size="text-base">{{ $user->name }}</h3>
