@@ -101,9 +101,21 @@ class UserController extends Controller
 
         // Handle profile photo upload
         if ($request->hasFile('profile_photo')) {
+            // Store in storage/app/public/profile-photos
             $path = $request->file('profile_photo')->store('profile-photos', 'public');
             $user->profile_photo_path = $path;
             $user->save();
+            
+            // Also copy to public/profile-photos for direct access
+            $file = $request->file('profile_photo');
+            $filename = pathinfo($path, PATHINFO_BASENAME);
+            $publicProfilePhotosPath = public_path('profile-photos');
+            
+            if (!file_exists($publicProfilePhotosPath)) {
+                mkdir($publicProfilePhotosPath, 0777, true);
+            }
+            
+            $file->move($publicProfilePhotosPath, $filename);
         }
 
         // Generate QR code for the user
@@ -229,16 +241,16 @@ class UserController extends Controller
                 if ($file->move($storagePath, $filename)) {
                     \Log::info('File moved successfully', ['path' => $storagePath . '/' . $filename]);
                     
-                    // Make a copy in public/storage directory
-                    $publicStoragePath = public_path('storage/profile-photos');
-                    if (!file_exists($publicStoragePath)) {
-                        mkdir($publicStoragePath, 0777, true);
+                    // Make a copy in public/profile-photos directory
+                    $publicProfilePhotosPath = public_path('profile-photos');
+                    if (!file_exists($publicProfilePhotosPath)) {
+                        mkdir($publicProfilePhotosPath, 0777, true);
                     }
                     
-                    if (copy($storagePath . '/' . $filename, $publicStoragePath . '/' . $filename)) {
-                        \Log::info('File copied to public storage', ['path' => $publicStoragePath . '/' . $filename]);
+                    if (copy($storagePath . '/' . $filename, $publicProfilePhotosPath . '/' . $filename)) {
+                        \Log::info('File copied to public profile-photos', ['path' => $publicProfilePhotosPath . '/' . $filename]);
                     } else {
-                        \Log::warning('Failed to copy file to public storage');
+                        \Log::warning('Failed to copy file to public profile-photos');
                     }
                     
                     // Update user data with the relative path

@@ -63,14 +63,26 @@ class ProfileController extends Controller
             try {
                 $uploadedFile = $request->file('profile_photo');
                 if ($uploadedFile->isValid()) {
+                    // Store in storage/app/public/profile-photos
+                    $path = $uploadedFile->store('profile-photos', 'public');
+                    
+                    // Also copy to public/profile-photos for direct access
                     $extension = $uploadedFile->getClientOriginalExtension();
-                    $filename = time() . '-' . uniqid() . '.' . $extension;
+                    $filename = pathinfo($path, PATHINFO_BASENAME);
                     $publicPath = public_path('profile-photos');
+                    
                     if (!file_exists($publicPath)) {
                         mkdir($publicPath, 0777, true);
                     }
-                    $uploadedFile->move($publicPath, $filename);
-                    $user->profile_photo_path = 'public/profile-photos/' . $filename;
+                    
+                    if (copy(storage_path('app/public/' . $path), $publicPath . '/' . $filename)) {
+                        Log::info('File copied to public profile-photos', ['path' => $publicPath . '/' . $filename]);
+                    } else {
+                        Log::warning('Failed to copy file to public profile-photos');
+                    }
+                    
+                    // Update user with the relative path (without 'public/')
+                    $user->profile_photo_path = $path;
                     Log::info('User profile_photo_path updated to: ' . $user->profile_photo_path);
                 } else {
                     Log::error('Uploaded file is not valid');
