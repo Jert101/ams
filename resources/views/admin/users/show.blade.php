@@ -22,7 +22,13 @@
                     
                     <!-- Profile Photo -->
                     <div class="mb-6 flex justify-center md:justify-start">
-                        <img src="{{ $user->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ $user->name }}'s profile photo" class="h-32 w-32 object-cover rounded-full border-4 border-red-200">
+                        @php
+                            $photoPath = $user->profile_photo_path;
+                            $photoUrl = empty($photoPath) ? asset('img/kofa.png') : 
+                                        ($photoPath === 'kofa.png' ? asset('img/kofa.png') : 
+                                        asset('storage/' . $photoPath));
+                        @endphp
+                        <img src="{{ $photoUrl }}" alt="{{ $user->name }}'s profile photo" class="h-32 w-32 object-cover rounded-full border-4 border-red-200 profile-user-img">
                     </div>
                     
                     <div class="mb-4">

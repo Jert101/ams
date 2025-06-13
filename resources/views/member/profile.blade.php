@@ -12,7 +12,13 @@
                     <!-- Profile Photo -->
                     <div class="mb-4 relative">
                         <div class="h-32 w-32 rounded-full border-4 border-[#FFD700] overflow-hidden">
-                            <img src="{{ Auth::user()->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ Auth::user()->name }}" class="h-full w-full object-cover">
+                            @php
+                                $photoPath = Auth::user()->profile_photo_path;
+                                $photoUrl = empty($photoPath) ? asset('img/kofa.png') : 
+                                            ($photoPath === 'kofa.png' ? asset('img/kofa.png') : 
+                                            asset('storage/' . $photoPath));
+                            @endphp
+                            <img src="{{ $photoUrl }}" alt="{{ Auth::user()->name }}" class="h-full w-full object-cover profile-user-img">
                         </div>
                     </div>
                     
