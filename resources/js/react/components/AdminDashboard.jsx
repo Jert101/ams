@@ -65,6 +65,11 @@ const AdminDashboard = ({
   
   // Helper function to get the profile photo URL
   const getProfilePhotoUrl = (user) => {
+    // First check if the profile_photo_url is already provided
+    if (user.profile_photo_url) {
+      return user.profile_photo_url;
+    }
+    
     // Check if user has a profile photo path
     if (user.profile_photo_path) {
       // Check if it's the default logo
@@ -85,7 +90,12 @@ const AdminDashboard = ({
       }
       
       // Check for storage path
-      return `/storage/${user.profile_photo_path}${cacheBuster}`;
+      if (user.profile_photo_path.includes('profile-photos/')) {
+        return `/storage/${user.profile_photo_path}${cacheBuster}`;
+      }
+      
+      // Try direct path
+      return `/profile-photos/${filename}${cacheBuster}`;
     }
     
     // Default fallback
@@ -270,7 +280,7 @@ const AdminDashboard = ({
                             <div className="flex-shrink-0 h-10 w-10">
                               <img 
                                 className="h-10 w-10 rounded-full object-cover" 
-                                src={getProfilePhotoUrl(user)} 
+                                src={user.profile_photo_url || getProfilePhotoUrl(user)} 
                                 alt={user.name}
                                 onError={(e) => {
                                   e.target.onerror = null;

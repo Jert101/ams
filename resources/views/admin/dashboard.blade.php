@@ -163,7 +163,7 @@
                                                         <div class="flex items-center">
                                                             <div class="flex-shrink-0 h-10 w-10">
                                                                 <img class="h-10 w-10 rounded-full object-cover" 
-                                                                    src="{{ $user->profile_photo_url }}" 
+                                                                    src="{{ $user['profile_photo_url'] }}" 
                                                                     alt="{{ $user['name'] }}"
                                                                     onerror="this.onerror=null; this.src='{{ asset('img/kofa.png') }}';">
                                                             </div>
@@ -207,6 +207,11 @@
     </div>
 </x-app-layout>
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/profile-photo-fix.css') }}">
+@endpush
+
 @push('scripts')
+<script src="{{ asset('js/profile-photo-fix.js') }}"></script>
 <script src="{{ asset('js/admin-dashboard-fix.js') }}"></script>
 @endpush
