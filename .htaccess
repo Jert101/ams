@@ -13,6 +13,9 @@ DirectoryIndex index.php
 
     # Handle direct access to public assets
     RewriteRule ^(css|js|fonts|images)/(.*)$ public/$1/$2 [L]
+    
+    # Allow direct access to profile photos
+    RewriteRule ^profile-photos/(.*)$ profile-photos/$1 [L]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
@@ -39,6 +42,25 @@ DirectoryIndex index.php
     Allow from all
     Satisfy any
 </Files>
+
+# Allow access to image files
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+    Order allow,deny
+    Allow from all
+    Satisfy any
+</FilesMatch>
+
+# Special permissions for profile-photos directory
+<Directory "profile-photos">
+    Options FollowSymLinks
+    AllowOverride All
+    Require all granted
+    
+    # Allow direct access to files
+    <IfModule mod_rewrite.c>
+        RewriteEngine Off
+    </IfModule>
+</Directory>
 
 # Enable compression for better performance
 <IfModule mod_deflate.c>
