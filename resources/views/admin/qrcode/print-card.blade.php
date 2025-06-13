@@ -56,8 +56,7 @@
             <div class="flex flex-col sm:flex-row">
                 <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md mr-8 flex-shrink-0 mx-auto sm:mx-0 mb-4 sm:mb-0">
                     <!-- User Profile Image -->
-                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-24 h-24 rounded-full object-cover">
-                    <p style="font-size:10px;word-break:break-all;">Photo URL: {{ $user->profile_photo_url }}</p>
+                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-24 h-24 rounded-full object-cover" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
                 </div>
                 <div class="flex-1 sm:ml-4">
                     <h3 class="text-xl font-bold text-gray-800 text-center sm:text-left auto-text-size mb-1" data-max-size="text-xl" data-min-size="text-base">{{ $user->name }}</h3>
@@ -114,11 +113,13 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Generate QR code with responsive sizing
         const qrCodeContainer = document.getElementById('qrcode-container');
+        
         // Determine QR code size based on screen width
         let qrSize = 200; // Default size
         if (window.innerWidth < 640) {
             qrSize = Math.min(window.innerWidth - 100, 200); // Responsive but not too small
         }
+        
         const qrCode = new QRCode(qrCodeContainer, {
             text: "{{ $qrCode->code }}",
             width: qrSize,
@@ -127,12 +128,15 @@
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H
         });
+        
         // Handle window resize for responsiveness
         window.addEventListener('resize', function() {
             adjustLayout();
         });
+        
         // Initial layout adjustment
         adjustLayout();
+        
         function adjustLayout() {
             // Adjust QR code container if needed
             if (window.innerWidth < 640) {
@@ -144,11 +148,14 @@
                 qrCodeContainer.style.height = '200px';
             }
         }
+        
         // Download card as image
         document.getElementById('download-card-btn').addEventListener('click', function() {
             // Show loading indicator
             this.innerHTML = '<svg class="animate-spin h-5 w-5 text-white inline-block mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...';
+            
             const card = document.getElementById('printable-card');
+            
             // We need to wait for QR code to render completely
             setTimeout(() => {
                 html2canvas(card, {
@@ -175,24 +182,29 @@
                     link.download = 'qr-card-{{ $user->user_id }}.png';
                     link.href = canvas.toDataURL('image/png');
                     link.click();
+                    
                     // Reset button text
                     document.getElementById('download-card-btn').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> Download as Image';
                 });
             }, 500);
         });
+        
         // Automatically adjust font size based on content
         function adjustTextSizes() {
             const elements = document.querySelectorAll('.auto-text-size');
             elements.forEach(element => {
                 const maxSize = element.getAttribute('data-max-size') || 'text-xl';
                 const minSize = element.getAttribute('data-min-size') || 'text-base';
+                
                 // Reset to maximum size first
                 element.classList.remove('text-base', 'text-lg', 'text-xl');
                 element.classList.add(maxSize);
+                
                 // Check if text is overflowing
                 if (element.scrollWidth > element.clientWidth) {
                     element.classList.remove(maxSize);
                     element.classList.add('text-lg');
+                    
                     // Check again, if still overflowing, use minimum size
                     if (element.scrollWidth > element.clientWidth) {
                         element.classList.remove('text-lg');
@@ -201,6 +213,7 @@
                 }
             });
         }
+        
         // Run on load and on resize
         adjustTextSizes();
         window.addEventListener('resize', adjustTextSizes);
