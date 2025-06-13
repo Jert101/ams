@@ -26,7 +26,7 @@
                             $photoPath = $user->profile_photo_path;
                             $photoUrl = empty($photoPath) ? asset('img/kofa.png') : 
                                         ($photoPath === 'kofa.png' ? asset('img/kofa.png') : 
-                                        asset('profile-photos/' . basename($photoPath)));
+                                        url('profile-photos/' . basename($photoPath)));
                         @endphp
                         <img src="{{ $photoUrl }}" alt="{{ $user->name }}'s profile photo" class="h-32 w-32 object-cover rounded-full border-4 border-red-200 profile-user-img">
                     </div>

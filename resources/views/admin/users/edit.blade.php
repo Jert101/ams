@@ -172,7 +172,7 @@
                                 $photoPath = $user->profile_photo_path;
                                 $photoUrl = empty($photoPath) ? asset('kofa.png') : 
                                             ($photoPath === 'kofa.png' ? asset('kofa.png') : 
-                                            asset('profile-photos/' . basename($photoPath)));
+                                            url('profile-photos/' . basename($photoPath)));
                                 // Add cache busting parameter
                                 $photoUrl = $photoUrl . '?v=' . time();
                             @endphp

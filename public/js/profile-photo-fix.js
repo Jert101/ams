@@ -23,36 +23,39 @@
                     var urlParts = img.src.split('/');
                     var filename = urlParts.pop().split('?')[0];
                     
-                    // Check if the URL contains 'storage/profile-photos' or just 'profile-photos'
-                    var hasStorage = img.src.includes('/storage/profile-photos/');
+                    // For root level profile-photos directory
+                    img.src = '/ams/profile-photos/' + filename;
+                    console.log("Fixed image path to root level:", img.src);
                     
-                    // For InfinityFree hosting, prioritize direct public path
-                    img.src = '/profile-photos/' + filename;
-                    console.log("Fixed image path to public:", img.src);
-                    
-                    // Add error handler to try storage path if public fails
+                    // Add error handler for fallbacks
                     img.onerror = function() {
-                        console.log("Public path failed, trying storage path...");
-                        this.src = '/storage/profile-photos/' + filename;
-                        console.log("Trying storage path:", this.src);
+                        console.log("Root path failed, trying public path...");
+                        this.src = '/ams/public/profile-photos/' + filename;
+                        console.log("Trying public path:", this.src);
                         
                         // Add another error handler for final fallback
                         this.onerror = function() {
-                            console.log("Storage path failed, using default image");
-                            this.src = '/img/kofa.png';
+                            console.log("Public path failed, trying storage path...");
+                            this.src = '/ams/public/storage/profile-photos/' + filename;
+                            
+                            // Final fallback to default image
+                            this.onerror = function() {
+                                console.log("All paths failed, using default image");
+                                this.src = '/ams/public/img/kofa.png';
+                            };
                         };
                     };
                 }
-                // Also fix storage URLs to use public path
-                else if (img.src.includes('/storage/profile-photos/')) {
+                // Also fix storage URLs to use root path
+                else if (img.src.includes('/storage/profile-photos/') || img.src.includes('/public/profile-photos/')) {
                     var filename = img.src.split('/').pop().split('?')[0];
-                    img.src = '/profile-photos/' + filename;
-                    console.log("Converted storage path to public path:", img.src);
+                    img.src = '/ams/profile-photos/' + filename;
+                    console.log("Converted to root path:", img.src);
                     
                     // Add error handler for fallback
                     img.onerror = function() {
-                        console.log("Public path failed, using default image");
-                        this.src = '/img/kofa.png';
+                        console.log("Root path failed, using default image");
+                        this.src = '/ams/public/img/kofa.png';
                     };
                 }
                 
@@ -87,7 +90,8 @@
                         if (node.tagName === 'IMG') {
                             // If it's an image, check if it needs fixing
                             if (node.src && (node.src.includes('ckpkofa-network.ct.ws') || 
-                                             node.src.includes('/storage/profile-photos/'))) {
+                                             node.src.includes('/storage/profile-photos/') ||
+                                             node.src.includes('/public/profile-photos/'))) {
                                 fixProfilePhotos();
                                 break;
                             }
