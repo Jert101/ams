@@ -44,4 +44,88 @@ img[alt*="profile picture"][src=""] {
         -webkit-transform: translateZ(0);
         transform: translateZ(0);
     }
+}
+
+/* Fix for profile photos in tables */
+.flex-shrink-0 img.rounded-full {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #f3f4f6;
+}
+
+/* Fix for profile photos that fail to load */
+img.rounded-full {
+  min-width: 40px;
+  min-height: 40px;
+  background-color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+img.rounded-full::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/img/kofa.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+img.rounded-full:not([src]), 
+img.rounded-full[src=""], 
+img.rounded-full[src="null"], 
+img.rounded-full[src="undefined"] {
+  visibility: hidden;
+}
+
+img.rounded-full:not([src])::after, 
+img.rounded-full[src=""]::after, 
+img.rounded-full[src="null"]::after, 
+img.rounded-full[src="undefined"]::after {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Fix for profile photos in mobile view */
+@media (max-width: 640px) {
+  .flex-shrink-0 {
+    margin-right: 0.5rem;
+  }
+  
+  .flex-shrink-0 img.rounded-full {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* SVG fallback for profile photos */
+.profile-photo-fallback {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #b91c1c;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Fix for profile photos in navbar */
+.navbar-profile-photo {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #f3f4f6;
 } 

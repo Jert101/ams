@@ -24,11 +24,17 @@ class DashboardController extends Controller
         $totalNotifications = Notification::count();
         $pendingRegistrations = User::where('approval_status', 'pending')->count();
         
-        // Get recent users
-        $recentUsers = User::with('role')
+        // Get recent users with eager loading to avoid N+1 queries
+        $recentUsers = User::with(['role', 'qrCode'])
             ->latest()
             ->take(5)
-            ->get();
+            ->get()
+            ->map(function($user) {
+                // Add profile_photo_url to the array
+                $userData = $user->toArray();
+                $userData['profile_photo_url'] = $user->profile_photo_url;
+                return $userData;
+            });
             
         // Get upcoming events
         $upcomingEvents = Event::where('date', '>=', now()->format('Y-m-d'))

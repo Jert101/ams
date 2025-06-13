@@ -139,7 +139,7 @@
                             
                             @if(count($recentUsers) > 0)
                                 <div class="overflow-x-auto">
-                                    <table class="min-w-full divide-y divide-gray-200">
+                                    <table class="min-w-full divide-y divide-gray-200 table-responsive">
                                         <thead class="bg-gray-50">
                                             <tr>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -159,32 +159,27 @@
                                         <tbody class="bg-white divide-y divide-gray-200">
                                             @foreach($recentUsers as $user)
                                                 <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                    <td class="px-6 py-4 whitespace-nowrap" data-label="Name">
                                                         <div class="flex items-center">
                                                             <div class="flex-shrink-0 h-10 w-10">
-                                                                @if(isset($user['profile_photo_path']))
-                                                                    @if($user['profile_photo_path'] === 'kofa.png')
-                                                                        <img class="h-10 w-10 rounded-full" src="{{ asset('kofa.png') }}" alt="{{ $user['name'] }}">
-                                                                    @else
-                                                                    <img class="h-10 w-10 rounded-full" src="{{ '/storage/' . $user['profile_photo_path'] }}" alt="{{ $user['name'] }}">
-                                                                    @endif
-                                                                @else
-                                                                    <img class="h-10 w-10 rounded-full" src="{{ asset('kofa.png') }}" alt="{{ $user['name'] }}">
-                                                                @endif
+                                                                <img class="h-10 w-10 rounded-full object-cover" 
+                                                                    src="{{ $user->profile_photo_url }}" 
+                                                                    alt="{{ $user['name'] }}"
+                                                                    onerror="this.onerror=null; this.src='{{ asset('img/kofa.png') }}';">
                                                             </div>
                                                             <div class="ml-4">
                                                                 <div class="text-sm font-medium text-gray-900">{{ $user['name'] }}</div>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                    <td class="px-6 py-4 whitespace-nowrap" data-label="Email">
                                                         <div class="text-sm text-gray-900">{{ $user['email'] }}</div>
                                                     </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                    <td class="px-6 py-4 whitespace-nowrap" data-label="Role">
                                                         <div class="text-sm text-gray-900">{{ $user['role']['name'] ?? 'No Role' }}</div>
                                                     </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        @if(isset($user['approved']) && $user['approved'])
+                                                    <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
+                                                        @if($user['approval_status'] === 'approved')
                                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                                 Approved
                                                             </span>
@@ -211,3 +206,7 @@
         </div>
     </div>
 </x-app-layout>
+
+@push('scripts')
+<script src="{{ asset('js/admin-dashboard-fix.js') }}"></script>
+@endpush

@@ -65,13 +65,31 @@ const AdminDashboard = ({
   
   // Helper function to get the profile photo URL
   const getProfilePhotoUrl = (user) => {
+    // Check if user has a profile photo path
     if (user.profile_photo_path) {
+      // Check if it's the default logo
       if (user.profile_photo_path === 'kofa.png') {
-        return '/kofa.png';
+        return '/img/kofa.png';
       }
-      return `/storage/${user.profile_photo_path}`;
+      
+      // Get the filename from the path
+      const filename = user.profile_photo_path.split('/').pop();
+      
+      // Add cache busting parameter
+      const cacheBuster = `?v=${Date.now()}`;
+      
+      // Try different paths
+      // First check if it's a full path
+      if (user.profile_photo_path.startsWith('/')) {
+        return `${user.profile_photo_path}${cacheBuster}`;
+      }
+      
+      // Check for storage path
+      return `/storage/${user.profile_photo_path}${cacheBuster}`;
     }
-    return '/kofa.png'; // Default
+    
+    // Default fallback
+    return '/img/kofa.png';
   };
   
   return (
@@ -227,7 +245,7 @@ const AdminDashboard = ({
             
             {recentUsers && recentUsers.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
+                <table className="min-w-full divide-y divide-gray-200 table-responsive">
                   <thead className="bg-gray-50">
                     <tr>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -247,13 +265,17 @@ const AdminDashboard = ({
                   <tbody className="bg-white divide-y divide-gray-200">
                     {recentUsers.map((user, index) => (
                       <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap" data-label="Name">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-10 w-10">
                               <img 
-                                className="h-10 w-10 rounded-full" 
+                                className="h-10 w-10 rounded-full object-cover" 
                                 src={getProfilePhotoUrl(user)} 
-                                alt={user.name} 
+                                alt={user.name}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = '/img/kofa.png';
+                                }}
                               />
                             </div>
                             <div className="ml-4">
@@ -261,13 +283,13 @@ const AdminDashboard = ({
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap" data-label="Email">
                           <div className="text-sm text-gray-900">{user.email}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap" data-label="Role">
                           <div className="text-sm text-gray-900">{user.role?.name || 'No Role'}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap" data-label="Status">
                           {user.approval_status === 'approved' ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                               Approved
