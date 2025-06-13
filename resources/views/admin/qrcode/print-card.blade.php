@@ -57,6 +57,7 @@
                 <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md mr-8 flex-shrink-0 mx-auto sm:mx-0 mb-4 sm:mb-0">
                     <!-- User Profile Image -->
                     <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-24 h-24 rounded-full object-cover" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
+                    <p style="font-size:10px;word-break:break-all;">Photo URL: {{ $user->profile_photo_url }}</p>
                 </div>
                 <div class="flex-1 sm:ml-4">
                     <h3 class="text-xl font-bold text-gray-800 text-center sm:text-left auto-text-size mb-1" data-max-size="text-xl" data-min-size="text-base">{{ $user->name }}</h3>
