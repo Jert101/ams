@@ -25,14 +25,13 @@ class DashboardController extends Controller
         $pendingRegistrations = User::where('approval_status', 'pending')->count();
         
         // Get recent users with eager loading to avoid N+1 queries
-        $recentUsers = User::with(['role', 'qrCode'])
+        $recentUsers = User::with(['role'])
             ->latest()
             ->take(5)
             ->get()
             ->map(function($user) {
                 // Add profile_photo_url to the array
                 $userData = $user->toArray();
-                $userData['profile_photo_url'] = $user->profile_photo_url;
                 return $userData;
             });
             

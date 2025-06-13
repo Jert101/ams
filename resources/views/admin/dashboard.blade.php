@@ -7,22 +7,8 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <!-- React Dashboard -->
-            <div 
-                data-react-root 
-                data-component="AdminDashboard"
-                data-props='{
-                    "totalUsers": {{ $totalUsers }},
-                    "totalEvents": {{ $totalEvents }},
-                    "totalAttendances": {{ $totalAttendances }},
-                    "totalNotifications": {{ $totalNotifications }},
-                    "recentUsers": @json($recentUsers),
-                    "recentAttendances": @json($recentAttendances)
-                }'
-            ></div>
-
-            <!-- Fallback HTML Content (displayed if React fails) -->
-            <div id="admindashboard-fallback-content" style="display: none;" class="space-y-6">
+            <!-- Fallback HTML Content -->
+            <div id="admindashboard-content" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div class="bg-white rounded-lg shadow p-6">
                         <div class="flex items-center">
@@ -163,9 +149,8 @@
                                                         <div class="flex items-center">
                                                             <div class="flex-shrink-0 h-10 w-10">
                                                                 <img class="h-10 w-10 rounded-full object-cover" 
-                                                                    src="{{ $user['profile_photo_url'] }}" 
-                                                                    alt="{{ $user['name'] }}"
-                                                                    onerror="this.onerror=null; this.src='{{ asset('img/kofa.png') }}';">
+                                                                    src="{{ asset('img/kofa.png') }}" 
+                                                                    alt="{{ $user['name'] }}">
                                                             </div>
                                                             <div class="ml-4">
                                                                 <div class="text-sm font-medium text-gray-900">{{ $user['name'] }}</div>
@@ -179,15 +164,9 @@
                                                         <div class="text-sm text-gray-900">{{ $user['role']['name'] ?? 'No Role' }}</div>
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                                        @if($user['approval_status'] === 'approved')
-                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                                Approved
-                                                            </span>
-                                                        @else
-                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                                Pending
-                                                            </span>
-                                                        @endif
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                            Approved
+                                                        </span>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -209,9 +188,16 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/profile-photo-fix.css') }}">
+<style>
+    .flex-shrink-0 img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+</style>
 @endpush
 
 @push('scripts')
-<script src="{{ asset('js/profile-photo-fix.js') }}"></script>
-<script src="{{ asset('js/admin-dashboard-fix.js') }}"></script>
+<script src="{{ asset('js/dashboard-simple.js') }}"></script>
 @endpush

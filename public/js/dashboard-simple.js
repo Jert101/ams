@@ -1,14 +1,8 @@
 /**
- * Admin Dashboard Fix
- * This script ensures the dashboard displays correctly
+ * Simple Dashboard Script
+ * Ensures images load properly
  */
 document.addEventListener('DOMContentLoaded', function() {
-    // Make sure the dashboard content is visible
-    const dashboardContent = document.getElementById('admindashboard-content');
-    if (dashboardContent) {
-        dashboardContent.style.display = 'block';
-    }
-    
     // Apply consistent styling to profile images
     const profileImages = document.querySelectorAll('.flex-shrink-0 img');
     profileImages.forEach(function(img) {
