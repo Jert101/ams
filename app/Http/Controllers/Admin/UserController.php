@@ -101,32 +101,16 @@ class UserController extends Controller
 
         // Handle profile photo upload
         if ($request->hasFile('profile_photo')) {
-            // For root level profile-photos directory
             $file = $request->file('profile_photo');
             $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
             $relativePath = 'profile-photos/' . $filename;
-            
-            $rootProfilePhotosPath = base_path('profile-photos');
-            if (!file_exists($rootProfilePhotosPath)) {
-                mkdir($rootProfilePhotosPath, 0777, true);
-            }
-            
-            // Move to root (legacy)
-            $file->move($rootProfilePhotosPath, $filename);
-            
-            // Copy to storage for Laravel compatibility
-            $storagePath = storage_path('app/public/profile-photos');
-            if (!file_exists($storagePath)) {
-                mkdir($storagePath, 0777, true);
-            }
-            copy($rootProfilePhotosPath . '/' . $filename, $storagePath . '/' . $filename);
 
-            // NEW: Copy to public/profile-photos for web access
+            // Save directly to public/profile-photos
             $publicProfilePhotosPath = public_path('profile-photos');
             if (!file_exists($publicProfilePhotosPath)) {
                 mkdir($publicProfilePhotosPath, 0777, true);
             }
-            copy($rootProfilePhotosPath . '/' . $filename, $publicProfilePhotosPath . '/' . $filename);
+            $file->move($publicProfilePhotosPath, $filename);
 
             // Update user with the relative path
             $user->profile_photo_path = $relativePath;
@@ -243,26 +227,12 @@ class UserController extends Controller
                 $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
                 $relativePath = 'profile-photos/' . $filename;
                 
-                // For root level profile-photos directory
-                $rootProfilePhotosPath = base_path('profile-photos');
-                if (!file_exists($rootProfilePhotosPath)) {
-                    mkdir($rootProfilePhotosPath, 0777, true);
-                }
-                $file->move($rootProfilePhotosPath, $filename);
-                
-                // Also copy to storage for Laravel compatibility
-                $storagePath = storage_path('app/public/profile-photos');
-                if (!file_exists($storagePath)) {
-                    mkdir($storagePath, 0777, true);
-                }
-                copy($rootProfilePhotosPath . '/' . $filename, $storagePath . '/' . $filename);
-
-                // NEW: Copy to public/profile-photos for web access
+                // Save directly to public/profile-photos
                 $publicProfilePhotosPath = public_path('profile-photos');
                 if (!file_exists($publicProfilePhotosPath)) {
                     mkdir($publicProfilePhotosPath, 0777, true);
                 }
-                copy($rootProfilePhotosPath . '/' . $filename, $publicProfilePhotosPath . '/' . $filename);
+                $file->move($publicProfilePhotosPath, $filename);
 
                 // Update user data with the relative path
                 $userData['profile_photo_path'] = $relativePath;

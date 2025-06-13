@@ -76,8 +76,8 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-10 w-10">
-                                                @if ($user->profile_photo_path)
-                                                    <img class="h-10 w-10 rounded-full object-cover" src="{{ Storage::url($user->profile_photo_path) }}" alt="{{ $user->name }}">
+                                                @if ($user->profile_photo_url)
+                                                    <img class="h-10 w-10 rounded-full object-cover" src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}">
                                                 @else
                                                     <div class="h-10 w-10 rounded-full bg-red-700 flex items-center justify-center text-white font-bold">
                                                         {{ strtoupper(substr($user->name, 0, 1)) }}

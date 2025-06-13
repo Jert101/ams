@@ -187,10 +187,10 @@
                             
                             <!-- Actual profile photo (loads on top if available) -->
                             <img 
-                                src="{{ $photoUrl }}" 
+                                src="{{ $user->profile_photo_url }}" 
                                 alt="{{ $user->name }}'s profile photo" 
-                                class="absolute inset-0 h-full w-full object-cover profile-user-img"
-                                style="width: 96px; height: 96px; display: block !important; visibility: visible !important; opacity: 1 !important;"
+                                class="absolute inset-0 h-full w-full object-cover rounded-full border-4 border-red-200 profile-user-img"
+                                style="display: block !important; visibility: visible !important; opacity: 1 !important;"
                                 onerror="this.style.display='none';"
                             >
                         </div>

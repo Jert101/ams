@@ -29,7 +29,7 @@
                 <!-- Current Profile Photo -->
                 <div class="mb-4 relative" x-show="! photoPreview">
                     <div class="h-32 w-32 rounded-full border-4 border-red-200 shadow-md overflow-hidden">
-                        <img src="{{ $this->user->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ $this->user->name }}" class="h-full w-full object-cover">
+                        <img src="{{ $this->user->profile_photo_url }}" alt="{{ $this->user->name }}" class="h-20 w-20 rounded-full object-cover" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
                     </div>
                     <div class="absolute bottom-0 right-0 bg-red-600 rounded-full p-1 shadow-lg cursor-pointer hover:bg-red-700 transition-colors duration-200" x-on:click.prevent="$refs.photo.click()">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
