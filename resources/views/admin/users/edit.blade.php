@@ -170,13 +170,19 @@
                         <div class="h-24 w-24 rounded-full border-4 border-red-200 shadow-md overflow-hidden">
                             @php
                                 $photoPath = $user->profile_photo_path;
-                                $photoUrl = empty($photoPath) ? asset('kofa.png') : 
-                                            ($photoPath === 'kofa.png' ? asset('kofa.png') : 
-                                            url('profile-photos/' . basename($photoPath)));
-                                // Add cache busting parameter
-                                $photoUrl = $photoUrl . '?v=' . time();
+                                $filename = $photoPath ? basename($photoPath) : 'kofa.png';
+                                // Try direct URL to root level profile-photos directory
+                                $photoUrl = $photoPath && $photoPath !== 'kofa.png' 
+                                    ? "https://ckpkofa-network.ct.ws/profile-photos/{$filename}?v=" . time()
+                                    : asset('img/kofa.png');
                             @endphp
-                            <img src="{{ $photoUrl }}" alt="{{ $user->name }}'s profile photo" class="h-full w-full object-cover profile-user-img">
+                            <img 
+                                src="{{ $photoUrl }}" 
+                                alt="{{ $user->name }}'s profile photo" 
+                                class="h-full w-full object-cover profile-user-img"
+                                style="display: block !important; visibility: visible !important; opacity: 1 !important;"
+                                onerror="this.onerror=null; this.src='{{ asset('img/kofa.png') }}'"
+                            >
                         </div>
                     </div>
                     <div class="flex-1">
@@ -255,5 +261,44 @@
             });
         }
     });
+</script>
+
+<!-- Immediate fix for profile photos -->
+<script>
+    // Function to fix profile photos
+    function fixProfilePhotos() {
+        console.log('Running immediate profile photo fix');
+        
+        // Find profile photo images
+        var profileImg = document.querySelector('.profile-user-img');
+        if (profileImg) {
+            console.log('Found profile image:', profileImg.src);
+            
+            // Make sure the image is visible
+            profileImg.style.display = 'block';
+            profileImg.style.visibility = 'visible';
+            profileImg.style.opacity = '1';
+            
+            // If the image is not loading, try a direct URL
+            if (!profileImg.complete || profileImg.naturalWidth === 0) {
+                var filename = profileImg.src.split('/').pop().split('?')[0];
+                profileImg.src = 'https://ckpkofa-network.ct.ws/profile-photos/' + filename + '?v=' + new Date().getTime();
+                console.log('Updated image source to:', profileImg.src);
+            }
+            
+            // Add error handler
+            profileImg.onerror = function() {
+                console.log('Image failed to load, using default');
+                this.src = '/img/kofa.png';
+            };
+        }
+    }
+    
+    // Run immediately
+    fixProfilePhotos();
+    
+    // Run again after a delay
+    setTimeout(fixProfilePhotos, 500);
+    setTimeout(fixProfilePhotos, 2000);
 </script>
 @endsection

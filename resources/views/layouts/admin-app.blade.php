@@ -685,10 +685,77 @@
                     border: 1px solid #ddd !important;
                 }
             }
+            
+            /* Critical profile photo fixes */
+            img.profile-user-img,
+            img[alt*="profile photo"],
+            img[alt*="profile picture"],
+            .rounded-full img {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                min-height: 32px;
+                min-width: 32px;
+            }
+            
+            /* Ensure containers are visible */
+            .rounded-full {
+                overflow: hidden;
+                position: relative;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
         </style>
         
         <!-- Livewire Styles -->
         @livewireStyles
+        
+        <!-- Immediate script fix -->
+        <script>
+            // Fix for profile photos that need to run before page load
+            window.fixProfilePhotosPreload = function() {
+                // Direct URL to the profile photos directory
+                var baseUrl = 'https://ckpkofa-network.ct.ws/profile-photos/';
+                
+                // Function to be called when DOM is ready
+                window.fixProfilePhotosOnLoad = function() {
+                    var images = document.querySelectorAll('img');
+                    images.forEach(function(img) {
+                        if (img.classList.contains('profile-user-img') || 
+                            (img.alt && (img.alt.includes('profile photo') || img.alt.includes('profile picture'))) ||
+                            (img.parentElement && img.parentElement.classList.contains('rounded-full'))) {
+                            
+                            // Make sure image is visible
+                            img.style.display = 'block';
+                            img.style.visibility = 'visible';
+                            img.style.opacity = '1';
+                            
+                            // Extract filename if it's a profile photo
+                            if (img.src && img.src.includes('profile-photos')) {
+                                var filename = img.src.split('/').pop().split('?')[0];
+                                img.src = baseUrl + filename + '?v=' + new Date().getTime();
+                            }
+                            
+                            // Add error handler
+                            img.onerror = function() {
+                                this.src = '/img/kofa.png';
+                            };
+                        }
+                    });
+                };
+                
+                // Run when DOM is ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', window.fixProfilePhotosOnLoad);
+                } else {
+                    window.fixProfilePhotosOnLoad();
+                }
+            };
+            
+            // Run preload fix immediately
+            window.fixProfilePhotosPreload();
+        </script>
     </head>
     <body class="font-sans antialiased pattern-bg bg-gray-50">
         <!-- Mobile Sidebar Toggle Button -->
@@ -722,11 +789,17 @@
             </div>
         </div>
 
-        <!-- Livewire Scripts -->
+        <!-- Scripts -->
         @livewireScripts
         
         <!-- Additional Scripts -->
         @stack('scripts')
+        
+        <!-- jQuery (needed for some Bootstrap components) -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        
+        <!-- Profile Photo Fix Script -->
+        <script src="{{ asset('js/profile-photo-fix.js') }}"></script>
         
         <!-- Sidebar Toggle Script -->
         <script>
@@ -829,6 +902,53 @@
                         }
                     });
                 }
+            });
+        </script>
+        
+        <!-- Final profile photo fix -->
+        <script>
+            // Run the fix again after everything is loaded
+            window.addEventListener('load', function() {
+                console.log('Window loaded, running final profile photo fix');
+                
+                // Function to fix profile photos
+                function finalFixProfilePhotos() {
+                    var images = document.querySelectorAll('img');
+                    images.forEach(function(img) {
+                        if (img.classList.contains('profile-user-img') || 
+                            (img.alt && (img.alt.includes('profile photo') || img.alt.includes('profile picture'))) ||
+                            (img.parentElement && img.parentElement.classList.contains('rounded-full'))) {
+                            
+                            // Force image to be visible
+                            img.style.display = 'block';
+                            img.style.visibility = 'visible';
+                            img.style.opacity = '1';
+                            
+                            // Check if image is broken
+                            if (!img.complete || img.naturalWidth === 0) {
+                                console.log('Found broken image:', img.src);
+                                
+                                // Extract filename if it's a profile photo
+                                if (img.src && img.src.includes('profile-photos')) {
+                                    var filename = img.src.split('/').pop().split('?')[0];
+                                    var newSrc = 'https://ckpkofa-network.ct.ws/profile-photos/' + filename + '?v=' + new Date().getTime();
+                                    console.log('Setting new src:', newSrc);
+                                    img.src = newSrc;
+                                } else {
+                                    // Use default image
+                                    img.src = '/img/kofa.png';
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                // Run immediately
+                finalFixProfilePhotos();
+                
+                // And again after a delay
+                setTimeout(finalFixProfilePhotos, 1000);
+                setTimeout(finalFixProfilePhotos, 3000);
             });
         </script>
     </body>
