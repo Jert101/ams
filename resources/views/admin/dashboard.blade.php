@@ -147,8 +147,8 @@
                                                 <tr>
                                                     <td class="px-6 py-4 whitespace-nowrap" data-label="Name">
                                                         <div class="flex items-center">
-                                                            <div class="user-avatar">
-                                                                <img src="https://ckpkofa-network.ct.ws/img/kofa.png" alt="{{ $user['name'] }}">
+                                                            <div class="user-initials">
+                                                                {{ strtoupper(substr($user['name'], 0, 1)) }}
                                                             </div>
                                                             <div class="ml-4">
                                                                 <div class="text-sm font-medium text-gray-900">{{ $user['name'] }}</div>
@@ -186,16 +186,17 @@
 
 @push('styles')
 <style>
-    .user-avatar {
+    .user-initials {
         width: 40px;
         height: 40px;
-        overflow: hidden;
         border-radius: 50%;
-    }
-    .user-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        background-color: #4f46e5;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 16px;
     }
 </style>
 @endpush
