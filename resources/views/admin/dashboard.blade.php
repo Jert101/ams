@@ -7,8 +7,8 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <!-- Fallback HTML Content -->
-            <div id="admindashboard-content" class="space-y-6">
+            <!-- Dashboard Content -->
+            <div class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div class="bg-white rounded-lg shadow p-6">
                         <div class="flex items-center">
@@ -147,10 +147,8 @@
                                                 <tr>
                                                     <td class="px-6 py-4 whitespace-nowrap" data-label="Name">
                                                         <div class="flex items-center">
-                                                            <div class="flex-shrink-0 h-10 w-10">
-                                                                <img class="h-10 w-10 rounded-full object-cover" 
-                                                                    src="{{ asset('img/kofa.png') }}" 
-                                                                    alt="{{ $user['name'] }}">
+                                                            <div class="user-avatar">
+                                                                <img src="https://ckpkofa-network.ct.ws/img/kofa.png" alt="{{ $user['name'] }}">
                                                             </div>
                                                             <div class="ml-4">
                                                                 <div class="text-sm font-medium text-gray-900">{{ $user['name'] }}</div>
@@ -187,17 +185,20 @@
 </x-app-layout>
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/profile-photo-fix.css') }}">
 <style>
-    .flex-shrink-0 img {
+    .user-avatar {
         width: 40px;
         height: 40px;
-        object-fit: cover;
+        overflow: hidden;
         border-radius: 50%;
+    }
+    .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 </style>
 @endpush
 
 @push('scripts')
-<script src="{{ asset('js/dashboard-simple.js') }}"></script>
 @endpush
