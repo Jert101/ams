@@ -111,19 +111,26 @@ class UserController extends Controller
                 mkdir($rootProfilePhotosPath, 0777, true);
             }
             
-            if ($file->move($rootProfilePhotosPath, $filename)) {
-                // Also copy to storage for Laravel compatibility
-                $storagePath = storage_path('app/public/profile-photos');
-                if (!file_exists($storagePath)) {
-                    mkdir($storagePath, 0777, true);
-                }
-                
-                copy($rootProfilePhotosPath . '/' . $filename, $storagePath . '/' . $filename);
-                
-                // Update user with the relative path
-                $user->profile_photo_path = $relativePath;
-                $user->save();
+            // Move to root (legacy)
+            $file->move($rootProfilePhotosPath, $filename);
+            
+            // Copy to storage for Laravel compatibility
+            $storagePath = storage_path('app/public/profile-photos');
+            if (!file_exists($storagePath)) {
+                mkdir($storagePath, 0777, true);
             }
+            copy($rootProfilePhotosPath . '/' . $filename, $storagePath . '/' . $filename);
+
+            // NEW: Copy to public/profile-photos for web access
+            $publicProfilePhotosPath = public_path('profile-photos');
+            if (!file_exists($publicProfilePhotosPath)) {
+                mkdir($publicProfilePhotosPath, 0777, true);
+            }
+            copy($rootProfilePhotosPath . '/' . $filename, $publicProfilePhotosPath . '/' . $filename);
+
+            // Update user with the relative path
+            $user->profile_photo_path = $relativePath;
+            $user->save();
         }
 
         // Generate QR code for the user
@@ -241,29 +248,25 @@ class UserController extends Controller
                 if (!file_exists($rootProfilePhotosPath)) {
                     mkdir($rootProfilePhotosPath, 0777, true);
                 }
+                $file->move($rootProfilePhotosPath, $filename);
                 
-                if ($file->move($rootProfilePhotosPath, $filename)) {
-                    \Log::info('File moved successfully to root path', ['path' => $rootProfilePhotosPath . '/' . $filename]);
-                    
-                    // Also copy to storage for Laravel compatibility
-                    $storagePath = storage_path('app/public/profile-photos');
-                    if (!file_exists($storagePath)) {
-                        mkdir($storagePath, 0777, true);
-                    }
-                    
-                    if (copy($rootProfilePhotosPath . '/' . $filename, $storagePath . '/' . $filename)) {
-                        \Log::info('File copied to storage path', ['path' => $storagePath . '/' . $filename]);
-                    } else {
-                        \Log::warning('Failed to copy file to storage path');
-                    }
-                    
-                    // Update user data with the relative path
-                    $userData['profile_photo_path'] = $relativePath;
-                    \Log::info('User profile_photo_path will be updated to', ['path' => $relativePath]);
-                } else {
-                    \Log::error('Failed to move uploaded file');
-                    // Do not update profile_photo_path if file move fails
+                // Also copy to storage for Laravel compatibility
+                $storagePath = storage_path('app/public/profile-photos');
+                if (!file_exists($storagePath)) {
+                    mkdir($storagePath, 0777, true);
                 }
+                copy($rootProfilePhotosPath . '/' . $filename, $storagePath . '/' . $filename);
+
+                // NEW: Copy to public/profile-photos for web access
+                $publicProfilePhotosPath = public_path('profile-photos');
+                if (!file_exists($publicProfilePhotosPath)) {
+                    mkdir($publicProfilePhotosPath, 0777, true);
+                }
+                copy($rootProfilePhotosPath . '/' . $filename, $publicProfilePhotosPath . '/' . $filename);
+
+                // Update user data with the relative path
+                $userData['profile_photo_path'] = $relativePath;
+                \Log::info('User profile_photo_path will be updated to', ['path' => $relativePath]);
             } catch (\Exception $e) {
                 \Log::error('Exception during file upload', [
                     'message' => $e->getMessage(),
