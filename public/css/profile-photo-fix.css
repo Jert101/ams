@@ -1,53 +1,13 @@
-/**
- * Profile Photo Fix CSS
- * Ensures profile photos display correctly with proper styling
- */
+/* Profile Photo Fix CSS */
 
-/* Profile photo container styling */
-.profile-user-img {
+/* Ensure profile photos are always visible */
+img.profile-user-img,
+img[alt*="profile photo"],
+img[alt*="profile picture"],
+.rounded-full img {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-}
-
-/* Ensure profile photos are properly sized */
-img.profile-user-img {
-    border-radius: 50%;
-    border: 4px solid #fecaca; /* red-200 */
-    overflow: hidden;
-}
-
-/* Fallback styling for when images fail to load */
-.profile-photo-fallback {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f3f4f6; /* gray-100 */
-    color: #6b7280; /* gray-500 */
-    font-weight: bold;
-    font-size: 1.25rem;
-    border-radius: 50%;
-    width: 100%;
-    height: 100%;
-    border: 4px solid #fecaca; /* red-200 */
-}
-
-/* Ensure profile photo containers have proper positioning */
-.profile-photo-container {
-    position: relative;
-    height: 8rem;
-    width: 8rem;
-}
-
-/* Media query for smaller screens */
-@media (max-width: 640px) {
-    .profile-photo-container {
-        height: 6rem;
-        width: 6rem;
-    }
 }
 
 /* Add a subtle border to empty profile photos */

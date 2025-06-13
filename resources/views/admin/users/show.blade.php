@@ -1,20 +1,6 @@
 @extends('layouts.admin-app')
 
 @section('content')
-<style>
-    /* Ensure profile photos display correctly */
-    .profile-user-img {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-    }
-</style>
-<!-- Include profile photo fix CSS and JS -->
-<link rel="stylesheet" href="{{ asset('css/profile-photo-fix.css') }}">
-<script src="{{ asset('js/profile-photo-fix.js') }}"></script>
 <div class="container mx-auto px-4 py-6">
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-3xl font-bold text-red-700">User Details</h1>
@@ -37,6 +23,13 @@
                     <!-- Profile Photo -->
                     <div class="mb-6 flex justify-center md:justify-start">
                         @php
+                            $photoPath = $user->profile_photo_path;
+                            $filename = $photoPath ? basename($photoPath) : 'kofa.png';
+                            // Try direct URL to root level profile-photos directory
+                            $photoUrl = $photoPath && $photoPath !== 'kofa.png' 
+                                ? "https://ckpkofa-network.ct.ws/profile-photos/{$filename}?v=" . time()
+                                : asset('img/kofa.png');
+                            
                             // Base64 encoded default user icon for fallback (simple user icon)
                             $fallbackImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2U1ZTdlYiIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=';
                         @endphp
@@ -48,7 +41,7 @@
                             
                             <!-- Actual profile photo (loads on top if available) -->
                             <img 
-                                src="{{ $user->profile_photo_url }}" 
+                                src="{{ $photoUrl }}" 
                                 alt="{{ $user->name }}'s profile photo" 
                                 class="absolute inset-0 h-full w-full object-cover rounded-full border-4 border-red-200 profile-user-img"
                                 style="display: block !important; visibility: visible !important; opacity: 1 !important;"
@@ -56,6 +49,39 @@
                             >
                         </div>
                     </div>
+                    
+                    <!-- Immediate fix for profile photos -->
+                    <script>
+                        // Function to fix profile photos
+                        function fixProfilePhotos() {
+                            console.log('Running immediate profile photo fix');
+                            
+                            // Find profile photo images
+                            var profileImg = document.querySelector('.profile-user-img');
+                            if (profileImg) {
+                                console.log('Found profile image:', profileImg.src);
+                                
+                                // Make sure the image is visible
+                                profileImg.style.display = 'block';
+                                profileImg.style.visibility = 'visible';
+                                profileImg.style.opacity = '1';
+                                
+                                // If the image is not loading, try a direct URL
+                                if (!profileImg.complete || profileImg.naturalWidth === 0) {
+                                    var filename = profileImg.src.split('/').pop().split('?')[0];
+                                    profileImg.src = 'https://ckpkofa-network.ct.ws/profile-photos/' + filename + '?v=' + new Date().getTime();
+                                    console.log('Updated image source to:', profileImg.src);
+                                }
+                            }
+                        }
+                        
+                        // Run immediately
+                        fixProfilePhotos();
+                        
+                        // Run again after a delay
+                        setTimeout(fixProfilePhotos, 500);
+                        setTimeout(fixProfilePhotos, 2000);
+                    </script>
                     
                     <div class="mb-4">
                         <p class="text-sm font-medium text-gray-700">Name</p>

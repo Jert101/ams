@@ -141,12 +141,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        // Eager load relationships and ensure profile_photo_url is available
         $user->load('role', 'qrCode', 'attendances.event');
-        
-        // Make sure profile_photo_url is accessible
-        $user->append('profile_photo_url');
-        
         return view('admin.users.show', compact('user'));
     }
 
