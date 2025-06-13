@@ -13,7 +13,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Create profile-photos directory if it doesn't exist
-$rootProfilePhotosPath = __DIR__ . '/profile-photos';
+$rootProfilePhotosPath = __DIR__ . '/profile-photos'
 if (!file_exists($rootProfilePhotosPath)) {
     if (mkdir($rootProfilePhotosPath, 0777, true)) {
         echo "Created directory: {$rootProfilePhotosPath}<br>";
