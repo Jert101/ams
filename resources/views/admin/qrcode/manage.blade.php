@@ -34,15 +34,11 @@
             @php
                 $photoPath = $user->profile_photo_path;
                 $filename = $photoPath ? basename($photoPath) : 'kofa.png';
-                $photoUrl = $photoPath && $photoPath !== 'kofa.png'
-                    ? "https://ckpkofa-network.ct.ws/profile-photos/{$filename}?v=" . time()
-                    : asset('img/kofa.png');
-                $fallbackSvg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2U1ZTdlYiIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=';
             @endphp
             <div class="border-b border-gray-200 p-4">
                 <div class="flex items-center mb-3">
                     <div class="flex-shrink-0 h-10 w-10 mr-3">
-                        <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" src="{{ $photoUrl }}" alt="{{ $user->name }}" onerror="this.onerror=null;this.src='{{ $fallbackSvg }}';">
+                        <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" src="{{ asset('storage/profile-photos/' . $filename) }}" alt="{{ $user->name }}" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
                     </div>
                     <div>
                         <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
@@ -125,10 +121,6 @@
                     @php
                         $photoPath = $user->profile_photo_path;
                         $filename = $photoPath ? basename($photoPath) : 'kofa.png';
-                        $photoUrl = $photoPath && $photoPath !== 'kofa.png'
-                            ? "https://ckpkofa-network.ct.ws/profile-photos/{$filename}?v=" . time()
-                            : asset('img/kofa.png');
-                        $fallbackSvg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2U1ZTdlYiIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=';
                     @endphp
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -137,7 +129,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10">
-                                    <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" src="{{ $photoUrl }}" alt="{{ $user->name }}" onerror="this.onerror=null;this.src='{{ $fallbackSvg }}';">
+                                    <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" src="{{ asset('storage/profile-photos/' . $filename) }}" alt="{{ $user->name }}" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
                                 </div>
                                 <div class="ml-4">
                                     <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
