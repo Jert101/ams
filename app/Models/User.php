@@ -198,42 +198,11 @@ class User extends Authenticatable
      */
     public function getProfilePhotoUrlAttribute()
     {
-        if (empty($this->profile_photo_path)) {
-            return asset('img/kofa.png');
+        $filename = $this->profile_photo_path ? basename($this->profile_photo_path) : 'kofa.png';
+        // Always use public/profile-photos for maximum compatibility
+        if ($filename && $filename !== 'kofa.png') {
+            return asset('profile-photos/' . $filename) . '?v=' . time();
         }
-        
-        // Check if it's the default logo
-        if ($this->profile_photo_path === 'kofa.png') {
-            return asset('img/kofa.png');
-        }
-        
-        // Get the filename from the path
-        $filename = basename($this->profile_photo_path);
-        
-        // Add cache busting parameter
-        $cacheBuster = '?v=' . time();
-        
-        // Check if file exists in root level profile-photos directory
-        if (file_exists(public_path('profile-photos/' . $filename))) {
-            return url('profile-photos/' . $filename) . $cacheBuster;
-        }
-        
-        // Check if file exists in public/storage directory (symlinked)
-        if (file_exists(public_path('storage/' . $this->profile_photo_path))) {
-            return asset('storage/' . $this->profile_photo_path) . $cacheBuster;
-        }
-        
-        // Check if file exists directly in public directory
-        if (file_exists(public_path($this->profile_photo_path))) {
-            return asset($this->profile_photo_path) . $cacheBuster;
-        }
-        
-        // Check if file exists in storage/app/public directory
-        if (file_exists(storage_path('app/public/' . $this->profile_photo_path))) {
-            return asset('storage/' . $this->profile_photo_path) . $cacheBuster;
-        }
-        
-        // Fallback to default
         return asset('img/kofa.png');
     }
     
