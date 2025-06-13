@@ -63,27 +63,38 @@ class ProfileController extends Controller
             try {
                 $uploadedFile = $request->file('profile_photo');
                 if ($uploadedFile->isValid()) {
-                    // Store in storage/app/public/profile-photos
-                    $path = $uploadedFile->store('profile-photos', 'public');
-                    
-                    // Also copy to public/profile-photos for direct access
+                    // For InfinityFree hosting, prioritize direct public path
                     $extension = $uploadedFile->getClientOriginalExtension();
-                    $filename = pathinfo($path, PATHINFO_BASENAME);
-                    $publicPath = public_path('profile-photos');
+                    $filename = time() . '-' . uniqid() . '.' . $extension;
+                    $relativePath = 'profile-photos/' . $filename;
                     
+                    $publicPath = public_path('profile-photos');
                     if (!file_exists($publicPath)) {
                         mkdir($publicPath, 0777, true);
                     }
                     
-                    if (copy(storage_path('app/public/' . $path), $publicPath . '/' . $filename)) {
-                        Log::info('File copied to public profile-photos', ['path' => $publicPath . '/' . $filename]);
+                    if ($uploadedFile->move($publicPath, $filename)) {
+                        Log::info('File moved successfully to public path', ['path' => $publicPath . '/' . $filename]);
+                        
+                        // Also copy to storage for Laravel compatibility
+                        $storagePath = storage_path('app/public/profile-photos');
+                        if (!file_exists($storagePath)) {
+                            mkdir($storagePath, 0777, true);
+                        }
+                        
+                        if (copy($publicPath . '/' . $filename, $storagePath . '/' . $filename)) {
+                            Log::info('File copied to storage path', ['path' => $storagePath . '/' . $filename]);
+                        } else {
+                            Log::warning('Failed to copy file to storage path');
+                        }
+                        
+                        // Update user with the relative path
+                        $user->profile_photo_path = $relativePath;
+                        Log::info('User profile_photo_path updated to: ' . $user->profile_photo_path);
                     } else {
-                        Log::warning('Failed to copy file to public profile-photos');
+                        Log::error('Failed to move uploaded file to public path');
+                        return redirect()->route('profile.show')->with('error', 'Failed to upload profile photo.');
                     }
-                    
-                    // Update user with the relative path (without 'public/')
-                    $user->profile_photo_path = $path;
-                    Log::info('User profile_photo_path updated to: ' . $user->profile_photo_path);
                 } else {
                     Log::error('Uploaded file is not valid');
                     return redirect()->route('profile.show')->with('error', 'Uploaded file is not valid.');

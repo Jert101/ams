@@ -56,7 +56,7 @@
                                 $photoPath = Auth::user()->profile_photo_path;
                                 $photoUrl = empty($photoPath) ? asset('img/kofa.png') : 
                                             ($photoPath === 'kofa.png' ? asset('img/kofa.png') : 
-                                            asset('storage/' . $photoPath));
+                                            asset('profile-photos/' . basename($photoPath)));
                             @endphp
                             <img src="{{ $photoUrl }}" alt="{{ Auth::user()->name }}" class="h-full w-full object-cover profile-user-img">
                         </div>

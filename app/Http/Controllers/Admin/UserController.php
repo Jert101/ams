@@ -101,21 +101,29 @@ class UserController extends Controller
 
         // Handle profile photo upload
         if ($request->hasFile('profile_photo')) {
-            // Store in storage/app/public/profile-photos
-            $path = $request->file('profile_photo')->store('profile-photos', 'public');
-            $user->profile_photo_path = $path;
-            $user->save();
-            
-            // Also copy to public/profile-photos for direct access
+            // For InfinityFree hosting, prioritize direct public path
             $file = $request->file('profile_photo');
-            $filename = pathinfo($path, PATHINFO_BASENAME);
-            $publicProfilePhotosPath = public_path('profile-photos');
+            $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $relativePath = 'profile-photos/' . $filename;
             
+            $publicProfilePhotosPath = public_path('profile-photos');
             if (!file_exists($publicProfilePhotosPath)) {
                 mkdir($publicProfilePhotosPath, 0777, true);
             }
             
-            $file->move($publicProfilePhotosPath, $filename);
+            if ($file->move($publicProfilePhotosPath, $filename)) {
+                // Also copy to storage for Laravel compatibility
+                $storagePath = storage_path('app/public/profile-photos');
+                if (!file_exists($storagePath)) {
+                    mkdir($storagePath, 0777, true);
+                }
+                
+                copy($publicProfilePhotosPath . '/' . $filename, $storagePath . '/' . $filename);
+                
+                // Update user with the relative path
+                $user->profile_photo_path = $relativePath;
+                $user->save();
+            }
         }
 
         // Generate QR code for the user
@@ -223,34 +231,30 @@ class UserController extends Controller
                     Storage::disk('public')->delete($user->profile_photo_path);
                 }
                 
-                // Check storage path exists and is writable
-                $storagePath = storage_path('app/public/profile-photos');
-                if (!file_exists($storagePath)) {
-                    \Log::info('Creating storage directory', ['path' => $storagePath]);
-                    if (!mkdir($storagePath, 0777, true)) {
-                        $error = error_get_last();
-                        \Log::error('Failed to create directory', ['error' => $error ? $error['message'] : 'Unknown error']);
-                    }
-                }
-                
                 // Store the file
                 $file = $request->file('profile_photo');
                 $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
                 $relativePath = 'profile-photos/' . $filename;
                 
-                if ($file->move($storagePath, $filename)) {
-                    \Log::info('File moved successfully', ['path' => $storagePath . '/' . $filename]);
+                // For InfinityFree hosting, prioritize direct public path
+                $publicProfilePhotosPath = public_path('profile-photos');
+                if (!file_exists($publicProfilePhotosPath)) {
+                    mkdir($publicProfilePhotosPath, 0777, true);
+                }
+                
+                if ($file->move($publicProfilePhotosPath, $filename)) {
+                    \Log::info('File moved successfully to public path', ['path' => $publicProfilePhotosPath . '/' . $filename]);
                     
-                    // Make a copy in public/profile-photos directory
-                    $publicProfilePhotosPath = public_path('profile-photos');
-                    if (!file_exists($publicProfilePhotosPath)) {
-                        mkdir($publicProfilePhotosPath, 0777, true);
+                    // Also copy to storage for Laravel compatibility
+                    $storagePath = storage_path('app/public/profile-photos');
+                    if (!file_exists($storagePath)) {
+                        mkdir($storagePath, 0777, true);
                     }
                     
-                    if (copy($storagePath . '/' . $filename, $publicProfilePhotosPath . '/' . $filename)) {
-                        \Log::info('File copied to public profile-photos', ['path' => $publicProfilePhotosPath . '/' . $filename]);
+                    if (copy($publicProfilePhotosPath . '/' . $filename, $storagePath . '/' . $filename)) {
+                        \Log::info('File copied to storage path', ['path' => $storagePath . '/' . $filename]);
                     } else {
-                        \Log::warning('Failed to copy file to public profile-photos');
+                        \Log::warning('Failed to copy file to storage path');
                     }
                     
                     // Update user data with the relative path
