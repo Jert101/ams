@@ -38,7 +38,7 @@
             <div class="border-b border-gray-200 p-4">
                 <div class="flex items-center mb-3">
                     <div class="flex-shrink-0 h-10 w-10 mr-3">
-                        <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
+                        <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover">
                         <p style="font-size:10px;word-break:break-all;">Photo URL: {{ $user->profile_photo_url }}</p>
                     </div>
                     <div>
@@ -130,7 +130,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10">
-                                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
+                                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover">
                                     <p style="font-size:10px;word-break:break-all;">Photo URL: {{ $user->profile_photo_url }}</p>
                                 </div>
                                 <div class="ml-4">
