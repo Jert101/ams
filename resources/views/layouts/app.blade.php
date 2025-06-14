@@ -467,17 +467,7 @@
                             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                                 {{ $header }}
                             </h2>
-                            
-                            @auth
-                                <!-- User Profile -->
-                                <div class="flex items-center">
-                                    <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ Auth::user()->name }}" />
-                                    <div class="ml-2">
-                                        <div class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</div>
-                                        <div class="text-xs text-gray-500">{{ Auth::user()->role->name ?? 'User' }}</div>
-                                    </div>
-                                </div>
-                            @endauth
+                            <!-- User Profile removed as per request -->
                         </div>
                     </div>
                 </header>

@@ -221,15 +221,6 @@
                             <h2 class="font-semibold text-xl text-indigo-700 leading-tight mb-2 sm:mb-0">
                                 {{ $header }}
                             </h2>
-                            
-                            <!-- User Profile -->
-                            <div class="flex items-center user-profile-header">
-                                <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ Auth::user()->name }}" />
-                                <div class="ml-2 user-profile-info">
-                                    <div class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</div>
-                                    <div class="text-xs text-gray-500">{{ Auth::user()->role->name ?? 'Secretary' }}</div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </header>
@@ -240,15 +231,6 @@
                             <h2 class="font-semibold text-xl text-indigo-700 leading-tight mb-2 sm:mb-0">
                                 Secretary Dashboard
                             </h2>
-                            
-                            <!-- User Profile -->
-                            <div class="flex items-center user-profile-header">
-                                <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url ?? asset('img/defaults/user.svg') }}" alt="{{ Auth::user()->name }}" />
-                                <div class="ml-2 user-profile-info">
-                                    <div class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</div>
-                                    <div class="text-xs text-gray-500">{{ Auth::user()->role->name ?? 'Secretary' }}</div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </header>

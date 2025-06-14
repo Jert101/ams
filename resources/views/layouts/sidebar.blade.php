@@ -44,6 +44,20 @@
         </div>
     </div>
 
+    <!-- Sidebar User Info -->
+    <div class="flex flex-col items-center py-6">
+        @php
+            $photoPath = Auth::user()->profile_photo_path;
+            $defaultImage = asset('img/kofa.png');
+            $photoUrl = $photoPath && $photoPath !== 'kofa.png'
+                ? asset('/uploads/' . $photoPath) . '?v=' . time()
+                : $defaultImage;
+        @endphp
+        <img src="{{ $photoUrl }}" alt="{{ Auth::user()->name }}'s profile photo" class="h-16 w-16 object-cover rounded-full border-4 border-yellow-400 mb-2" onerror="this.src='{{ $defaultImage }}';">
+        <div class="text-lg font-semibold text-gray-900">{{ Auth::user()->name }}</div>
+        <div class="text-xs text-gray-600">ID: {{ Auth::user()->user_id }}</div>
+    </div>
+
     <!-- Sidebar Content -->
     <div class="flex-1 flex flex-col overflow-y-auto">
         <nav class="flex-1 px-4 py-4 space-y-1">
