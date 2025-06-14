@@ -173,17 +173,8 @@
                                 $defaultImage = asset('img/kofa.png');
                                 
                                 if ($photoPath && $photoPath !== 'kofa.png') {
-                                    // Try storage path first
-                                    $storagePath = storage_path('app/public/' . $photoPath);
-                                    $publicPath = public_path('storage/' . $photoPath);
-                                    
-                                    if (file_exists($publicPath)) {
-                                        $photoUrl = asset('storage/' . $photoPath) . '?v=' . time();
-                                    } elseif (file_exists($storagePath)) {
-                                        $photoUrl = asset('storage/' . $photoPath) . '?v=' . time();
-                                    } else {
-                                        $photoUrl = $defaultImage;
-                                    }
+                                    // For InfinityFree, use direct public path
+                                    $photoUrl = url($photoPath) . '?v=' . time();
                                 } else {
                                     $photoUrl = $defaultImage;
                                 }
@@ -192,8 +183,7 @@
                             <img src="{{ $photoUrl }}" 
                                 alt="{{ $user->name }}'s profile photo" 
                                 class="h-full w-full object-cover"
-                                onerror="this.src='{{ $defaultImage }}'"
-                                style="display: block;">
+                                onerror="this.src='{{ $defaultImage }}'; console.log('Profile photo load failed, using default');">
                         </div>
                     </div>
                     <div class="flex-1">

@@ -226,31 +226,31 @@ class UserController extends Controller
                 $file = $request->file('profile_photo');
                 $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
                 
-                // Store in storage/app/public/profile-photos
-                $file->storeAs('public/profile-photos', $filename);
-                
-                // Ensure the public storage directory exists
-                $publicStoragePath = public_path('storage/profile-photos');
-                if (!file_exists($publicStoragePath)) {
-                    mkdir($publicStoragePath, 0777, true);
+                try {
+                    // Store directly in the public directory for InfinityFree compatibility
+                    $publicPath = public_path('profile-photos');
+                    if (!file_exists($publicPath)) {
+                        mkdir($publicPath, 0755, true);
+                    }
+                    
+                    // Move the uploaded file directly to public directory
+                    $file->move($publicPath, $filename);
+                    
+                    // Set the path relative to public directory
+                    $userData['profile_photo_path'] = 'profile-photos/' . $filename;
+                    
+                    \Log::info('Profile photo uploaded', [
+                        'filename' => $filename,
+                        'path' => $userData['profile_photo_path'],
+                        'exists' => file_exists($publicPath . '/' . $filename)
+                    ]);
+                } catch (\Exception $e) {
+                    \Log::error('Profile photo upload failed', [
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                    return back()->with('error', 'Failed to upload profile photo. Please try again.');
                 }
-
-                // Copy to public/storage/profile-photos
-                copy(
-                    storage_path('app/public/profile-photos/' . $filename),
-                    $publicStoragePath . '/' . $filename
-                );
-
-                // Set correct permissions
-                chmod($publicStoragePath . '/' . $filename, 0644);
-
-                // Update user data with the storage path
-                $userData['profile_photo_path'] = 'profile-photos/' . $filename;
-                \Log::info('User profile_photo_path updated', [
-                    'path' => $userData['profile_photo_path'],
-                    'storage_exists' => file_exists(storage_path('app/public/profile-photos/' . $filename)),
-                    'public_exists' => file_exists($publicStoragePath . '/' . $filename)
-                ]);
             } catch (\Exception $e) {
                 \Log::error('Exception during file upload', [
                     'message' => $e->getMessage(),
