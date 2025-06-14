@@ -227,15 +227,18 @@ class UserController extends Controller
                 $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
                 $relativePath = 'profile-photos/' . $filename;
                 
-                // Save directly to public/profile-photos
-                $publicProfilePhotosPath = public_path('profile-photos');
-                if (!file_exists($publicProfilePhotosPath)) {
-                    mkdir($publicProfilePhotosPath, 0777, true);
+                // Store in storage/app/public/profile-photos
+                $file->storeAs('public/profile-photos', $filename);
+                
+                // Also store in public/storage/profile-photos for direct access
+                $publicStoragePath = public_path('storage/profile-photos');
+                if (!file_exists($publicStoragePath)) {
+                    mkdir($publicStoragePath, 0777, true);
                 }
-                $file->move($publicProfilePhotosPath, $filename);
+                $file->move($publicStoragePath, $filename);
 
                 // Update user data with the relative path
-                $userData['profile_photo_path'] = $relativePath;
+                $userData['profile_photo_path'] = 'profile-photos/' . $filename;
                 \Log::info('User profile_photo_path will be updated to', ['path' => $relativePath]);
             } catch (\Exception $e) {
                 \Log::error('Exception during file upload', [
