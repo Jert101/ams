@@ -202,10 +202,15 @@
             
             <div class="mb-4">
                 <label for="member_since_date" class="block text-sm font-medium text-gray-700">Member Since Date</label>
-                <input type="date" name="member_since_date" id="member_since_date" 
-                       value="{{ old('member_since_date', $user->member_since_date?->format('Y-m-d')) }}"
-                       class="mt-1 focus:ring-red-500 focus:border-red-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                <p class="mt-1 text-xs text-gray-500">This date is used for election eligibility.</p>
+                <div class="mt-1 relative">
+                    <input type="date" name="member_since_date" id="member_since_date" 
+                           value="{{ old('member_since_date', $user->member_since_date?->format('Y-m-d')) }}"
+                           class="focus:ring-red-500 focus:border-red-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                    <p class="mt-1 text-sm text-gray-500">This date is used to determine eligibility for voting and running in elections.</p>
+                </div>
+                @error('member_since_date')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
             
             <div class="border-t border-red-100 pt-6 mt-6">

@@ -1038,32 +1038,36 @@
                 <div class="modal-body">
                     <div class="mb-4">
                         <label for="title" class="form-label font-semibold">Position Title</label>
-                        <input type="text" class="form-control" id="title" name="title" required>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="E.g. KOFA Leader, Secretary, Treasurer" required>
                     </div>
                     
                     <div class="mb-4">
                         <label for="description" class="form-label font-semibold">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        <textarea class="form-control" id="description" name="description" rows="3" placeholder="Describe the duties and responsibilities of this position..."></textarea>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="mb-4">
-                            <label for="required_votes" class="form-label font-semibold">Required Number of Votes</label>
-                            <input type="number" class="form-control" id="required_votes" name="required_votes" min="1" value="1" required>
-                            <small class="text-gray-500">How many candidates each voter MUST vote for this position (e.g., select 2 board members)</small>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h3 class="font-semibold text-gray-700 mb-3">Voting Requirements</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="required_votes" class="form-label font-semibold">Required Votes Per Position</label>
+                                <input type="number" class="form-control" id="required_votes" name="required_votes" min="1" value="1" required>
+                                <small class="text-gray-500">How many candidates should be selected for this position? (e.g., select 2 board members)</small>
+                            </div>
+
+                            <div>
+                                <label for="max_candidates" class="form-label font-semibold">Maximum Candidates Allowed</label>
+                                <input type="number" class="form-control" id="max_candidates" name="max_candidates" min="0" value="0">
+                                <small class="text-gray-500">Maximum number of candidates that can apply (0 for unlimited)</small>
+                            </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="max_candidates" class="form-label font-semibold">Maximum Number of Candidates</label>
-                            <input type="number" class="form-control" id="max_candidates" name="max_candidates" min="0" value="0" required>
-                            <small class="text-gray-500">Maximum allowed candidates (0 for unlimited)</small>
+                        <div class="mt-4">
+                            <label for="minimum_member_since_date" class="form-label font-semibold">Minimum Membership Date</label>
+                            <input type="date" class="form-control" id="minimum_member_since_date" name="minimum_member_since_date">
+                            <small class="text-gray-500">Only members who joined before this date can vote for this position</small>
                         </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="minimum_member_since_date" class="form-label font-semibold">Minimum Membership Date Requirement</label>
-                        <input type="date" class="form-control" id="minimum_member_since_date" name="minimum_member_since_date">
-                        <small class="text-gray-500">Only members who joined before this date can vote (leave empty for no restriction)</small>
                     </div>
 
                     <div class="mb-4">
@@ -1111,24 +1115,28 @@
                         <textarea class="form-control" id="edit_description" name="description" rows="3"></textarea>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="mb-4">
-                            <label for="edit_required_votes" class="form-label font-semibold">Required Number of Votes</label>
-                            <input type="number" class="form-control" id="edit_required_votes" name="required_votes" min="1" required>
-                            <small class="text-gray-500">How many candidates each voter MUST vote for this position (e.g., select 2 board members)</small>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h3 class="font-semibold text-gray-700 mb-3">Voting Requirements</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="edit_required_votes" class="form-label font-semibold">Required Votes Per Position</label>
+                                <input type="number" class="form-control" id="edit_required_votes" name="required_votes" min="1" required>
+                                <small class="text-gray-500">How many candidates should be selected for this position? (e.g., select 2 board members)</small>
+                            </div>
+
+                            <div>
+                                <label for="edit_max_candidates" class="form-label font-semibold">Maximum Candidates Allowed</label>
+                                <input type="number" class="form-control" id="edit_max_candidates" name="max_candidates" min="0">
+                                <small class="text-gray-500">Maximum number of candidates that can apply (0 for unlimited)</small>
+                            </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="edit_max_candidates" class="form-label font-semibold">Maximum Number of Candidates</label>
-                            <input type="number" class="form-control" id="edit_max_candidates" name="max_candidates" min="0" required>
-                            <small class="text-gray-500">Maximum allowed candidates (0 for unlimited)</small>
+                        <div class="mt-4">
+                            <label for="edit_minimum_member_since_date" class="form-label font-semibold">Minimum Membership Date</label>
+                            <input type="date" class="form-control" id="edit_minimum_member_since_date" name="minimum_member_since_date">
+                            <small class="text-gray-500">Only members who joined before this date can vote for this position</small>
                         </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="edit_minimum_member_since_date" class="form-label font-semibold">Minimum Membership Date Requirement</label>
-                        <input type="date" class="form-control" id="edit_minimum_member_since_date" name="minimum_member_since_date">
-                        <small class="text-gray-500">Only members who joined before this date can vote (leave empty for no restriction)</small>
                     </div>
 
                     <div class="mb-4">
