@@ -167,7 +167,7 @@
                 <label for="profile_photo" class="block text-red-700 text-sm font-semibold mb-2">Profile Photo:</label>
                 <div class="flex items-center">
                     <div class="mr-4">
-                        <div class="h-24 w-24 rounded-full border-4 border-red-200 shadow-md overflow-hidden">
+                        <div class="h-24 w-24 overflow-hidden">
                             @php
                                 $photoPath = $user->profile_photo_path;
                                 $defaultImage = asset('img/kofa.png');
@@ -180,10 +180,11 @@
                                 }
                             @endphp
                             
-                            <img src="{{ $photoUrl }}" 
+                            <img 
+                                src="{{ $photoUrl }}" 
                                 alt="{{ $user->name }}'s profile photo" 
-                                class="h-full w-full object-cover"
-                                onerror="this.src='{{ $defaultImage }}'; console.log('Profile photo load failed, using default');">
+                                class="w-full h-full object-cover rounded-full border-4 border-red-200"
+                                onerror="this.src='{{ $defaultImage }}'; console.log('Loading default image');">
                         </div>
                     </div>
                     <div class="flex-1">

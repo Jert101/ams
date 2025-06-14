@@ -234,16 +234,23 @@ class UserController extends Controller
                     }
                     
                     // Move the uploaded file directly to public directory
-                    $file->move($publicPath, $filename);
-                    
-                    // Set the path relative to public directory
-                    $userData['profile_photo_path'] = 'profile-photos/' . $filename;
-                    
-                    \Log::info('Profile photo uploaded', [
-                        'filename' => $filename,
-                        'path' => $userData['profile_photo_path'],
-                        'exists' => file_exists($publicPath . '/' . $filename)
-                    ]);
+                    if ($file->move($publicPath, $filename)) {
+                        // Set permissions
+                        chmod($publicPath . '/' . $filename, 0644);
+                        
+                        // Set the path relative to public directory
+                        $userData['profile_photo_path'] = 'profile-photos/' . $filename;
+                        
+                        \Log::info('Profile photo uploaded successfully', [
+                            'filename' => $filename,
+                            'full_path' => $publicPath . '/' . $filename,
+                            'web_path' => $userData['profile_photo_path'],
+                            'file_exists' => file_exists($publicPath . '/' . $filename),
+                            'file_permissions' => substr(sprintf('%o', fileperms($publicPath . '/' . $filename)), -4)
+                        ]);
+                    } else {
+                        throw new \Exception('Failed to move uploaded file');
+                    }
                 } catch (\Exception $e) {
                     \Log::error('Profile photo upload failed', [
                         'error' => $e->getMessage(),
