@@ -23,10 +23,6 @@
         <!-- Bootstrap Icons -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
         
-        <!-- Bootstrap CSS and JS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        
         <!-- Tailwind CSS -->
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
@@ -59,7 +55,6 @@
         <script src="{{ asset('js/admin-responsive-fix.js') }}"></script>
         
         <!-- Custom CSS -->
-        <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
         <link rel="stylesheet" href="{{ asset('css/profile-photo-fix.css') }}">
         
         <style>
@@ -106,6 +101,30 @@
                 position: relative;
                 z-index: 10;
                 transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+            }
+            
+            /* Sidebar Profile Section */
+            .sidebar-container .flex.flex-col.items-center.py-4 {
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
+            
+            .sidebar-container .flex.flex-col.items-center.py-4 img {
+                width: 3rem !important;
+                height: 3rem !important;
+                min-width: 3rem !important;
+                min-height: 3rem !important;
+                border-width: 2px !important;
+            }
+            
+            .sidebar-container .flex.flex-col.items-center.py-4 .text-sm {
+                font-size: 0.875rem !important;
+                line-height: 1.25rem !important;
+            }
+            
+            .sidebar-container .flex.flex-col.items-center.py-4 .text-xs {
+                font-size: 0.75rem !important;
+                line-height: 1rem !important;
             }
             
             /* Mobile responsiveness */
@@ -725,6 +744,41 @@
                 background-repeat: no-repeat;
                 background-color: #f3f4f6;
             }
+            
+            /* Force small profile section */
+            .sidebar-container img[alt*="profile photo"] {
+                width: 40px !important;
+                height: 40px !important;
+                min-width: 40px !important;
+                min-height: 40px !important;
+                max-width: 40px !important;
+                max-height: 40px !important;
+                border-width: 1px !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .sidebar-container .flex.items-center {
+                padding: 0.5rem !important;
+                gap: 0.5rem !important;
+            }
+
+            .sidebar-container .flex.items-center > div {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .sidebar-container .flex.items-center > div > div {
+                font-size: 0.75rem !important;
+                line-height: 1rem !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .sidebar-container .flex.items-center > div > div:last-child {
+                font-size: 0.625rem !important;
+                line-height: 0.75rem !important;
+            }
         </style>
         
         <!-- Livewire Styles -->
@@ -777,169 +831,55 @@
         </script>
     </head>
     <body class="font-sans antialiased pattern-bg bg-gray-50">
-        <div class="sidebar-container">
-            @include('layouts.sidebar')
-        </div>
-        <div class="content-wrapper">
-            <div class="container mx-auto px-4 py-4 w-full">
-                @isset($header)
-                    <header class="bg-white shadow-sm border-b border-yellow-400">
-                        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                            {{ $header }}
-                        </div>
-                    </header>
-                @endisset
-
-                <main class="py-6 px-4">
+        <!-- Mobile Sidebar Toggle Button -->
+        <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle Sidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+        
+        <!-- Sidebar Overlay -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden lg:hidden"></div>
+        
+        <div class="flex h-screen bg-gray-50">
+            <!-- Sidebar -->
+            <div id="sidebar" class="sidebar-container bg-white">
+                @include('layouts.sidebar')
+            </div>
+            
+            <!-- Main Content -->
+            <div id="main-content" class="content-wrapper">
+                <!-- Page Content -->
+                <main>
                     @yield('content')
                 </main>
             </div>
         </div>
-
+        
+        <!-- Livewire Scripts -->
         @livewireScripts
         
+        <!-- Additional Scripts -->
         @stack('scripts')
         
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        
-        <script src="{{ asset('js/profile-photo-fix.js') }}"></script>
-        
-        <script>
-            function toggleSidebar() {
-                const sidebar = document.querySelector('.sidebar-container');
-                sidebar.classList.toggle('show');
-            }
-        </script>
-        
+        <!-- Sidebar Toggle Script -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                const sidebarToggle = document.querySelector('.sidebar-toggle');
-                const sidebarContainer = document.querySelector('.sidebar-container');
-                const contentWrapper = document.querySelector('.content-wrapper');
+                const sidebarToggle = document.querySelector('#sidebar-toggle');
+                const sidebar = document.querySelector('#sidebar');
+                const sidebarOverlay = document.querySelector('#sidebar-overlay');
                 
-                if (sidebarToggle && sidebarContainer && contentWrapper) {
+                if (sidebarToggle && sidebar && sidebarOverlay) {
                     sidebarToggle.addEventListener('click', function() {
-                        sidebarContainer.classList.toggle('show');
-                        
-                        if (sidebarContainer.classList.contains('show')) {
-                            let overlay = document.getElementById('sidebar-overlay');
-                            if (!overlay) {
-                                overlay = document.createElement('div');
-                                overlay.id = 'sidebar-overlay';
-                                overlay.style.position = 'fixed';
-                                overlay.style.top = '0';
-                                overlay.style.left = '0';
-                                overlay.style.width = '100%';
-                                overlay.style.height = '100%';
-                                overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                                overlay.style.zIndex = '1049';
-                                overlay.style.display = 'block';
-                                document.body.appendChild(overlay);
-                                
-                                overlay.addEventListener('click', function() {
-                                    sidebarContainer.classList.remove('show');
-                                    overlay.remove();
-                                });
-                            }
-                        } else {
-                            const overlay = document.getElementById('sidebar-overlay');
-                            if (overlay) {
-                                overlay.remove();
-                            }
-                        }
+                        sidebar.classList.toggle('show');
+                        sidebarOverlay.classList.toggle('hidden');
                     });
                     
-                    window.addEventListener('resize', function() {
-                        if (window.innerWidth > 1024 && sidebarContainer.classList.contains('show')) {
-                            sidebarContainer.classList.remove('show');
-                            const overlay = document.getElementById('sidebar-overlay');
-                            if (overlay) {
-                                overlay.remove();
-                            }
-                        }
-                    });
-                    
-                    document.addEventListener('click', function(event) {
-                        const isMobile = window.innerWidth <= 1024;
-                        const isClickInsideSidebar = sidebarContainer.contains(event.target);
-                        const isClickOnToggle = sidebarToggle.contains(event.target);
-                        
-                        if (isMobile && !isClickInsideSidebar && !isClickOnToggle && sidebarContainer.classList.contains('show')) {
-                            sidebarContainer.classList.remove('show');
-                            const overlay = document.getElementById('sidebar-overlay');
-                            if (overlay) {
-                                overlay.remove();
-                            }
-                        }
+                    sidebarOverlay.addEventListener('click', function() {
+                        sidebar.classList.remove('show');
+                        sidebarOverlay.classList.add('hidden');
                     });
                 }
-                
-                const tables = document.querySelectorAll('.table-responsive table');
-                tables.forEach(function(table) {
-                    const headerCells = table.querySelectorAll('thead th');
-                    const headerTexts = Array.from(headerCells).map(cell => cell.textContent.trim());
-                    
-                    const rows = table.querySelectorAll('tbody tr');
-                    rows.forEach(function(row) {
-                        const cells = row.querySelectorAll('td');
-                        cells.forEach(function(cell, index) {
-                            if (index < headerTexts.length) {
-                                cell.setAttribute('data-label', headerTexts[index]);
-                            }
-                        });
-                    });
-                });
-                
-                const sidebarCloseBtn = document.querySelector('.sidebar-close');
-                if (sidebarCloseBtn) {
-                    sidebarCloseBtn.addEventListener('click', function() {
-                        if (sidebarContainer) {
-                            sidebarContainer.classList.remove('show');
-                            const overlay = document.getElementById('sidebar-overlay');
-                            if (overlay) {
-                                overlay.remove();
-                            }
-                        }
-                    });
-                }
-            });
-        </script>
-        
-        <script>
-            window.addEventListener('load', function() {
-                console.log('Window loaded, running final profile photo fix');
-                
-                function finalFixProfilePhotos() {
-                    var images = document.querySelectorAll('img');
-                    images.forEach(function(img) {
-                        if (img.classList.contains('profile-user-img') || 
-                            (img.alt && (img.alt.includes('profile photo') || img.alt.includes('profile picture'))) ||
-                            (img.parentElement && img.parentElement.classList.contains('rounded-full'))) {
-                            
-                            img.style.display = 'block';
-                            img.style.visibility = 'visible';
-                            img.style.opacity = '1';
-                            
-                            if (!img.complete || img.naturalWidth === 0) {
-                                console.log('Found broken image:', img.src);
-                                
-                                if (img.src && img.src.includes('profile-photos')) {
-                                    var filename = img.src.split('/').pop().split('?')[0];
-                                    var newSrc = 'https://ckpkofa-network.ct.ws/profile-photos/' + filename + '?v=' + new Date().getTime();
-                                    console.log('Setting new src:', newSrc);
-                                    img.src = newSrc;
-                                } else {
-                                    img.src = '/img/kofa.png';
-                                }
-                            }
-                        }
-                    });
-                }
-                
-                finalFixProfilePhotos();
-                
-                setTimeout(finalFixProfilePhotos, 1000);
-                setTimeout(finalFixProfilePhotos, 3000);
             });
         </script>
     </body>

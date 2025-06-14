@@ -224,12 +224,11 @@
             <div id="main-content" class="main-content">
                 <!-- Page Heading -->
                 <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                        <div class="flex justify-between items-center flex-wrap">
-                            <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-2 sm:mb-0">
+                    <div class="max-w-7xl mx-auto p-2">
+                        <div class="flex justify-between items-center">
+                            <h2 class="font-semibold text-sm text-gray-800 leading-tight">
                                 {{ $header ?? 'Officer Dashboard' }}
                             </h2>
-                            <!-- User Profile removed as per request -->
                         </div>
                     </div>
                 </header>

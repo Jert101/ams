@@ -18,26 +18,26 @@
 <div class="h-full bg-white border-r border-gray-200 role-{{ $roleLower }} flex flex-col">
 
     <!-- Sidebar Header -->
-    <div class="sidebar-header p-4 bg-gradient-to-r {{ $gradient }} text-white border-b border-yellow-400 role-{{ $roleLower }}">
+    <div class="sidebar-header p-2 bg-gradient-to-r {{ $gradient }} text-white border-b border-yellow-400 role-{{ $roleLower }}">
         <div class="flex items-center justify-between">
             <a href="{{ Auth::user()->isAdmin() ? route('admin.dashboard') : (Auth::user()->isOfficer() ? route('officer.dashboard') : (Auth::user()->isSecretary() ? route('secretary.dashboard') : route('member.dashboard'))) }}" class="flex items-center">
                 @if(file_exists(public_path('kofa.png')))
-                    <img src="{{ asset('kofa.png') }}" alt="KofA Logo" class="h-8 w-auto">
+                    <img src="{{ asset('kofa.png') }}" alt="KofA Logo" class="h-5 w-5">
                 @else
-                    <div class="bg-yellow-400 p-2 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <div class="bg-yellow-400 p-1 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
                 @endif
-                <span class="ml-2 text-xl font-bold text-yellow-400 tracking-tight">
+                <span class="ml-1 text-sm font-bold text-yellow-400">
                     AMS
                 </span>
             </a>
             
             <!-- Close button for mobile -->
-            <button class="sidebar-close text-white p-1 rounded-full hover:bg-opacity-20 hover:bg-white lg:hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button class="sidebar-close text-white p-0.5 rounded-full hover:bg-opacity-20 hover:bg-white lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
@@ -45,7 +45,7 @@
     </div>
 
     <!-- Sidebar User Info -->
-    <div class="flex flex-col items-center py-6">
+    <div class="flex items-center p-1 border-b border-gray-200">
         @php
             $photoPath = Auth::user()->profile_photo_path;
             $defaultImage = asset('img/kofa.png');
@@ -53,9 +53,11 @@
                 ? asset('/uploads/' . $photoPath) . '?v=' . time()
                 : $defaultImage;
         @endphp
-        <img src="{{ $photoUrl }}" alt="{{ Auth::user()->name }}'s profile photo" class="h-16 w-16 object-cover rounded-full border-4 border-yellow-400 mb-2" onerror="this.src='{{ $defaultImage }}';">
-        <div class="text-lg font-semibold text-gray-900">{{ Auth::user()->name }}</div>
-        <div class="text-xs text-gray-600">ID: {{ Auth::user()->user_id }}</div>
+        <img src="{{ $photoUrl }}" alt="{{ Auth::user()->name }}'s profile photo" class="h-6 w-6 object-cover rounded-full border border-yellow-400" onerror="this.src='{{ $defaultImage }}';">
+        <div class="ml-1">
+            <div class="text-[10px] font-medium text-gray-900">Admin</div>
+            <div class="text-[8px] text-gray-600">ID: {{ Auth::user()->user_id }}</div>
+        </div>
     </div>
 
     <!-- Sidebar Content -->

@@ -208,19 +208,18 @@
         <!-- Main Content -->
         <div id="content-area" class="content-area min-h-screen">
             <!-- Header with User Profile -->
-            <header class="bg-white shadow-sm mb-6 p-4">
+            <header class="bg-white shadow-sm p-2">
                 <div class="container mx-auto">
                     <div class="flex justify-between items-center">
-                        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                        <h2 class="font-semibold text-sm text-gray-800 leading-tight">
                             {{ $header ?? 'Member Dashboard' }}
                         </h2>
-                        <!-- User Profile removed as per request -->
                     </div>
                 </div>
             </header>
             
             <!-- Page Content -->
-            <main class="py-4 px-4">
+            <main class="py-6 px-4">
                 @yield('content')
             </main>
         </div>

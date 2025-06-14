@@ -216,19 +216,19 @@
             <!-- Page Heading -->
             @isset($header)
                 <header class="bg-white shadow-sm border-b border-yellow-400">
-                    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                        <div class="flex justify-between items-center flex-wrap">
-                            <h2 class="font-semibold text-xl text-indigo-700 leading-tight mb-2 sm:mb-0">
+                    <div class="max-w-7xl mx-auto p-2">
+                        <div class="flex justify-between items-center">
+                            <h2 class="font-semibold text-sm text-indigo-700 leading-tight">
                                 {{ $header }}
                             </h2>
                         </div>
                     </div>
                 </header>
             @else
-                <header class="bg-white shadow-sm border-b border-yellow-400 mb-6">
-                    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                        <div class="flex justify-between items-center flex-wrap">
-                            <h2 class="font-semibold text-xl text-indigo-700 leading-tight mb-2 sm:mb-0">
+                <header class="bg-white shadow-sm border-b border-yellow-400">
+                    <div class="max-w-7xl mx-auto p-2">
+                        <div class="flex justify-between items-center">
+                            <h2 class="font-semibold text-sm text-indigo-700 leading-tight">
                                 Secretary Dashboard
                             </h2>
                         </div>
