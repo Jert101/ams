@@ -117,42 +117,39 @@ class ElectionController extends Controller
      */
     public function vote(Request $request)
     {
-        $request->validate([
-            'candidate_id' => 'required|exists:election_candidates,id',
-        ]);
+        $election = ElectionSetting::getActiveOrCreate();
         
-        $user = Auth::user();
-        $candidate = ElectionCandidate::findOrFail($request->candidate_id);
-        $position = $candidate->position;
-        $electionSetting = ElectionSetting::getActiveOrCreate();
+        // Group votes by position
+        $votesByPosition = collect($request->votes)->groupBy('position_id');
         
-        // Check if election is in voting period
-        if (!$electionSetting->isVotingPeriod()) {
-            return redirect()->route('election.index')->with('error', 'The voting period is not active.');
-        }
-        
-        // Check if user can vote more for this position
-        if (!$position->canUserVoteMore($user)) {
-            return redirect()->route('election.index')->with('error', 'You have already cast the maximum number of votes for this position.');
-        }
-        
-        // Check if user has already voted for this candidate
-        $existingVote = ElectionVote::where('user_id', $user->id)
-            ->where('candidate_id', $candidate->id)
-            ->first();
+        // Validate votes for each position
+        foreach ($votesByPosition as $positionId => $votes) {
+            $position = ElectionPosition::findOrFail($positionId);
             
-        if ($existingVote) {
-            return redirect()->route('election.index')->with('error', 'You have already voted for this candidate.');
+            // Check if the number of votes matches the required number
+            if (count($votes) !== $position->required_votes) {
+                return back()->with('error', "You must select exactly {$position->required_votes} candidate(s) for the position of {$position->title}.");
+            }
+            
+            // Validate each vote
+            foreach ($votes as $vote) {
+                $candidate = ElectionCandidate::findOrFail($vote['candidate_id']);
+                
+                // Ensure candidate belongs to this position
+                if ($candidate->position_id != $positionId) {
+                    return back()->with('error', 'Invalid vote detected.');
+                }
+                
+                // Create the vote
+                ElectionVote::create([
+                    'user_id' => auth()->id(),
+                    'candidate_id' => $candidate->id,
+                    'election_settings_id' => $election->id
+                ]);
+            }
         }
         
-        // Create the vote
-        ElectionVote::create([
-            'user_id' => $user->id,
-            'candidate_id' => $candidate->id,
-            'position_id' => $position->id,
-        ]);
-        
-        return redirect()->route('election.index')->with('success', 'Your vote has been recorded.');
+        return redirect()->route('election.index')->with('success', 'Your votes have been recorded successfully.');
     }
 
     /**

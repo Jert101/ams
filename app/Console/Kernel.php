@@ -12,6 +12,7 @@ use App\Console\Commands\FixAdminElectionViewCommand;
 use App\Console\Commands\FixElectionDatesCommand;
 use App\Console\Commands\FixSyntaxErrorCommand;
 use App\Console\Commands\CleanupRejectedUsers;
+use App\Console\Commands\SendTestElectionEmail;
 
 class Kernel extends ConsoleKernel
 {
@@ -39,6 +40,7 @@ class Kernel extends ConsoleKernel
         FixAdminElectionViewCommand::class,
         FixElectionDatesCommand::class,
         FixSyntaxErrorCommand::class,
+        SendTestElectionEmail::class,
     ];
 
     /**

@@ -1025,7 +1025,134 @@
     </div>
 </div>
 
+<!-- Position Modal -->
+<div class="modal fade" id="positionModal" tabindex="-1" aria-labelledby="positionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-red-600 text-white">
+                <h5 class="modal-title" id="positionModalLabel">Add New Position</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="positionForm" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <label for="title" class="form-label font-semibold">Position Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="description" class="form-label font-semibold">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
 
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="mb-4">
+                            <label for="required_votes" class="form-label font-semibold">Required Number of Votes</label>
+                            <input type="number" class="form-control" id="required_votes" name="required_votes" min="1" value="1" required>
+                            <small class="text-gray-500">How many candidates each voter MUST vote for this position (e.g., select 2 board members)</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="max_candidates" class="form-label font-semibold">Maximum Number of Candidates</label>
+                            <input type="number" class="form-control" id="max_candidates" name="max_candidates" min="0" value="0" required>
+                            <small class="text-gray-500">Maximum allowed candidates (0 for unlimited)</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="minimum_member_since_date" class="form-label font-semibold">Minimum Membership Date Requirement</label>
+                        <input type="date" class="form-control" id="minimum_member_since_date" name="minimum_member_since_date">
+                        <small class="text-gray-500">Only members who joined before this date can vote (leave empty for no restriction)</small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label font-semibold">Eligible Roles</label>
+                        <div class="space-y-2">
+                            @foreach($roles as $role)
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="eligible_roles[]" value="{{ $role->id }}" 
+                                           class="form-checkbox h-4 w-4 text-red-600" id="role_{{ $role->id }}">
+                                    <label for="role_{{ $role->id }}" class="ml-2">{{ $role->name }}</label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <small class="text-gray-500">Select which roles can vote for this position</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Position</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Position Modal -->
+<div class="modal fade" id="editPositionModal" tabindex="-1" aria-labelledby="editPositionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-red-600 text-white">
+                <h5 class="modal-title" id="editPositionModalLabel">Edit Position</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editPositionForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <label for="edit_title" class="form-label font-semibold">Position Title</label>
+                        <input type="text" class="form-control" id="edit_title" name="title" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="edit_description" class="form-label font-semibold">Description</label>
+                        <textarea class="form-control" id="edit_description" name="description" rows="3"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="mb-4">
+                            <label for="edit_required_votes" class="form-label font-semibold">Required Number of Votes</label>
+                            <input type="number" class="form-control" id="edit_required_votes" name="required_votes" min="1" required>
+                            <small class="text-gray-500">How many candidates each voter MUST vote for this position (e.g., select 2 board members)</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="edit_max_candidates" class="form-label font-semibold">Maximum Number of Candidates</label>
+                            <input type="number" class="form-control" id="edit_max_candidates" name="max_candidates" min="0" required>
+                            <small class="text-gray-500">Maximum allowed candidates (0 for unlimited)</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="edit_minimum_member_since_date" class="form-label font-semibold">Minimum Membership Date Requirement</label>
+                        <input type="date" class="form-control" id="edit_minimum_member_since_date" name="minimum_member_since_date">
+                        <small class="text-gray-500">Only members who joined before this date can vote (leave empty for no restriction)</small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label font-semibold">Eligible Roles</label>
+                        <div class="space-y-2">
+                            @foreach($roles as $role)
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="eligible_roles[]" value="{{ $role->id }}" 
+                                           class="form-checkbox h-4 w-4 text-red-600" id="edit_role_{{ $role->id }}">
+                                    <label for="edit_role_{{ $role->id }}" class="ml-2">{{ $role->name }}</label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <small class="text-gray-500">Select which roles can vote for this position</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Position</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @endsection
 

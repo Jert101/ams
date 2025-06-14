@@ -200,6 +200,14 @@
                 </div>
             </div>
             
+            <div class="mb-4">
+                <label for="member_since_date" class="block text-sm font-medium text-gray-700">Member Since Date</label>
+                <input type="date" name="member_since_date" id="member_since_date" 
+                       value="{{ old('member_since_date', $user->member_since_date?->format('Y-m-d')) }}"
+                       class="mt-1 focus:ring-red-500 focus:border-red-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                <p class="mt-1 text-xs text-gray-500">This date is used for election eligibility.</p>
+            </div>
+            
             <div class="border-t border-red-100 pt-6 mt-6">
                 <div class="flex items-center justify-end">
                     <a href="{{ route('admin.users.show', $user) }}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2 flex items-center">

@@ -387,6 +387,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/election/apply', [App\Http\Controllers\ElectionController::class, 'applyForCandidacy'])->name('election.apply');
     Route::post('/election/vote', [App\Http\Controllers\ElectionController::class, 'vote'])->name('election.vote');
     Route::get('/election/candidate/{candidate}', [App\Http\Controllers\ElectionController::class, 'viewCandidate'])->name('election.candidate');
+    Route::get('/election/results', [ElectionController::class, 'results'])->name('election.results');
 });
 
 // Election Management

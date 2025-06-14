@@ -65,6 +65,8 @@ class User extends Authenticatable
         'rejection_reason',
         'date_of_birth',
         'gender',
+        'member_since_date',
+        'status'
     ];
 
     /**
@@ -91,14 +93,12 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'date_of_birth' => 'date',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'member_since_date' => 'date',
+        'password' => 'hashed',
+        'date_of_birth' => 'date',
+    ];
 
     /**
      * Get the user's role.

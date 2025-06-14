@@ -5,16 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ElectionCandidate extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'position_id',
+        'status',
         'platform',
         'qualifications',
-        'status',
-        'rejection_reason',
+        'rejection_reason'
+    ];
+
+    protected $casts = [
+        'platform' => 'array',
+        'qualifications' => 'array'
     ];
 
     /**
@@ -132,5 +140,52 @@ class ElectionCandidate extends Model
         
         // Default fallback
         return 'Unknown';
+    }
+
+    public function isApproved()
+    {
+        return $this->status === 'approved';
+    }
+
+    public function isPending()
+    {
+        return $this->status === 'pending';
+    }
+
+    public function isRejected()
+    {
+        return $this->status === 'rejected';
+    }
+
+    // New: Check if user has already applied in current election
+    public static function hasExistingApplication($userId)
+    {
+        $currentElection = ElectionSetting::getActiveOrCreate();
+        return self::whereHas('position', function($query) use ($currentElection) {
+                $query->where('election_settings_id', $currentElection->id);
+            })
+            ->where('user_id', $userId)
+            ->exists();
+    }
+
+    // New: Validate if position has reached maximum candidates
+    public function validateMaxCandidates()
+    {
+        if ($this->position->max_candidates > 0) {
+            $currentCandidates = self::where('position_id', $this->position_id)
+                ->where('status', 'approved')
+                ->count();
+            return $currentCandidates < $this->position->max_candidates;
+        }
+        return true;
+    }
+
+    // New: Check if user meets minimum membership date requirement
+    public function validateMembershipDate()
+    {
+        if ($this->position->minimum_member_since_date) {
+            return $this->user->member_since_date <= $this->position->minimum_member_since_date;
+        }
+        return true;
     }
 } 
