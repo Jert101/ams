@@ -7,24 +7,12 @@ DirectoryIndex index.php
 
     RewriteEngine On
 
-    # Handle Authorization Header
-    RewriteCond %{HTTP:Authorization} .
-    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    # Allow direct access to existing files and folders
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
 
-    # Handle direct access to public assets
-    RewriteRule ^(css|js|fonts|images)/(.*)$ public/$1/$2 [L]
-
-    # Allow direct access to profile photos
-    RewriteRule ^profile-photos/(.*)$ profile-photos/$1 [L]
-
-    # Redirect Trailing Slashes If Not A Folder...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
-
-    # Send Requests To Front Controller...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
+    # Otherwise, route to index.php
     RewriteRule ^ index.php [L]
 </IfModule>
 
