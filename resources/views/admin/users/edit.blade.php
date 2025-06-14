@@ -172,7 +172,7 @@
                                 $photoPath = $user->profile_photo_path;
                                 $defaultImage = asset('img/kofa.png');
                                 $photoUrl = $photoPath && $photoPath !== 'kofa.png'
-                                    ? asset('uploads/' . $photoPath) . '?v=' . time()
+                                    ? asset('/uploads/' . $photoPath) . '?v=' . time()
                                     : $defaultImage;
                             @endphp
                             <img src="{{ $photoUrl }}"

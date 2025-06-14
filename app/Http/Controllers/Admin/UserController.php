@@ -103,11 +103,11 @@ class UserController extends Controller
         if ($request->hasFile('profile_photo')) {
             $file = $request->file('profile_photo');
             $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $uploadDir = public_path('uploads');
+            $uploadDir = base_path('uploads'); // uploads folder outside public
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
-            $file->move($uploadDir, $filename); // Save to /public/uploads
+            $file->move($uploadDir, $filename); // Save to /uploads
             $user->profile_photo_path = $filename; // Store only the filename
             $user->save();
         }
@@ -220,11 +220,11 @@ class UserController extends Controller
                 // Store the file
                 $file = $request->file('profile_photo');
                 $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-                $uploadDir = public_path('uploads');
+                $uploadDir = base_path('uploads'); // uploads folder outside public
                 if (!file_exists($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
-                $file->move($uploadDir, $filename); // Save to /public/uploads
+                $file->move($uploadDir, $filename); // Save to /uploads
                 $userData['profile_photo_path'] = $filename; // Store only the filename
                 
                 \Log::info('Profile photo uploaded successfully', [
