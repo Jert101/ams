@@ -30,18 +30,12 @@
                                 : $defaultImage;
                         @endphp
                         <div class="relative h-32 w-32">
-                            <!-- Fallback image (always visible) -->
-                            <div class="absolute inset-0 rounded-full border-4 border-red-200 overflow-hidden bg-gray-100">
-                                <img src="{{ $defaultImage }}" alt="Default profile" class="h-full w-full object-cover">
-                            </div>
-                            
                             <!-- Actual profile photo (loads on top if available) -->
                             <img 
                                 src="{{ $photoUrl }}" 
                                 alt="{{ $user->name }}'s profile photo" 
-                                class="absolute inset-0 h-full w-full object-cover rounded-full border-4 border-red-200 profile-user-img"
-                                style="display: block !important; visibility: visible !important; opacity: 1 !important;"
-                                onerror="this.style.display='none';"
+                                class="h-32 w-32 object-cover rounded-full border-4 border-red-200"
+                                onerror="this.src='{{ $defaultImage }}';"
                             >
                         </div>
                     </div>
