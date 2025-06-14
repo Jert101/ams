@@ -167,7 +167,7 @@
                 <label for="profile_photo" class="block text-red-700 text-sm font-semibold mb-2">Profile Photo:</label>
                 <div class="flex items-center">
                     <div class="mr-4">
-                        <div class="h-24 w-24 rounded-full border-4 border-red-200 shadow-md overflow-hidden">
+                        <div class="h-24 w-24 rounded-full border-4 border-red-200 shadow-md overflow-hidden relative">
                             @php
                                 $photoPath = $user->profile_photo_path;
                                 $filename = $photoPath ? basename($photoPath) : 'kofa.png';
@@ -175,24 +175,23 @@
                                 $photoUrl = $photoPath && $photoPath !== 'kofa.png' 
                                     ? asset('storage/' . $photoPath) . '?v=' . time()
                                     : asset('img/kofa.png');
-                                
-                                // Base64 encoded default user icon for fallback (simple user icon)
-                                $fallbackImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2U1ZTdlYiIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=';
                             @endphp
                             
-                            <!-- Fallback image (always visible) -->
-                            <div class="absolute inset-0 rounded-full overflow-hidden bg-gray-100" style="width: 96px; height: 96px;">
-                                <img src="{{ $fallbackImage }}" alt="Default profile" class="h-full w-full object-cover">
-                            </div>
+                            <!-- Default/Fallback Image (shown while main image loads or on error) -->
+                            <img src="{{ asset('img/kofa.png') }}" 
+                                alt="Default profile" 
+                                class="h-full w-full object-cover"
+                                style="position: absolute; top: 0; left: 0;">
                             
-                            <!-- Actual profile photo (loads on top if available) -->
-                            <img 
-                                src="{{ $photoUrl }}" 
+                            <!-- Main Profile Photo -->
+                            @if($photoPath && $photoPath !== 'kofa.png')
+                            <img src="{{ $photoUrl }}" 
                                 alt="{{ $user->name }}'s profile photo" 
-                                class="absolute inset-0 h-full w-full object-cover profile-user-img"
-                                style="width: 96px; height: 96px; display: block !important; visibility: visible !important; opacity: 1 !important;"
-                                onerror="this.style.display='none';"
-                            >
+                                class="h-full w-full object-cover"
+                                style="position: absolute; top: 0; left: 0;"
+                                onerror="this.style.display='none'; this.previousElementSibling.style.display='block';"
+                                onload="this.style.display='block'; this.previousElementSibling.style.display='none';">
+                            @endif
                         </div>
                     </div>
                     <div class="flex-1">
