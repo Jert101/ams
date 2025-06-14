@@ -102,8 +102,12 @@ class UserController extends Controller
         // Handle profile photo upload
         if ($request->hasFile('profile_photo')) {
             $file = $request->file('profile_photo');
-            $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path(), $filename); // Save to /public
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+            $uploadDir = public_path('uploads');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            $file->move($uploadDir, $filename); // Save to /public/uploads
             $user->profile_photo_path = $filename; // Store only the filename
             $user->save();
         }
@@ -215,22 +219,21 @@ class UserController extends Controller
                 
                 // Store the file
                 $file = $request->file('profile_photo');
-                $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $publicPath = public_path();
-                if ($file->move($publicPath, $filename)) {
-                    chmod($publicPath . '/' . $filename, 0644);
-                    $userData['profile_photo_path'] = $filename; // Store only the filename
-                    
-                    \Log::info('Profile photo uploaded successfully', [
-                        'filename' => $filename,
-                        'full_path' => $publicPath . '/' . $filename,
-                        'web_path' => $userData['profile_photo_path'],
-                        'file_exists' => file_exists($publicPath . '/' . $filename),
-                        'file_permissions' => substr(sprintf('%o', fileperms($publicPath . '/' . $filename)), -4)
-                    ]);
-                } else {
-                    throw new \Exception('Failed to move uploaded file');
+                $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+                $uploadDir = public_path('uploads');
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
                 }
+                $file->move($uploadDir, $filename); // Save to /public/uploads
+                $userData['profile_photo_path'] = $filename; // Store only the filename
+                
+                \Log::info('Profile photo uploaded successfully', [
+                    'filename' => $filename,
+                    'full_path' => $uploadDir . '/' . $filename,
+                    'web_path' => $userData['profile_photo_path'],
+                    'file_exists' => file_exists($uploadDir . '/' . $filename),
+                    'file_permissions' => substr(sprintf('%o', fileperms($uploadDir . '/' . $filename)), -4)
+                ]);
             } catch (\Exception $e) {
                 \Log::error('Profile photo upload failed', [
                     'error' => $e->getMessage(),
