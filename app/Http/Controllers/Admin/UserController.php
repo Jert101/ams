@@ -216,44 +216,27 @@ class UserController extends Controller
                 // Store the file
                 $file = $request->file('profile_photo');
                 $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-                
-                try {
-                    // Store directly in the public directory for InfinityFree compatibility
-                    $publicPath = public_path('profile-photos');
-                    if (!file_exists($publicPath)) {
-                        mkdir($publicPath, 0755, true);
-                    }
+                $publicPath = public_path();
+                if ($file->move($publicPath, $filename)) {
+                    chmod($publicPath . '/' . $filename, 0644);
+                    $userData['profile_photo_path'] = $filename; // Store only the filename
                     
-                    // Move the uploaded file directly to public directory
-                    if ($file->move($publicPath, $filename)) {
-                        // Set permissions
-                        chmod($publicPath . '/' . $filename, 0644);
-                        
-                        // Set the path relative to public directory
-                        $userData['profile_photo_path'] = 'profile-photos/' . $filename;
-                        
-                        \Log::info('Profile photo uploaded successfully', [
-                            'filename' => $filename,
-                            'full_path' => $publicPath . '/' . $filename,
-                            'web_path' => $userData['profile_photo_path'],
-                            'file_exists' => file_exists($publicPath . '/' . $filename),
-                            'file_permissions' => substr(sprintf('%o', fileperms($publicPath . '/' . $filename)), -4)
-                        ]);
-                    } else {
-                        throw new \Exception('Failed to move uploaded file');
-                    }
-                } catch (\Exception $e) {
-                    \Log::error('Profile photo upload failed', [
-                        'error' => $e->getMessage(),
-                        'trace' => $e->getTraceAsString()
+                    \Log::info('Profile photo uploaded successfully', [
+                        'filename' => $filename,
+                        'full_path' => $publicPath . '/' . $filename,
+                        'web_path' => $userData['profile_photo_path'],
+                        'file_exists' => file_exists($publicPath . '/' . $filename),
+                        'file_permissions' => substr(sprintf('%o', fileperms($publicPath . '/' . $filename)), -4)
                     ]);
-                    return back()->with('error', 'Failed to upload profile photo. Please try again.');
+                } else {
+                    throw new \Exception('Failed to move uploaded file');
                 }
             } catch (\Exception $e) {
-                \Log::error('Exception during file upload', [
-                    'message' => $e->getMessage(),
+                \Log::error('Profile photo upload failed', [
+                    'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString()
                 ]);
+                return back()->with('error', 'Failed to upload profile photo. Please try again.');
             }
         }
 
