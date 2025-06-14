@@ -167,31 +167,33 @@
                 <label for="profile_photo" class="block text-red-700 text-sm font-semibold mb-2">Profile Photo:</label>
                 <div class="flex items-center">
                     <div class="mr-4">
-                        <div class="h-24 w-24 rounded-full border-4 border-red-200 shadow-md overflow-hidden relative">
+                        <div class="h-24 w-24 rounded-full border-4 border-red-200 shadow-md overflow-hidden">
                             @php
                                 $photoPath = $user->profile_photo_path;
-                                $filename = $photoPath ? basename($photoPath) : 'kofa.png';
-                                // Use asset helper for proper URL generation
-                                $photoUrl = $photoPath && $photoPath !== 'kofa.png' 
-                                    ? asset('storage/' . $photoPath) . '?v=' . time()
-                                    : asset('img/kofa.png');
+                                $defaultImage = asset('img/kofa.png');
+                                
+                                if ($photoPath && $photoPath !== 'kofa.png') {
+                                    // Try storage path first
+                                    $storagePath = storage_path('app/public/' . $photoPath);
+                                    $publicPath = public_path('storage/' . $photoPath);
+                                    
+                                    if (file_exists($publicPath)) {
+                                        $photoUrl = asset('storage/' . $photoPath) . '?v=' . time();
+                                    } elseif (file_exists($storagePath)) {
+                                        $photoUrl = asset('storage/' . $photoPath) . '?v=' . time();
+                                    } else {
+                                        $photoUrl = $defaultImage;
+                                    }
+                                } else {
+                                    $photoUrl = $defaultImage;
+                                }
                             @endphp
                             
-                            <!-- Default/Fallback Image (shown while main image loads or on error) -->
-                            <img src="{{ asset('img/kofa.png') }}" 
-                                alt="Default profile" 
-                                class="h-full w-full object-cover"
-                                style="position: absolute; top: 0; left: 0;">
-                            
-                            <!-- Main Profile Photo -->
-                            @if($photoPath && $photoPath !== 'kofa.png')
                             <img src="{{ $photoUrl }}" 
                                 alt="{{ $user->name }}'s profile photo" 
                                 class="h-full w-full object-cover"
-                                style="position: absolute; top: 0; left: 0;"
-                                onerror="this.style.display='none'; this.previousElementSibling.style.display='block';"
-                                onload="this.style.display='block'; this.previousElementSibling.style.display='none';">
-                            @endif
+                                onerror="this.src='{{ $defaultImage }}'"
+                                style="display: block;">
                         </div>
                     </div>
                     <div class="flex-1">
