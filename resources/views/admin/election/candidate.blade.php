@@ -68,7 +68,9 @@
                 <div class="col-md-4 mb-4 mb-md-0">
                     <div class="text-center">
                         <div class="mx-auto mb-3 w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                            <img src="{{ $profilePhotoUrl }}" alt="{{ $userName }}" class="w-full h-full object-cover">
+                            <img src="{{ $candidate->user ? $candidate->user->profile_photo_url : asset('img/kofa.png') }}" 
+                                 alt="{{ $userName }}" 
+                                 class="w-full h-full object-cover">
                         </div>
                         <h3 class="text-xl font-semibold mt-2">{{ $userName }}</h3>
                         @if($userEmail)

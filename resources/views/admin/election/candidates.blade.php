@@ -36,37 +36,9 @@
                                     <td data-label="Candidate">
                                         <div class="d-flex align-items-center">
                                             <div class="me-3">
-                                                @php
-                                                    $profilePhotoUrl = null;
-                                                    
-                                                    // First try direct URL from controller
-                                                    if (isset($candidate->profile_photo_url)) {
-                                                        $profilePhotoUrl = $candidate->profile_photo_url;
-                                                    }
-                                                    // Try to get photo from pre-processed data
-                                                    elseif(isset($candidate->profile_photo) && $candidate->profile_photo) {
-                                                        if (filter_var($candidate->profile_photo, FILTER_VALIDATE_URL)) {
-                                                            $profilePhotoUrl = $candidate->profile_photo;
-                                                        } else {
-                                                            $profilePhotoUrl = asset('storage/' . $candidate->profile_photo);
-                                                        }
-                                                    }
-                                                    // Try to get it from user relationship
-                                                    elseif($candidate->user && $candidate->user->profile_photo_url) {
-                                                        $profilePhotoUrl = $candidate->user->profile_photo_url;
-                                                    }
-                                                    
-                                                    // If still no photo, use default
-                                                    if (!$profilePhotoUrl) {
-                                                        if (file_exists(public_path('kofa.png'))) {
-                                                            $profilePhotoUrl = asset('kofa.png');
-                                                        } else {
-                                                            $profilePhotoUrl = asset('img/defaults/user.svg');
-                                                        }
-                                                    }
-                                                @endphp
-                                                <img src="{{ $profilePhotoUrl }}" 
-                                                     alt="{{ $candidate->user_name }}" class="rounded-circle" 
+                                                <img src="{{ $candidate->user ? $candidate->user->profile_photo_url : asset('img/kofa.png') }}" 
+                                                     alt="{{ $candidate->user_name }}" 
+                                                     class="rounded-circle" 
                                                      width="40" height="40">
                                             </div>
                                             <div>

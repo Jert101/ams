@@ -37,11 +37,11 @@
                         
                         // Default photo if none found
                         if (!$profilePhotoUrl) {
-                            $profilePhotoUrl = asset('img/defaults/user.svg');
+                            $profilePhotoUrl = asset('img/kofa.png');
                         }
                     @endphp
                     
-                    <img src="{{ $profilePhotoUrl }}" 
+                    <img src="{{ $candidate->user ? $candidate->user->profile_photo_url : asset('img/kofa.png') }}" 
                          alt="{{ $userName }}" 
                          class="img-fluid rounded-circle mb-3" style="max-width: 200px;">
                     <h4>{{ $userName }}</h4>

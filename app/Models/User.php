@@ -198,10 +198,31 @@ class User extends Authenticatable
      */
     public function getProfilePhotoUrlAttribute()
     {
-        $filename = $this->profile_photo_path;
-        if ($filename && $filename !== 'kofa.png') {
-            return asset($filename) . '?v=' . time();
+        if (empty($this->profile_photo_path)) {
+            return asset('img/kofa.png');
         }
+
+        // If it's a full URL, return it as is
+        if (filter_var($this->profile_photo_path, FILTER_VALIDATE_URL)) {
+            return $this->profile_photo_path;
+        }
+
+        // If it starts with storage/, use asset()
+        if (str_starts_with($this->profile_photo_path, 'storage/')) {
+            return asset($this->profile_photo_path);
+        }
+
+        // If it's in the uploads directory
+        if (file_exists(base_path('uploads/' . $this->profile_photo_path))) {
+            return asset('uploads/' . $this->profile_photo_path);
+        }
+
+        // If it's in the storage/profile-photos directory
+        if (file_exists(storage_path('app/public/profile-photos/' . $this->profile_photo_path))) {
+            return asset('storage/profile-photos/' . $this->profile_photo_path);
+        }
+
+        // Fallback to default
         return asset('img/kofa.png');
     }
     
@@ -212,7 +233,6 @@ class User extends Authenticatable
      */
     protected function defaultProfilePhotoUrl()
     {
-        // Just return kofa.png directly
-        return asset('img/kofa.png') . '?v=' . time();
+        return asset('img/kofa.png');
     }
 }

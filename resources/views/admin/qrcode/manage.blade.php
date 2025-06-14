@@ -31,14 +31,12 @@
         <!-- Mobile View (Card Layout) -->
         <div class="block sm:hidden">
             @foreach($users as $user)
-            @php
-                $photoPath = $user->profile_photo_path;
-                $filename = $photoPath ? basename($photoPath) : 'kofa.png';
-            @endphp
             <div class="border-b border-gray-200 p-4">
                 <div class="flex items-center mb-3">
                     <div class="flex-shrink-0 h-10 w-10 mr-3">
-                        <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" src="{{ asset('storage/profile-photos/' . $filename) }}" alt="{{ $user->name }}" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
+                        <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" 
+                             src="{{ $user->profile_photo_url }}" 
+                             alt="{{ $user->name }}">
                     </div>
                     <div>
                         <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
@@ -118,10 +116,6 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach($users as $user)
-                    @php
-                        $photoPath = $user->profile_photo_path;
-                        $filename = $photoPath ? basename($photoPath) : 'kofa.png';
-                    @endphp
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                             {{ $user->user_id }}
@@ -129,7 +123,9 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10">
-                                    <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" src="{{ asset('storage/profile-photos/' . $filename) }}" alt="{{ $user->name }}" onerror="this.onerror=null;this.src='{{ asset('img/kofa.png') }}';">
+                                    <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" 
+                                         src="{{ $user->profile_photo_url }}" 
+                                         alt="{{ $user->name }}">
                                 </div>
                                 <div class="ml-4">
                                     <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
