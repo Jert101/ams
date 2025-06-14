@@ -24,19 +24,15 @@
                     <div class="mb-6 flex justify-center md:justify-start">
                         @php
                             $photoPath = $user->profile_photo_path;
-                            $filename = $photoPath ? basename($photoPath) : 'kofa.png';
-                            // Try direct URL to root level profile-photos directory
-                            $photoUrl = $photoPath && $photoPath !== 'kofa.png' 
-                                ? "https://ckpkofa-network.ct.ws/profile-photos/{$filename}?v=" . time()
-                                : asset('img/kofa.png');
-                            
-                            // Base64 encoded default user icon for fallback (simple user icon)
-                            $fallbackImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2U1ZTdlYiIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=';
+                            $defaultImage = asset('img/kofa.png');
+                            $photoUrl = $photoPath && $photoPath !== 'kofa.png'
+                                ? asset('/uploads/' . $photoPath) . '?v=' . time()
+                                : $defaultImage;
                         @endphp
                         <div class="relative h-32 w-32">
                             <!-- Fallback image (always visible) -->
                             <div class="absolute inset-0 rounded-full border-4 border-red-200 overflow-hidden bg-gray-100">
-                                <img src="{{ $fallbackImage }}" alt="Default profile" class="h-full w-full object-cover">
+                                <img src="{{ $defaultImage }}" alt="Default profile" class="h-full w-full object-cover">
                             </div>
                             
                             <!-- Actual profile photo (loads on top if available) -->
