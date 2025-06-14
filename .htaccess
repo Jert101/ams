@@ -13,7 +13,7 @@ DirectoryIndex index.php
 
     # Handle direct access to public assets
     RewriteRule ^(css|js|fonts|images)/(.*)$ public/$1/$2 [L]
-    
+
     # Allow direct access to profile photos
     RewriteRule ^profile-photos/(.*)$ profile-photos/$1 [L]
 

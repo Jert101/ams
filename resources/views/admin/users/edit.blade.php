@@ -171,20 +171,14 @@
                             @php
                                 $photoPath = $user->profile_photo_path;
                                 $defaultImage = asset('img/kofa.png');
-                                
-                                if ($photoPath && $photoPath !== 'kofa.png') {
-                                    // For InfinityFree, use direct public path
-                                    $photoUrl = url($photoPath) . '?v=' . time();
-                                } else {
-                                    $photoUrl = $defaultImage;
-                                }
+                                $photoUrl = $photoPath && $photoPath !== 'kofa.png'
+                                    ? url($photoPath) . '?v=' . time()
+                                    : $defaultImage;
                             @endphp
-                            
-                            <img 
-                                src="{{ $photoUrl }}" 
-                                alt="{{ $user->name }}'s profile photo" 
-                                class="w-full h-full object-cover rounded-full border-4 border-red-200"
-                                onerror="this.src='{{ $defaultImage }}'; console.log('Loading default image');">
+                            <img src="{{ $photoUrl }}"
+                                 alt="{{ $user->name }}'s profile photo"
+                                 class="w-full h-full object-cover rounded-full border-4 border-red-200"
+                                 onerror="this.src='{{ $defaultImage }}';">
                         </div>
                     </div>
                     <div class="flex-1">

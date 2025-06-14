@@ -103,17 +103,13 @@ class UserController extends Controller
         if ($request->hasFile('profile_photo')) {
             $file = $request->file('profile_photo');
             $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $relativePath = 'profile-photos/' . $filename;
+            $publicPath = public_path(); // root public directory
 
-            // Save directly to public/profile-photos
-            $publicProfilePhotosPath = public_path('profile-photos');
-            if (!file_exists($publicProfilePhotosPath)) {
-                mkdir($publicProfilePhotosPath, 0777, true);
-            }
-            $file->move($publicProfilePhotosPath, $filename);
+            // Move the uploaded file directly to the public directory
+            $file->move($publicPath, $filename);
 
-            // Update user with the relative path
-            $user->profile_photo_path = $relativePath;
+            // Save just the filename in the database
+            $user->profile_photo_path = $filename;
             $user->save();
         }
 

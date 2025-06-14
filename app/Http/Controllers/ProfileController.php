@@ -90,7 +90,7 @@ class ProfileController extends Controller
                         
                         // Update user with the relative path
                         $user->profile_photo_path = $relativePath;
-                        Log::info('User profile_photo_path updated to: ' . $user->profile_photo_path);
+                    Log::info('User profile_photo_path updated to: ' . $user->profile_photo_path);
                     } else {
                         Log::error('Failed to move uploaded file to root path');
                         return redirect()->route('profile.show')->with('error', 'Failed to upload profile photo.');
