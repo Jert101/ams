@@ -145,10 +145,10 @@
                                             @foreach($recentUsers as $user)
                                                 @php
                                                     $photoPath = $user['profile_photo_path'] ?? null;
-                                                    $filename = $photoPath ? basename($photoPath) : 'kofa.png';
+                                                    $defaultImage = asset('img/kofa.png');
                                                     $photoUrl = $photoPath && $photoPath !== 'kofa.png'
-                                                        ? "https://ckpkofa-network.ct.ws/profile-photos/{$filename}?v=" . time()
-                                                        : asset('img/kofa.png');
+                                                        ? asset('/uploads/' . $photoPath) . '?v=' . time()
+                                                        : $defaultImage;
                                                     $fallbackSvg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2U1ZTdlYiIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4=';
                                                 @endphp
                                                 <tr>
