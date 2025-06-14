@@ -777,22 +777,11 @@
         </script>
     </head>
     <body class="font-sans antialiased pattern-bg bg-gray-50">
-        <!-- Mobile Sidebar Toggle Button -->
-        <button class="sidebar-toggle" aria-label="Toggle Sidebar">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-        </button>
-        
-        <!-- Sidebar - Fixed position on the left -->
         <div class="sidebar-container">
             @include('layouts.sidebar')
         </div>
-        
-        <!-- Main Content - With appropriate margin to accommodate sidebar -->
         <div class="content-wrapper">
             <div class="container mx-auto px-4 py-4 w-full">
-                <!-- Page Heading -->
                 @isset($header)
                     <header class="bg-white shadow-sm border-b border-yellow-400">
                         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
@@ -801,29 +790,29 @@
                     </header>
                 @endisset
 
-                <!-- Page Content -->
                 <main class="py-6 px-4">
                     @yield('content')
                 </main>
             </div>
         </div>
 
-        <!-- Scripts -->
         @livewireScripts
         
-        <!-- Additional Scripts -->
         @stack('scripts')
         
-        <!-- jQuery (needed for some Bootstrap components) -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         
-        <!-- Profile Photo Fix Script -->
         <script src="{{ asset('js/profile-photo-fix.js') }}"></script>
         
-        <!-- Sidebar Toggle Script -->
+        <script>
+            function toggleSidebar() {
+                const sidebar = document.querySelector('.sidebar-container');
+                sidebar.classList.toggle('show');
+            }
+        </script>
+        
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Sidebar toggle functionality
                 const sidebarToggle = document.querySelector('.sidebar-toggle');
                 const sidebarContainer = document.querySelector('.sidebar-container');
                 const contentWrapper = document.querySelector('.content-wrapper');
@@ -832,9 +821,7 @@
                     sidebarToggle.addEventListener('click', function() {
                         sidebarContainer.classList.toggle('show');
                         
-                        // Add overlay when sidebar is shown on mobile
                         if (sidebarContainer.classList.contains('show')) {
-                            // Create overlay if it doesn't exist
                             let overlay = document.getElementById('sidebar-overlay');
                             if (!overlay) {
                                 overlay = document.createElement('div');
@@ -849,14 +836,12 @@
                                 overlay.style.display = 'block';
                                 document.body.appendChild(overlay);
                                 
-                                // Close sidebar when overlay is clicked
                                 overlay.addEventListener('click', function() {
                                     sidebarContainer.classList.remove('show');
                                     overlay.remove();
                                 });
                             }
                         } else {
-                            // Remove overlay when sidebar is hidden
                             const overlay = document.getElementById('sidebar-overlay');
                             if (overlay) {
                                 overlay.remove();
@@ -864,7 +849,6 @@
                         }
                     });
                     
-                    // Close sidebar when window is resized to desktop size
                     window.addEventListener('resize', function() {
                         if (window.innerWidth > 1024 && sidebarContainer.classList.contains('show')) {
                             sidebarContainer.classList.remove('show');
@@ -875,7 +859,6 @@
                         }
                     });
                     
-                    // Close sidebar when clicking outside on mobile
                     document.addEventListener('click', function(event) {
                         const isMobile = window.innerWidth <= 1024;
                         const isClickInsideSidebar = sidebarContainer.contains(event.target);
@@ -891,7 +874,6 @@
                     });
                 }
                 
-                // Add data-label attributes to table cells for mobile responsive view
                 const tables = document.querySelectorAll('.table-responsive table');
                 tables.forEach(function(table) {
                     const headerCells = table.querySelectorAll('thead th');
@@ -908,7 +890,6 @@
                     });
                 });
                 
-                // Handle sidebar close button
                 const sidebarCloseBtn = document.querySelector('.sidebar-close');
                 if (sidebarCloseBtn) {
                     sidebarCloseBtn.addEventListener('click', function() {
@@ -924,13 +905,10 @@
             });
         </script>
         
-        <!-- Final profile photo fix -->
         <script>
-            // Run the fix again after everything is loaded
             window.addEventListener('load', function() {
                 console.log('Window loaded, running final profile photo fix');
                 
-                // Function to fix profile photos
                 function finalFixProfilePhotos() {
                     var images = document.querySelectorAll('img');
                     images.forEach(function(img) {
@@ -938,23 +916,19 @@
                             (img.alt && (img.alt.includes('profile photo') || img.alt.includes('profile picture'))) ||
                             (img.parentElement && img.parentElement.classList.contains('rounded-full'))) {
                             
-                            // Force image to be visible
                             img.style.display = 'block';
                             img.style.visibility = 'visible';
                             img.style.opacity = '1';
                             
-                            // Check if image is broken
                             if (!img.complete || img.naturalWidth === 0) {
                                 console.log('Found broken image:', img.src);
                                 
-                                // Extract filename if it's a profile photo
                                 if (img.src && img.src.includes('profile-photos')) {
                                     var filename = img.src.split('/').pop().split('?')[0];
                                     var newSrc = 'https://ckpkofa-network.ct.ws/profile-photos/' + filename + '?v=' + new Date().getTime();
                                     console.log('Setting new src:', newSrc);
                                     img.src = newSrc;
                                 } else {
-                                    // Use default image
                                     img.src = '/img/kofa.png';
                                 }
                             }
@@ -962,10 +936,8 @@
                     });
                 }
                 
-                // Run immediately
                 finalFixProfilePhotos();
                 
-                // And again after a delay
                 setTimeout(finalFixProfilePhotos, 1000);
                 setTimeout(finalFixProfilePhotos, 3000);
             });

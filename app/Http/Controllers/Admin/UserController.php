@@ -223,7 +223,7 @@ class UserController extends Controller
                 $uploadDir = base_path('uploads'); // uploads folder outside public
                 if (!file_exists($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
-                }
+                    }
                 $file->move($uploadDir, $filename); // Save to /uploads
                 $userData['profile_photo_path'] = $filename; // Store only the filename
                 
