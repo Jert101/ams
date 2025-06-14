@@ -198,10 +198,9 @@ class User extends Authenticatable
      */
     public function getProfilePhotoUrlAttribute()
     {
-        $filename = $this->profile_photo_path ? basename($this->profile_photo_path) : 'kofa.png';
-        // Always use public/profile-photos for maximum compatibility
+        $filename = $this->profile_photo_path;
         if ($filename && $filename !== 'kofa.png') {
-            return asset('profile-photos/' . $filename) . '?v=' . time();
+            return asset($filename) . '?v=' . time();
         }
         return asset('img/kofa.png');
     }
