@@ -255,5 +255,59 @@
         </div>
     </div>
     @endif
+
+    <!-- Action Buttons Section -->
+    <div class="mt-4 border-t pt-4">
+        <h4 class="text-lg font-semibold mb-3">Actions</h4>
+        <div class="flex gap-2">
+            @if($candidate->status === 'pending')
+                <form action="{{ route('admin.election.candidate.approve', $candidate->id) }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle me-1"></i> Approve Candidate
+                    </button>
+                </form>
+                
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                    <i class="bi bi-x-circle me-1"></i> Reject Candidate
+                </button>
+            @endif
+            
+            @if($candidate->status === 'approved')
+                <form action="{{ route('admin.election.candidate.delete', $candidate->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this candidacy? This action cannot be undone.');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i> Delete Candidacy
+                    </button>
+                </form>
+            @endif
+        </div>
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectModalLabel">Reject Candidate Application</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('admin.election.candidate.reject', $candidate->id) }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="rejection_reason" class="form-label">Reason for Rejection</label>
+                        <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Reject Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection 

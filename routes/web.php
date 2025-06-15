@@ -416,6 +416,7 @@ Route::middleware(['auth', 'verified', 'role:Admin'])->group(function () {
     Route::get('/admin/election/candidates/{id}', [ElectionController::class, 'viewCandidate'])->name('admin.election.candidate');
     Route::post('/admin/election/candidates/{id}/approve', [ElectionController::class, 'approveCandidate'])->name('admin.election.candidate.approve');
     Route::post('/admin/election/candidates/{id}/reject', [ElectionController::class, 'rejectCandidate'])->name('admin.election.candidate.reject');
+    Route::delete('/admin/election/candidates/{id}/delete', [ElectionController::class, 'deleteCandidate'])->name('admin.election.candidate.delete');
     
     // Auto-approval setting
     Route::get('/admin/election/set-auto-approval/{status}', [ElectionController::class, 'setAutoApproval'])->name('admin.election.set-auto-approval');
