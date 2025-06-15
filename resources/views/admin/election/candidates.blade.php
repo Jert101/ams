@@ -154,35 +154,37 @@
                                     {{ ucfirst($candidate->status) }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                <div class="flex space-x-2">
-                                    <a href="{{ url('/admin/election/candidates/'.$candidate->id) }}" 
-                                       class="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex justify-end space-x-2">
+                                    <a href="{{ route('admin.election.candidate', $candidate->id) }}" 
+                                       class="text-indigo-600 hover:text-indigo-900">
                                         View
                                     </a>
-                                    
+
                                     @if($candidate->status === 'pending')
-                                        <form action="{{ url('/admin/election/candidates/' . $candidate->id . '/approve') }}" method="POST" class="inline">
+                                        <form action="{{ route('admin.election.candidate.approve', $candidate->id) }}" method="POST" class="inline">
                                             @csrf
-                                            <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                                <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                                </svg>
+                                            <button type="submit" class="text-green-600 hover:text-green-900">
                                                 Approve
                                             </button>
                                         </form>
-                                        
-                                        <form action="{{ url('/admin/election/candidates/' . $candidate->id . '/reject') }}" method="POST" class="inline">
+
+                                        <button type="button" 
+                                                class="text-red-600 hover:text-red-900"
+                                                onclick="openRejectModal('{{ $candidate->id }}')">
+                                            Reject
+                                        </button>
+                                    @endif
+
+                                    @if($candidate->status === 'approved')
+                                        <form action="{{ route('admin.election.candidate.delete', $candidate->id) }}" 
+                                              method="POST" 
+                                              class="inline" 
+                                              onsubmit="return confirm('Are you sure you want to delete this candidacy? This action cannot be undone.');">
                                             @csrf
-                                            <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                                <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                                Reject
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900">
+                                                Delete
                                             </button>
                                         </form>
                                     @endif
@@ -194,5 +196,39 @@
             </table>
         </div>
     </div>
+
+    <!-- Reject Modal -->
+    <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rejectModalLabel">Reject Candidate Application</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="rejectForm" action="" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="rejection_reason" class="form-label">Reason for Rejection</label>
+                            <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Reject Application</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openRejectModal(candidateId) {
+            const modal = document.getElementById('rejectModal');
+            const form = document.getElementById('rejectForm');
+            form.action = `/admin/election/candidates/${candidateId}/reject`;
+            new bootstrap.Modal(modal).show();
+        }
+    </script>
 </div>
 @endsection
