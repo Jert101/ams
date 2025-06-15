@@ -12,10 +12,20 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <!-- Scripts and Styles -->
+        @php
+            $manifestPath = public_path('build/manifest.json');
+            $manifest = file_exists($manifestPath) ? json_decode(file_get_contents($manifestPath), true) : null;
+        @endphp
 
-        <!-- Styles -->
+        @if ($manifest)
+            @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @else
+            <!-- Fallback for production if Vite manifest is not found -->
+            <link rel="stylesheet" href="{{ asset('build/assets/app-DkuVia4n.css') }}">
+            <script src="{{ asset('build/assets/app-CdRc4Ovg.js') }}" defer></script>
+        @endif
+
         @livewireStyles
 
         <style>
