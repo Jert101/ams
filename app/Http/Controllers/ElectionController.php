@@ -89,9 +89,12 @@ class ElectionController extends Controller
         }
         
         // Check if user has already applied for this position
-        if (ElectionCandidate::hasExistingApplication($user->id)) {
-            return redirect()->route('election.index')
-                ->with('error', 'You cannot submit multiple candidacy applications. You are only allowed to apply for one position per election period. If you wish to apply for a different position, please wait for the next election period.');
+        $existingApplication = ElectionCandidate::where('user_id', $user->id)
+            ->where('position_id', $position->id)
+            ->first();
+            
+        if ($existingApplication) {
+            return redirect()->route('election.index')->with('error', 'You have already applied for this position.');
         }
         
         // Create the candidacy - status set by model boot method

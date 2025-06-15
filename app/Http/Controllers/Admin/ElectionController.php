@@ -219,22 +219,6 @@ class ElectionController extends Controller
     }
 
     /**
-     * Display the positions management page.
-     */
-    public function positions()
-    {
-        $electionSetting = ElectionSetting::getActiveOrCreate();
-        $positions = ElectionPosition::where('election_settings_id', $electionSetting->id)
-            ->withCount(['candidates' => function($query) {
-                $query->where('status', 'approved');
-            }])
-            ->get();
-        $roles = Role::all();
-        
-        return view('admin.election.positions', compact('positions', 'roles', 'electionSetting'));
-    }
-
-    /**
      * Store a new position.
      */
     public function storePosition(Request $request)

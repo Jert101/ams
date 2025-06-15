@@ -12,22 +12,12 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
 
-        <!-- Scripts and Styles -->
-        @php
-            $manifestPath = public_path('build/manifest.json');
-            $manifest = file_exists($manifestPath) ? json_decode(file_get_contents($manifestPath), true) : null;
-        @endphp
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        @if ($manifest)
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @else
-            <!-- Fallback for production if Vite manifest is not found -->
-            <link rel="stylesheet" href="{{ asset('build/assets/app-DkuVia4n.css') }}">
-            <script src="{{ asset('build/assets/app-CdRc4Ovg.js') }}" defer></script>
-        @endif
-
+        <!-- Styles -->
         @livewireStyles
-
+        
         <style>
             :root {
                 --primary-color: #b91c1c;
@@ -38,14 +28,14 @@
                 --sidebar-width: 18rem;
                 --header-height: 4rem;
             }
-
+            
             /* Base styles */
             body {
                 font-family: 'Figtree', sans-serif;
                 background-color: #f8fafc;
                 overflow-x: hidden;
             }
-
+            
             /* Sidebar styles */
             .sidebar {
                 position: fixed;
@@ -107,18 +97,18 @@
                 .sidebar.show {
                     transform: translateX(0);
                 }
-
+                
                 .content-wrapper {
                     margin-left: 0;
                     padding-top: 4rem;
                 }
-
+                
                 .sidebar-toggle {
                     display: flex;
                     align-items: center;
                     justify-content: center;
                 }
-
+                
                 .sidebar-overlay {
                     display: block;
                 }
@@ -132,7 +122,7 @@
                     padding-left: 1rem;
                     padding-right: 1rem;
                 }
-
+                
                 /* Stack buttons on mobile */
                 .button-group {
                     display: flex;
@@ -190,16 +180,16 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
         </button>
-
+        
         <!-- Sidebar Overlay -->
         <div id="sidebar-overlay" class="sidebar-overlay"></div>
-
+        
         <div class="min-h-screen bg-gray-50">
             <!-- Sidebar -->
             <aside id="sidebar" class="sidebar">
                 @include('layouts.sidebar')
             </aside>
-
+            
             <!-- Main Content -->
             <div id="content-wrapper" class="content-wrapper">
                 <!-- Page Content -->
@@ -208,7 +198,7 @@
                 </main>
             </div>
         </div>
-
+        
         <!-- Scripts -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -218,7 +208,7 @@
                 const contentWrapper = document.getElementById('content-wrapper');
 
                 function toggleSidebar() {
-                    sidebar.classList.toggle('show');
+                        sidebar.classList.toggle('show');
                     sidebarOverlay.classList.toggle('show');
                     document.body.classList.toggle('overflow-hidden');
                 }
