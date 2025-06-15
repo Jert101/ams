@@ -1,0 +1,31 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-DkuVia4n.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-B1aIL2Yz.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "resources/js/react/index.jsx"
+    ]
+  },
+  "resources/js/pwa.js": {
+    "file": "assets/pwa-CFuco_k2.js",
+    "name": "pwa",
+    "src": "resources/js/pwa.js",
+    "isEntry": true
+  },
+  "resources/js/react/index.jsx": {
+    "file": "assets/index-CXz5X6T7.js",
+    "name": "index",
+    "src": "resources/js/react/index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ]
+  }
+}
