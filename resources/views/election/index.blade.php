@@ -459,17 +459,35 @@
             <input type="hidden" name="position_id" id="positionId">
             
             <div class="mb-3">
-                <label for="platform" class="form-label">Your Platform/Vision</label>
-                <textarea class="form-control w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    id="platform" name="platform" rows="3" required></textarea>
-                <div class="form-text text-xs text-gray-600">Describe your vision and goals for this position.</div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Platform and Goals</label>
+                <div class="space-y-4" id="platform-fields">
+                    <div class="flex items-center gap-2">
+                        <input type="text" name="platform[]" class="form-input rounded-md shadow-sm mt-1 block w-full" 
+                               placeholder="Enter your platform point" required>
+                        <button type="button" class="add-platform-field px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-text text-xs text-gray-600 mt-2">Add your key platform points and what you aim to achieve in this position.</div>
             </div>
             
             <div class="mb-3">
-                <label for="qualifications" class="form-label">Your Qualifications</label>
-                <textarea class="form-control w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    id="qualifications" name="qualifications" rows="3" required></textarea>
-                <div class="form-text text-xs text-gray-600">List your relevant experience and qualifications.</div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Qualifications and Experience</label>
+                <div class="space-y-4" id="qualification-fields">
+                    <div class="flex items-center gap-2">
+                        <input type="text" name="qualifications[]" class="form-input rounded-md shadow-sm mt-1 block w-full" 
+                               placeholder="Enter your qualification" required>
+                        <button type="button" class="add-qualification-field px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-text text-xs text-gray-600 mt-2">List your relevant qualifications and experience that make you suitable for this position.</div>
             </div>
             
             <div class="custom-modal-footer">
@@ -519,6 +537,39 @@
             modal.style.display = "none";
         }
     }
+
+    function createField(type) {
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-2';
+        div.innerHTML = `
+            <input type="text" name="${type}[]" class="form-input rounded-md shadow-sm mt-1 block w-full" 
+                   placeholder="Enter your ${type === 'platform' ? 'platform point' : 'qualification'}" required>
+            <button type="button" class="remove-field px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        `;
+        return div;
+    }
+
+    document.querySelectorAll('.add-platform-field').forEach(button => {
+        button.addEventListener('click', () => {
+            document.getElementById('platform-fields').appendChild(createField('platform'));
+        });
+    });
+
+    document.querySelectorAll('.add-qualification-field').forEach(button => {
+        button.addEventListener('click', () => {
+            document.getElementById('qualification-fields').appendChild(createField('qualifications'));
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.remove-field')) {
+            e.target.closest('.flex').remove();
+        }
+    });
 </script>
 
 @endsection 
