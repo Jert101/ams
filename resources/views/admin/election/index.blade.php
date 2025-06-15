@@ -766,11 +766,9 @@
                     </div>
                 </div>
             </div>
-            
             @if(isset($candidates) && count($candidates) > 0)
                 <div class="mb-4">
                     <p class="text-gray-700">There are <strong>{{ count($candidates) }}</strong> candidate applications in the system.</p>
-                    
                     <div class="mt-4">
                         <a href="{{ url('/admin/election/candidates') }}" class="btn btn-primary">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -780,86 +778,7 @@
                         </a>
                     </div>
                 </div>
-                
-                <!-- Latest candidates preview -->
-                <div class="mt-4">
-                    <h6 class="font-semibold mb-3">Latest Applications</h6>
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Candidate</th>
-                                    <th>Position</th>
-                                    <th>Applied On</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($candidates->sortByDesc('created_at')->take(3) as $candidate)
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                @php
-                                                    $profilePhotoUrl = null;
-                                                    $candidateName = 'Unknown User';
-                                                    
-                                                    // Try to get photo and name from user relationship
-                                                    if ($candidate->user) {
-                                                        $candidateName = $candidate->user->name;
-                                                        $profilePhotoUrl = $candidate->user->profile_photo_url;
-                                                    } 
-                                                    // Try from user_details if available
-                                                    elseif (isset($candidate->user_details['name'])) {
-                                                        $candidateName = $candidate->user_details['name'];
-                                                        
-                                                        // Try to build photo URL if we have a path
-                                                        if (!empty($candidate->user_details['photo'])) {
-                                                            if (filter_var($candidate->user_details['photo'], FILTER_VALIDATE_URL)) {
-                                                                $profilePhotoUrl = $candidate->user_details['photo'];
-                                                            } else {
-                                                                $profilePhotoUrl = asset('storage/' . $candidate->user_details['photo']);
-                                                            }
-                                                        }
-                                                    }
-                                                    
-                                                    // If still no photo, use default
-                                                    if (!$profilePhotoUrl) {
-                                                        if (file_exists(public_path('kofa.png'))) {
-                                                            $profilePhotoUrl = asset('kofa.png');
-                                                        } else {
-                                                            $profilePhotoUrl = asset('img/defaults/user.svg');
-                                                        }
-                                                    }
-                                                @endphp
-                                                
-                                                <div class="me-3">
-                                                    <img src="{{ $profilePhotoUrl }}" 
-                                                         alt="{{ $candidateName }}" class="rounded-circle" 
-                                                         width="40" height="40">
-                                                </div>
-                                                <div>
-                                                    {{ $candidateName }}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>{{ $candidate->position ? $candidate->position->title : 'Unknown Position' }}</td>
-                                        <td>{{ $candidate->created_at->format('M d, Y') }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            @else
-                <div class="text-center py-5">
-                    <div class="mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">No Candidate Applications Yet</h3>
-                    <p class="text-gray-500 mb-3">There are currently no candidates who have applied for any positions.</p>
-                    <p class="text-sm text-gray-600">Candidates will appear here once members apply for positions during the candidacy period.</p>
-                </div>
+                <!-- Latest candidates preview table, if any, can remain here -->
             @endif
         </div>
     </div>
