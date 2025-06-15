@@ -554,6 +554,185 @@
         </div>
     </div>
 
+    <!-- Positions Management -->
+    <div class="card shadow-lg mb-5 border-0">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 font-bold flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                Election Positions
+            </h5>
+            <div class="flex space-x-2">
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('customAddPositionModal').style.display='block'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add New Position
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="quickActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                        </svg>
+                        Quick Actions
+                    </button>
+                    <ul class="dropdown-menu shadow" aria-labelledby="quickActionsDropdown">
+                        <li>
+                            <a href="{{ route('admin.election.test-add-position') }}" class="dropdown-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                    Test Form
+                </a>
+                        </li>
+                        <li>
+                <form action="{{ route('admin.election.position.store') }}" method="POST" class="d-inline">
+                    @csrf
+                    <input type="hidden" name="title" value="Quick Test Position">
+                    <input type="hidden" name="description" value="This is a test position created with the quick button.">
+                    <input type="hidden" name="eligible_roles[]" value="Member">
+                    <input type="hidden" name="max_votes_per_voter" value="1">
+                                <button type="submit" class="dropdown-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                    Quick Add Test Position
+                    </button>
+                </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            @if($positions->isEmpty())
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">No Positions Defined</h3>
+                    <p class="text-gray-500 mb-4">Create a position to start the election process.</p>
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('customAddPositionModal').style.display='block'">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Add First Position
+                    </button>
+                </div>
+                
+                <!-- Inline Position Form for Direct Access -->
+                <div class="card border-0 shadow-sm mt-5 mb-4 bg-gray-50">
+                    <div class="card-header bg-gray-100 border-0">
+                        <h5 class="mb-0 font-semibold text-gray-700">Add Position (Direct Form)</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ route('admin.election.position.store') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="direct_title" class="form-label font-medium">Position Title</label>
+                                <input type="text" class="form-control" id="direct_title" name="title" required placeholder="E.g., President, Secretary, Treasurer">
+                            </div>
+                            <div class="mb-3">
+                                <label for="direct_description" class="form-label font-medium">Description</label>
+                                <textarea class="form-control" id="direct_description" name="description" rows="3" required placeholder="Describe the role and responsibilities..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-medium">Eligible Roles</label>
+                                <div class="row">
+                                    @foreach($roles as $role)
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="eligible_roles[]" value="{{ $role->name }}" id="direct_role_{{ $role->id }}">
+                                                <label class="form-check-label" for="direct_role_{{ $role->id }}">
+                                                    {{ $role->name }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="direct_max_votes" class="form-label font-medium">Maximum Votes Per Voter</label>
+                                <div class="input-group">
+                                <input type="number" class="form-control" id="direct_max_votes" name="max_votes_per_voter" min="1" value="1" required>
+                                    <span class="input-group-text">vote(s)</span>
+                            </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Add Position
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-gray-700">Title</th>
+                                <th class="text-gray-700">Description</th>
+                                <th class="text-gray-700">Eligible Roles</th>
+                                <th class="text-gray-700">Max Votes</th>
+                                <th class="text-gray-700">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($positions as $position)
+                                <tr class="border-b">
+                                    <td class="font-semibold text-gray-800">{{ $position->title ?? '' }}</td>
+                                    <td class="text-gray-600">{{ Str::limit($position->description, 50) }}</td>
+                                    <td>
+                                        @foreach($position->eligible_roles as $role)
+                                            <span class="badge rounded-pill bg-blue-100 text-blue-800 mr-1 mb-1 px-2 py-1 text-xs">{{ $role }}</span>
+                                        @endforeach
+                                    </td>
+                                    <td class="text-center font-medium">
+                                        <span class="badge rounded-pill bg-gray-200 text-gray-800 px-3 py-2">
+                                            {{ $position->max_votes_per_voter ?? '' }}
+                                            <span class="text-xs">vote{{ $position->max_votes_per_voter > 1 ? 's' : '' }}</span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-warning edit-position-btn" 
+                                                data-position-id="{{ $position->id ?? '' }}"
+                                                data-position-title="{{ $position->title ?? '' }}"
+                                                data-position-description="{{ $position->description ?? '' }}"
+                                                data-position-eligible-roles="{{ json_encode($position->eligible_roles) }}"
+                                                data-position-max-votes="{{ $position->max_votes_per_voter ?? '' }}"
+                                                onclick="editPosition(this)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                                <span class="ms-1 d-none d-md-inline">Edit</span>
+                                            </button>
+                                            <form action="{{ route('admin.election.position.delete', $position->id) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this position?')">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                    <span class="ms-1 d-none d-md-inline">Delete</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
+    </div>
+
     <!-- Pending Candidates -->
     <div class="card shadow-lg mb-5">
         <div class="card-header bg-red-700 text-white">
@@ -587,9 +766,11 @@
                     </div>
                 </div>
             </div>
+            
             @if(isset($candidates) && count($candidates) > 0)
                 <div class="mb-4">
                     <p class="text-gray-700">There are <strong>{{ count($candidates) }}</strong> candidate applications in the system.</p>
+                    
                     <div class="mt-4">
                         <a href="{{ url('/admin/election/candidates') }}" class="btn btn-primary">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -599,7 +780,86 @@
                         </a>
                     </div>
                 </div>
-                <!-- Latest candidates preview table, if any, can remain here -->
+                
+                <!-- Latest candidates preview -->
+                <div class="mt-4">
+                    <h6 class="font-semibold mb-3">Latest Applications</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Position</th>
+                                    <th>Applied On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($candidates->sortByDesc('created_at')->take(3) as $candidate)
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                @php
+                                                    $profilePhotoUrl = null;
+                                                    $candidateName = 'Unknown User';
+                                                    
+                                                    // Try to get photo and name from user relationship
+                                                    if ($candidate->user) {
+                                                        $candidateName = $candidate->user->name;
+                                                        $profilePhotoUrl = $candidate->user->profile_photo_url;
+                                                    } 
+                                                    // Try from user_details if available
+                                                    elseif (isset($candidate->user_details['name'])) {
+                                                        $candidateName = $candidate->user_details['name'];
+                                                        
+                                                        // Try to build photo URL if we have a path
+                                                        if (!empty($candidate->user_details['photo'])) {
+                                                            if (filter_var($candidate->user_details['photo'], FILTER_VALIDATE_URL)) {
+                                                                $profilePhotoUrl = $candidate->user_details['photo'];
+                                                            } else {
+                                                                $profilePhotoUrl = asset('storage/' . $candidate->user_details['photo']);
+                                                            }
+                                                        }
+                                                    }
+                                                    
+                                                    // If still no photo, use default
+                                                    if (!$profilePhotoUrl) {
+                                                        if (file_exists(public_path('kofa.png'))) {
+                                                            $profilePhotoUrl = asset('kofa.png');
+                                                        } else {
+                                                            $profilePhotoUrl = asset('img/defaults/user.svg');
+                                                        }
+                                                    }
+                                                @endphp
+                                                
+                                                <div class="me-3">
+                                                    <img src="{{ $profilePhotoUrl }}" 
+                                                         alt="{{ $candidateName }}" class="rounded-circle" 
+                                                         width="40" height="40">
+                                                </div>
+                                                <div>
+                                                    {{ $candidateName }}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ $candidate->position ? $candidate->position->title : 'Unknown Position' }}</td>
+                                        <td>{{ $candidate->created_at->format('M d, Y') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            @else
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">No Candidate Applications Yet</h3>
+                    <p class="text-gray-500 mb-3">There are currently no candidates who have applied for any positions.</p>
+                    <p class="text-sm text-gray-600">Candidates will appear here once members apply for positions during the candidacy period.</p>
+                </div>
             @endif
         </div>
     </div>
@@ -611,6 +871,292 @@
             </svg>
             Last updated: {{ now()->format('M d, Y - h:i A') }}
         </p>
+    </div>
+</div>
+
+<!-- Custom Add Position Modal -->
+<div id="customAddPositionModal" class="custom-modal">
+    <div class="custom-modal-content">
+        <div class="custom-modal-header">
+            <h5 class="custom-modal-title">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add New Position
+            </h5>
+            <span class="custom-close" onclick="document.getElementById('customAddPositionModal').style.display='none'">&times;</span>
+        </div>
+        <form action="{{ route('admin.election.position.store') }}" method="POST" id="addPositionForm" onsubmit="return validateForm()">
+            @csrf
+            <div class="mb-4">
+                <label for="title" class="form-label font-semibold">Position Title</label>
+                <input type="text" class="form-control" id="title" name="title" required placeholder="E.g., KofA Leader, Secretary, Treasurer">
+            </div>
+            <div class="mb-4">
+                <label for="description" class="form-label font-semibold">Position Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required placeholder="Describe the duties and responsibilities of this position..."></textarea>
+            </div>
+            
+            <div class="card shadow-sm border-0 rounded-lg mb-4 bg-gray-50">
+                <div class="card-header bg-gray-100 border-0">
+                    <h6 class="mb-0 font-semibold">Position Eligibility</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-gray-600 text-sm mb-3">Select which roles are eligible to apply for this position. These roles must be already assigned to users.</p>
+                    <div class="mb-3">
+                        <label class="form-label font-medium text-gray-700">Eligible Roles (Required)</label>
+                        <div class="row mt-2">
+                            @foreach($roles as $role)
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="eligible_roles[]" value="{{ $role->name }}" id="role_{{ $role->id }}">
+                                        <label class="form-check-label" for="role_{{ $role->id }}">
+                                            {{ $role->name }}
+                                        </label>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="form-text text-gray-500 mt-2">Users must have one of these roles to be eligible to apply for this position.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="max_votes_per_voter" class="form-label font-semibold">Maximum Votes Per Voter</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="max_votes_per_voter" name="max_votes_per_voter" min="1" value="1" required>
+                    <span class="input-group-text">vote(s)</span>
+                </div>
+                <div class="form-text text-gray-500">Number of candidates each voter can select for this position.</div>
+            </div>
+            
+            <div class="custom-modal-footer">
+                <button type="button" class="btn btn-light" onclick="document.getElementById('customAddPositionModal').style.display='none'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Create Position
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Custom Edit Position Modal -->
+<div id="customEditPositionModal" class="custom-modal">
+    <div class="custom-modal-content">
+        <div class="custom-modal-header" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);">
+            <h5 class="custom-modal-title">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Edit Position
+            </h5>
+            <span class="custom-close" onclick="document.getElementById('customEditPositionModal').style.display='none'">&times;</span>
+        </div>
+        <form id="editPositionForm" action="" method="POST" onsubmit="return validateEditForm()">
+            @csrf
+            @method('PUT')
+            <div class="mb-4">
+                <label for="edit_title" class="form-label font-semibold">Position Title</label>
+                <input type="text" class="form-control" id="edit_title" name="title" required>
+            </div>
+            <div class="mb-4">
+                <label for="edit_description" class="form-label font-semibold">Position Description</label>
+                <textarea class="form-control" id="edit_description" name="description" rows="3" required></textarea>
+            </div>
+            
+            <div class="card shadow-sm border-0 rounded-lg mb-4 bg-gray-50">
+                <div class="card-header bg-gray-100 border-0">
+                    <h6 class="mb-0 font-semibold">Position Eligibility</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-gray-600 text-sm mb-3">Select which roles are eligible to apply for this position. These roles must be already assigned to users.</p>
+                    <div class="mb-3">
+                        <label class="form-label font-medium text-gray-700">Eligible Roles (Required)</label>
+                        <div class="row mt-2">
+                            @foreach($roles as $role)
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input edit-role-checkbox" type="checkbox" name="eligible_roles[]" value="{{ $role->name }}" id="edit_role_{{ $role->id }}">
+                                        <label class="form-check-label" for="edit_role_{{ $role->id }}">
+                                            {{ $role->name }}
+                                        </label>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="form-text text-gray-500 mt-2">Users must have one of these roles to be eligible to apply for this position.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="edit_max_votes_per_voter" class="form-label font-semibold">Maximum Votes Per Voter</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="edit_max_votes_per_voter" name="max_votes_per_voter" min="1" required>
+                    <span class="input-group-text">vote(s)</span>
+                </div>
+                <div class="form-text text-gray-500">Number of candidates each voter can select for this position.</div>
+            </div>
+            
+            <div class="custom-modal-footer">
+                <button type="button" class="btn btn-light" onclick="document.getElementById('customEditPositionModal').style.display='none'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-warning">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                    </svg>
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Position Modal -->
+<div class="modal fade" id="positionModal" tabindex="-1" aria-labelledby="positionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-red-600 text-white">
+                <h5 class="modal-title" id="positionModalLabel">Add New Position</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="positionForm" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <label for="title" class="form-label font-semibold">Position Title</label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="E.g. KOFA Leader, Secretary, Treasurer" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="description" class="form-label font-semibold">Position Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" placeholder="Describe the duties and responsibilities of this position..."></textarea>
+                    </div>
+
+                    <div class="bg-red-50 border border-red-100 p-4 rounded-lg mb-4">
+                        <h3 class="font-semibold text-gray-700 mb-3">Position Requirements</h3>
+                        
+                        <div class="mb-4">
+                            <label for="required_votes" class="form-label font-semibold">Number of Candidates to Vote</label>
+                            <input type="number" class="form-control" id="required_votes" name="required_votes" min="1" value="1" required>
+                            <small class="text-gray-500">How many candidates should each voter select for this position? (e.g., if set to 2, voters must select exactly 2 candidates)</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="minimum_member_since_date" class="form-label font-semibold">Minimum Membership Date</label>
+                            <input type="date" class="form-control" id="minimum_member_since_date" name="minimum_member_since_date">
+                            <small class="text-gray-500">Only members who joined before this date can vote for this position</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="max_candidates" class="form-label font-semibold">Maximum Number of Candidates</label>
+                            <input type="number" class="form-control" id="max_candidates" name="max_candidates" min="0" value="0">
+                            <small class="text-gray-500">Maximum number of candidates that can apply (0 for unlimited)</small>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-50 border border-red-100 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-700 mb-3">Position Eligibility</h3>
+                        <p class="text-sm text-gray-600 mb-3">Select which roles are eligible to apply for this position. These roles must be already assigned to users.</p>
+                        
+                        <div class="space-y-3">
+                            @foreach($roles as $role)
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="eligible_roles[]" value="{{ $role->id }}" 
+                                           class="form-checkbox h-4 w-4 text-red-600" id="role_{{ $role->id }}">
+                                    <label for="role_{{ $role->id }}" class="ml-2 text-gray-700">{{ $role->name }}</label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary bg-red-600">Create Position</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Position Modal -->
+<div class="modal fade" id="editPositionModal" tabindex="-1" aria-labelledby="editPositionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-red-600 text-white">
+                <h5 class="modal-title" id="editPositionModalLabel">Edit Position</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editPositionForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <label for="edit_title" class="form-label font-semibold">Position Title</label>
+                        <input type="text" class="form-control" id="edit_title" name="title" placeholder="E.g. KOFA Leader, Secretary, Treasurer" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="edit_description" class="form-label font-semibold">Position Description</label>
+                        <textarea class="form-control" id="edit_description" name="description" rows="3" placeholder="Describe the duties and responsibilities of this position..."></textarea>
+                    </div>
+
+                    <div class="bg-red-50 border border-red-100 p-4 rounded-lg mb-4">
+                        <h3 class="font-semibold text-gray-700 mb-3">Position Requirements</h3>
+                        
+                        <div class="mb-4">
+                            <label for="edit_required_votes" class="form-label font-semibold">Number of Candidates to Vote</label>
+                            <input type="number" class="form-control" id="edit_required_votes" name="required_votes" min="1" value="1" required>
+                            <small class="text-gray-500">How many candidates should each voter select for this position? (e.g., if set to 2, voters must select exactly 2 candidates)</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="edit_minimum_member_since_date" class="form-label font-semibold">Minimum Membership Date</label>
+                            <input type="date" class="form-control" id="edit_minimum_member_since_date" name="minimum_member_since_date">
+                            <small class="text-gray-500">Only members who joined before this date can vote for this position</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="edit_max_candidates" class="form-label font-semibold">Maximum Number of Candidates</label>
+                            <input type="number" class="form-control" id="edit_max_candidates" name="max_candidates" min="0" value="0">
+                            <small class="text-gray-500">Maximum number of candidates that can apply (0 for unlimited)</small>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-50 border border-red-100 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-700 mb-3">Position Eligibility</h3>
+                        <p class="text-sm text-gray-600 mb-3">Select which roles are eligible to apply for this position. These roles must be already assigned to users.</p>
+                        
+                        <div class="space-y-3">
+                            @foreach($roles as $role)
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="eligible_roles[]" value="{{ $role->id }}" 
+                                           class="form-checkbox h-4 w-4 text-red-600" id="edit_role_{{ $role->id }}">
+                                    <label for="edit_role_{{ $role->id }}" class="ml-2 text-gray-700">{{ $role->name }}</label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary bg-red-600">Update Position</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
