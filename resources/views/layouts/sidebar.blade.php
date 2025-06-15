@@ -55,7 +55,7 @@
         @endphp
         <img src="{{ $photoUrl }}" alt="{{ Auth::user()->name }}'s profile photo" class="h-6 w-6 object-cover rounded-full border border-yellow-400" onerror="this.src='{{ $defaultImage }}';">
         <div class="ml-1">
-            <div class="text-[10px] font-medium text-gray-900">Admin</div>
+            <div class="text-[10px] font-medium text-gray-900">{{ Auth::user()->name }}</div>
             <div class="text-[8px] text-gray-600">ID: {{ Auth::user()->user_id }}</div>
         </div>
     </div>
