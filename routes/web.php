@@ -149,24 +149,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         ));
     })->name('dashboard');
     
-    // Election Management Routes
-    Route::prefix('election')->name('election.')->group(function () {
-        Route::get('/settings', [ElectionController::class, 'settings'])->name('settings');
-        Route::put('/settings', [ElectionController::class, 'updateSettings'])->name('updateSettings');
-        Route::post('/status', [ElectionController::class, 'changeStatus'])->name('changeStatus');
-        
-        // Position Management
-        Route::get('/positions', [ElectionController::class, 'positions'])->name('positions');
-        Route::post('/positions', [ElectionController::class, 'storePosition'])->name('storePosition');
-        Route::get('/positions/{position}/edit', [ElectionController::class, 'editPosition'])->name('editPosition');
-        Route::put('/positions/{position}', [ElectionController::class, 'updatePosition'])->name('updatePosition');
-        Route::delete('/positions/{position}', [ElectionController::class, 'deletePosition'])->name('deletePosition');
-        
-        Route::get('/candidates', [ElectionController::class, 'candidates'])->name('candidates');
-        Route::get('/results', [ElectionController::class, 'results'])->name('results');
-        Route::get('/archives', [ElectionController::class, 'archives'])->name('archives');
-    });
-    
     // User Management Routes
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     
