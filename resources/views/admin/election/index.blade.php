@@ -622,54 +622,6 @@
                         Add First Position
                     </button>
                 </div>
-                
-                <!-- Inline Position Form for Direct Access -->
-                <div class="card border-0 shadow-sm mt-5 mb-4 bg-gray-50">
-                    <div class="card-header bg-gray-100 border-0">
-                        <h5 class="mb-0 font-semibold text-gray-700">Add Position (Direct Form)</h5>
-                    </div>
-                    <div class="card-body">
-                        <form action="{{ route('admin.election.position.store') }}" method="POST">
-                            @csrf
-                            <div class="mb-3">
-                                <label for="direct_title" class="form-label font-medium">Position Title</label>
-                                <input type="text" class="form-control" id="direct_title" name="title" required placeholder="E.g., President, Secretary, Treasurer">
-                            </div>
-                            <div class="mb-3">
-                                <label for="direct_description" class="form-label font-medium">Description</label>
-                                <textarea class="form-control" id="direct_description" name="description" rows="3" required placeholder="Describe the role and responsibilities..."></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label font-medium">Eligible Roles</label>
-                                <div class="row">
-                                    @foreach($roles as $role)
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="eligible_roles[]" value="{{ $role->name }}" id="direct_role_{{ $role->id }}">
-                                                <label class="form-check-label" for="direct_role_{{ $role->id }}">
-                                                    {{ $role->name }}
-                                                </label>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="direct_max_votes" class="form-label font-medium">Maximum Votes Per Voter</label>
-                                <div class="input-group">
-                                <input type="number" class="form-control" id="direct_max_votes" name="max_votes_per_voter" min="1" value="1" required>
-                                    <span class="input-group-text">vote(s)</span>
-                            </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                </svg>
-                                Add Position
-                            </button>
-                        </form>
-                    </div>
-                </div>
             @else
                 <div class="table-responsive">
                     <table class="table table-hover">
