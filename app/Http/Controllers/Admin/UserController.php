@@ -76,7 +76,7 @@ class UserController extends Controller
             'address' => 'nullable|string|max:255',
             'mobile_number' => 'nullable|string|max:20',
             'date_of_birth' => 'nullable|date',
-            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp,bmp,heic|max:4096',
+            'profile_photo' => 'nullable|mimes:jpg,jpeg,png,gif,webp,bmp,heic|max:4096',
         ]);
         
         // Generate random password if not provided
@@ -185,7 +185,7 @@ class UserController extends Controller
             'address' => 'nullable|string|max:255',
             'mobile_number' => 'nullable|string|max:20',
             'date_of_birth' => 'nullable|date',
-            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp,bmp,heic|max:4096',
+            'profile_photo' => 'nullable|mimes:jpg,jpeg,png,gif,webp,bmp,heic|max:4096',
         ]);
 
         $userData = [
