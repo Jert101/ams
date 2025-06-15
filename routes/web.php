@@ -149,6 +149,30 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         ));
     })->name('dashboard');
     
+    // Election Management Routes
+    Route::prefix('election')->name('election.')->group(function () {
+        Route::get('/', [ElectionController::class, 'index'])->name('index');
+        Route::get('/settings', [ElectionController::class, 'settings'])->name('settings');
+        Route::get('/positions', [ElectionController::class, 'positions'])->name('positions');
+        Route::get('/candidates', [ElectionController::class, 'candidates'])->name('candidates');
+        Route::get('/results', [ElectionController::class, 'results'])->name('results');
+        Route::get('/archives', [ElectionController::class, 'archives'])->name('archives');
+        
+        // Position Management
+        Route::post('/positions', [ElectionController::class, 'storePosition'])->name('positions.store');
+        Route::put('/positions/{position}', [ElectionController::class, 'updatePosition'])->name('positions.update');
+        Route::delete('/positions/{position}', [ElectionController::class, 'deletePosition'])->name('positions.delete');
+        
+        // Candidate Management
+        Route::get('/candidates/{id}', [ElectionController::class, 'viewCandidate'])->name('candidate');
+        Route::post('/candidates/{id}/approve', [ElectionController::class, 'approveCandidate'])->name('candidate.approve');
+        Route::post('/candidates/{id}/reject', [ElectionController::class, 'rejectCandidate'])->name('candidate.reject');
+        
+        // Settings Management
+        Route::post('/settings', [ElectionController::class, 'updateSettings'])->name('settings.update');
+        Route::get('/set-auto-approval/{action}', [ElectionController::class, 'setAutoApproval'])->name('settings.auto-approval');
+    });
+    
     // User Management Routes
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     
