@@ -20,10 +20,7 @@ class ElectionCandidate extends Model
         'rejection_reason'
     ];
 
-    protected $casts = [
-        'platform' => 'array',
-        'qualifications' => 'array'
-    ];
+    protected $casts = [];
 
     /**
      * The "booted" method of the model.
