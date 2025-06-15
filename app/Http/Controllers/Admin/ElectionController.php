@@ -515,26 +515,6 @@ class ElectionController extends Controller
     }
 
     /**
-     * Delete a candidate's application
-     */
-    public function deleteCandidate($id)
-    {
-        try {
-            $candidate = ElectionCandidate::findOrFail($id);
-            
-            // Delete associated votes if any
-            ElectionVote::where('candidate_id', $candidate->id)->delete();
-            
-            // Delete the candidate
-            $candidate->delete();
-            
-            return redirect()->back()->with('success', 'Candidate application deleted successfully.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to delete candidate application.');
-        }
-    }
-
-    /**
      * Toggle auto-approval setting for candidate applications
      */
     public function toggleAutoApproval()
