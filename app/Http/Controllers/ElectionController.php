@@ -70,8 +70,10 @@ class ElectionController extends Controller
     {
         $request->validate([
             'position_id' => 'required|exists:election_positions,id',
-            'platform' => 'required|string',
-            'qualifications' => 'required|string',
+            'platform' => 'required|array|min:1',
+            'platform.*' => 'required|string|max:500',
+            'qualifications' => 'required|array|min:1',
+            'qualifications.*' => 'required|string|max:500',
         ]);
         
         $user = Auth::user();

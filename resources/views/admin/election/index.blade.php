@@ -1042,51 +1042,50 @@
                     </div>
                     
                     <div class="mb-4">
-                        <label for="description" class="form-label font-semibold">Description</label>
+                        <label for="description" class="form-label font-semibold">Position Description</label>
                         <textarea class="form-control" id="description" name="description" rows="3" placeholder="Describe the duties and responsibilities of this position..."></textarea>
                     </div>
 
-                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Voting Requirements</h3>
+                    <div class="bg-red-50 border border-red-100 p-4 rounded-lg mb-4">
+                        <h3 class="font-semibold text-gray-700 mb-3">Position Requirements</h3>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="required_votes" class="form-label font-semibold">Required Votes Per Position</label>
-                                <input type="number" class="form-control" id="required_votes" name="required_votes" min="1" value="1" required>
-                                <small class="text-gray-500">How many candidates should be selected for this position? (e.g., select 2 board members)</small>
-                            </div>
-
-                            <div>
-                                <label for="max_candidates" class="form-label font-semibold">Maximum Candidates Allowed</label>
-                                <input type="number" class="form-control" id="max_candidates" name="max_candidates" min="0" value="0">
-                                <small class="text-gray-500">Maximum number of candidates that can apply (0 for unlimited)</small>
-                            </div>
+                        <div class="mb-4">
+                            <label for="required_votes" class="form-label font-semibold">Number of Candidates to Vote</label>
+                            <input type="number" class="form-control" id="required_votes" name="required_votes" min="1" value="1" required>
+                            <small class="text-gray-500">How many candidates should each voter select for this position? (e.g., if set to 2, voters must select exactly 2 candidates)</small>
                         </div>
 
-                        <div class="mt-4">
+                        <div class="mb-4">
                             <label for="minimum_member_since_date" class="form-label font-semibold">Minimum Membership Date</label>
                             <input type="date" class="form-control" id="minimum_member_since_date" name="minimum_member_since_date">
                             <small class="text-gray-500">Only members who joined before this date can vote for this position</small>
                         </div>
+
+                        <div class="mb-4">
+                            <label for="max_candidates" class="form-label font-semibold">Maximum Number of Candidates</label>
+                            <input type="number" class="form-control" id="max_candidates" name="max_candidates" min="0" value="0">
+                            <small class="text-gray-500">Maximum number of candidates that can apply (0 for unlimited)</small>
+                        </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label font-semibold">Eligible Roles</label>
-                        <div class="space-y-2">
+                    <div class="bg-red-50 border border-red-100 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-700 mb-3">Position Eligibility</h3>
+                        <p class="text-sm text-gray-600 mb-3">Select which roles are eligible to apply for this position. These roles must be already assigned to users.</p>
+                        
+                        <div class="space-y-3">
                             @foreach($roles as $role)
                                 <div class="flex items-center">
                                     <input type="checkbox" name="eligible_roles[]" value="{{ $role->id }}" 
                                            class="form-checkbox h-4 w-4 text-red-600" id="role_{{ $role->id }}">
-                                    <label for="role_{{ $role->id }}" class="ml-2">{{ $role->name }}</label>
+                                    <label for="role_{{ $role->id }}" class="ml-2 text-gray-700">{{ $role->name }}</label>
                                 </div>
                             @endforeach
                         </div>
-                        <small class="text-gray-500">Select which roles can vote for this position</small>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Position</button>
+                    <button type="submit" class="btn btn-primary bg-red-600">Create Position</button>
                 </div>
             </form>
         </div>
@@ -1107,55 +1106,54 @@
                 <div class="modal-body">
                     <div class="mb-4">
                         <label for="edit_title" class="form-label font-semibold">Position Title</label>
-                        <input type="text" class="form-control" id="edit_title" name="title" required>
+                        <input type="text" class="form-control" id="edit_title" name="title" placeholder="E.g. KOFA Leader, Secretary, Treasurer" required>
                     </div>
                     
                     <div class="mb-4">
-                        <label for="edit_description" class="form-label font-semibold">Description</label>
-                        <textarea class="form-control" id="edit_description" name="description" rows="3"></textarea>
+                        <label for="edit_description" class="form-label font-semibold">Position Description</label>
+                        <textarea class="form-control" id="edit_description" name="description" rows="3" placeholder="Describe the duties and responsibilities of this position..."></textarea>
                     </div>
 
-                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Voting Requirements</h3>
+                    <div class="bg-red-50 border border-red-100 p-4 rounded-lg mb-4">
+                        <h3 class="font-semibold text-gray-700 mb-3">Position Requirements</h3>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="edit_required_votes" class="form-label font-semibold">Required Votes Per Position</label>
-                                <input type="number" class="form-control" id="edit_required_votes" name="required_votes" min="1" required>
-                                <small class="text-gray-500">How many candidates should be selected for this position? (e.g., select 2 board members)</small>
-                            </div>
-
-                            <div>
-                                <label for="edit_max_candidates" class="form-label font-semibold">Maximum Candidates Allowed</label>
-                                <input type="number" class="form-control" id="edit_max_candidates" name="max_candidates" min="0">
-                                <small class="text-gray-500">Maximum number of candidates that can apply (0 for unlimited)</small>
-                            </div>
+                        <div class="mb-4">
+                            <label for="edit_required_votes" class="form-label font-semibold">Number of Candidates to Vote</label>
+                            <input type="number" class="form-control" id="edit_required_votes" name="required_votes" min="1" value="1" required>
+                            <small class="text-gray-500">How many candidates should each voter select for this position? (e.g., if set to 2, voters must select exactly 2 candidates)</small>
                         </div>
 
-                        <div class="mt-4">
+                        <div class="mb-4">
                             <label for="edit_minimum_member_since_date" class="form-label font-semibold">Minimum Membership Date</label>
                             <input type="date" class="form-control" id="edit_minimum_member_since_date" name="minimum_member_since_date">
                             <small class="text-gray-500">Only members who joined before this date can vote for this position</small>
                         </div>
+
+                        <div class="mb-4">
+                            <label for="edit_max_candidates" class="form-label font-semibold">Maximum Number of Candidates</label>
+                            <input type="number" class="form-control" id="edit_max_candidates" name="max_candidates" min="0" value="0">
+                            <small class="text-gray-500">Maximum number of candidates that can apply (0 for unlimited)</small>
+                        </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label font-semibold">Eligible Roles</label>
-                        <div class="space-y-2">
+                    <div class="bg-red-50 border border-red-100 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-700 mb-3">Position Eligibility</h3>
+                        <p class="text-sm text-gray-600 mb-3">Select which roles are eligible to apply for this position. These roles must be already assigned to users.</p>
+                        
+                        <div class="space-y-3">
                             @foreach($roles as $role)
                                 <div class="flex items-center">
                                     <input type="checkbox" name="eligible_roles[]" value="{{ $role->id }}" 
                                            class="form-checkbox h-4 w-4 text-red-600" id="edit_role_{{ $role->id }}">
-                                    <label for="edit_role_{{ $role->id }}" class="ml-2">{{ $role->name }}</label>
+                                    <label for="edit_role_{{ $role->id }}" class="ml-2 text-gray-700">{{ $role->name }}</label>
                                 </div>
                             @endforeach
                         </div>
-                        <small class="text-gray-500">Select which roles can vote for this position</small>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update Position</button>
+                    <button type="submit" class="btn btn-primary bg-red-600">Update Position</button>
                 </div>
             </form>
         </div>

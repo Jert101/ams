@@ -92,14 +92,30 @@
                     <div class="mb-4">
                         <h4 class="text-lg font-semibold mb-2 bg-gray-100 p-2 rounded">Platform</h4>
                         <div class="p-3 bg-white border rounded-lg">
-                            {!! nl2br(e($candidate->platform)) !!}
+                            @if(is_array($candidate->platform) && count($candidate->platform) > 0)
+                                <ul class="list-disc list-inside space-y-2">
+                                    @foreach($candidate->platform as $point)
+                                        <li class="text-gray-700">{{ $point }}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-gray-500 italic">No platform provided</p>
+                            @endif
                         </div>
                     </div>
                     
                     <div class="mb-4">
                         <h4 class="text-lg font-semibold mb-2 bg-gray-100 p-2 rounded">Qualifications</h4>
                         <div class="p-3 bg-white border rounded-lg">
-                            {!! nl2br(e($candidate->qualifications)) !!}
+                            @if(is_array($candidate->qualifications) && count($candidate->qualifications) > 0)
+                                <ul class="list-disc list-inside space-y-2">
+                                    @foreach($candidate->qualifications as $qualification)
+                                        <li class="text-gray-700">{{ $qualification }}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-gray-500 italic">No qualifications provided</p>
+                            @endif
                         </div>
                     </div>
                     
