@@ -22,7 +22,11 @@ class FixCandidatePlatformQualifications extends Migration
             if (!is_null($candidate->platform)) {
                 if (!is_array($candidate->platform)) {
                     // If it's a string, convert it to an array with one item
-                    $updates['platform'] = [$candidate->platform];
+                    // Split by newlines if present, otherwise use the whole string
+                    $platform = trim($candidate->platform);
+                    $updates['platform'] = strpos($platform, "\n") !== false 
+                        ? array_filter(explode("\n", $platform))
+                        : [$platform];
                 }
             } else {
                 $updates['platform'] = [];
@@ -32,7 +36,11 @@ class FixCandidatePlatformQualifications extends Migration
             if (!is_null($candidate->qualifications)) {
                 if (!is_array($candidate->qualifications)) {
                     // If it's a string, convert it to an array with one item
-                    $updates['qualifications'] = [$candidate->qualifications];
+                    // Split by newlines if present, otherwise use the whole string
+                    $qualifications = trim($candidate->qualifications);
+                    $updates['qualifications'] = strpos($qualifications, "\n") !== false 
+                        ? array_filter(explode("\n", $qualifications))
+                        : [$qualifications];
                 }
             } else {
                 $updates['qualifications'] = [];

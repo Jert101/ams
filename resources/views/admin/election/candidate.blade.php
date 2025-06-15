@@ -98,6 +98,8 @@
                                         <li class="text-gray-700">{{ $point }}</li>
                                     @endforeach
                                 </ul>
+                            @elseif(is_string($candidate->platform) && !empty(trim($candidate->platform)))
+                                <p class="text-gray-700">{{ $candidate->platform }}</p>
                             @else
                                 <p class="text-gray-500 italic">No platform provided</p>
                             @endif
@@ -113,6 +115,8 @@
                                         <li class="text-gray-700">{{ $qualification }}</li>
                                     @endforeach
                                 </ul>
+                            @elseif(is_string($candidate->qualifications) && !empty(trim($candidate->qualifications)))
+                                <p class="text-gray-700">{{ $candidate->qualifications }}</p>
                             @else
                                 <p class="text-gray-500 italic">No qualifications provided</p>
                             @endif
