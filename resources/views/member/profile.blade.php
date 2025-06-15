@@ -84,7 +84,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                                 <span>Choose Photo</span>
-                                <input type="file" id="profile_photo" name="profile_photo" class="hidden" accept="image/*">
+                                <input type="file" id="profile_photo" name="profile_photo" class="hidden" accept="image/*,.heic">
                             </label>
                             <span id="file-name" class="ml-3 text-sm text-gray-500">No file selected</span>
                         </div>
@@ -92,6 +92,8 @@
                             <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+                    
+                    <p class="text-gray-500 text-xs mt-1">Maximum size: 4MB. Allowed types: JPG, PNG, GIF, WEBP, BMP, HEIC.</p>
                     
                     <div class="flex justify-end">
                         <button type="submit" class="bg-[#B22234] hover:bg-[#8B0000] text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out flex items-center">

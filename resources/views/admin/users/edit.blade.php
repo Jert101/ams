@@ -189,10 +189,10 @@
                                 </svg>
                                 Choose Photo
                             </label>
-                            <input type="file" name="profile_photo" id="profile_photo" class="hidden" accept="image/*">
+                            <input type="file" name="profile_photo" id="profile_photo" class="hidden" accept="image/*,.heic">
                             <span class="ml-3 text-sm text-gray-500" id="file-name">No file selected</span>
                         </div>
-                        <p class="text-gray-500 text-xs mt-2">Leave empty to keep current profile photo. Maximum file size: 2MB.</p>
+                        <p class="text-gray-500 text-xs mt-2">Leave empty to keep current profile photo. Maximum file size: 4MB. Allowed types: JPG, PNG, GIF, WEBP, BMP, HEIC.</p>
                         @error('profile_photo')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror

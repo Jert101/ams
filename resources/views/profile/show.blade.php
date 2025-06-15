@@ -163,7 +163,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                     <span>Choose Photo</span>
-                                    <input type="file" id="profile_photo" name="profile_photo" class="hidden" accept="image/*">
+                                    <input type="file" id="profile_photo" name="profile_photo" class="hidden" accept="image/*,.heic">
                                 </label>
                                 <span id="file-name" class="ml-3 text-sm text-gray-500">No file selected</span>
                             </div>
@@ -173,12 +173,7 @@
                             
                             <!-- Added photo upload info for debugging -->
                             <div class="mt-2 text-xs text-gray-500">
-                                <p>Note: Photo uploads require proper server configuration. If you're experiencing issues:</p>
-                                <ul class="list-disc pl-5 mt-1">
-                                    <li>Maximum upload size: {{ ini_get('upload_max_filesize') }}</li>
-                                    <li>Storage symlink: {{ file_exists(public_path('storage')) ? '✓ Exists' : '✗ Missing' }}</li>
-                                    <li>For troubleshooting, visit: <a href="{{ url('/storage-test.php') }}" class="text-blue-500 hover:underline" target="_blank">Storage Test</a></li>
-                                </ul>
+                                <p>Maximum size: 4MB. Allowed types: JPG, PNG, GIF, WEBP, BMP, HEIC.</p>
                             </div>
                         </div>
                         @endif

@@ -112,11 +112,11 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                     </svg>
                                     <span class="mt-2 text-sm">Select a photo</span>
-                                    <input type="file" name="profile_photo" id="profile_photo" class="hidden" accept="image/*">
+                                    <input type="file" name="profile_photo" id="profile_photo" class="hidden" accept="image/*,.heic">
                                 </label>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-xs mt-1">Maximum size: 1MB. Recommended: Square image.</p>
+                        <p class="text-gray-500 text-xs mt-1">Maximum size: 4MB. Allowed types: JPG, PNG, GIF, WEBP, BMP, HEIC.</p>
                         @error('profile_photo')
                             <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
                         @enderror

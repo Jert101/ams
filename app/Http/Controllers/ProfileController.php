@@ -51,7 +51,7 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $request->user()->id],
-            'profile_photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif,webp,bmp', 'max:2048'],
+            'profile_photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif,webp,bmp,heic', 'max:4096'],
         ]);
 
         $user = $request->user();
