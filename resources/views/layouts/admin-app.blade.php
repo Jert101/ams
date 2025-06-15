@@ -13,6 +13,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
 
         <!-- Scripts -->
+        @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <!-- Styles -->
