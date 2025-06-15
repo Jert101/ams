@@ -25,7 +25,11 @@
     <div class="p-4 border-b border-gray-200">
         <div class="flex items-center space-x-3">
             <div class="flex-shrink-0">
-                <img src="{{ auth()->user()->profile_photo_url }}" alt="Profile photo" class="w-10 h-10 rounded-full">
+                @if(auth()->user()->profile_photo_url)
+                    <img src="{{ auth()->user()->profile_photo_url }}" alt="Profile photo" class="w-10 h-10 rounded-full object-cover">
+                @else
+                    <img src="{{ asset('img/default-profile.png') }}" alt="Default profile" class="w-10 h-10 rounded-full object-cover">
+                @endif
             </div>
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-900 truncate">
