@@ -60,14 +60,19 @@ class ProfileController extends Controller
 
         // Handle profile photo upload
         if ($request->hasFile('profile_photo')) {
-            try {
-                $file = $request->file('profile_photo');
-                $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path(), $filename); // Save to /public
-                $user->profile_photo_path = $filename; // Store only the filename
-            } catch (Exception $e) {
-                Log::error('Failed to upload profile photo: ' . $e->getMessage());
-                return redirect()->route('profile.show')->with('error', 'Failed to upload profile photo.');
+            if ($user->isAdmin()) {
+                try {
+                    $file = $request->file('profile_photo');
+                    $filename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path(), $filename); // Save to /public
+                    $user->profile_photo_path = $filename; // Store only the filename
+                } catch (Exception $e) {
+                    Log::error('Failed to upload profile photo: ' . $e->getMessage());
+                    return redirect()->route('profile.show')->with('error', 'Failed to upload profile photo.');
+                }
+            } else {
+                // Non-admin tried to upload a photo
+                return redirect()->route('profile.show')->with('error', 'Only admins can change profile pictures.');
             }
         }
 

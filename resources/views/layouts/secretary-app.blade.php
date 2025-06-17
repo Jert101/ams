@@ -209,6 +209,11 @@
         <!-- Sidebar - Fixed position on the left -->
         <div class="sidebar-container" id="sidebar">
             @include('layouts.sidebar')
+            <li>
+                <a href="{{ route('profile.show') }}" class="sidebar-link">
+                    <i class="fas fa-user-cog"></i> Profile Settings
+                </a>
+            </li>
         </div>
         
         <!-- Main Content - With appropriate margin to accommodate sidebar -->

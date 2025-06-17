@@ -18,6 +18,10 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        // Update last_seen_at for the current user
+        if ($request->user()) {
+            $request->user()->update(['last_seen_at' => now()]);
+        }
         // Get search query
         $search = $request->query('search');
         
@@ -51,7 +55,8 @@ class UserController extends Controller
         // Keep search parameter in pagination links
         $users->appends(['search' => $search, 'filter' => $filter]);
         
-        return view('admin.users.index', compact('users', 'filter', 'search'));
+        $now = now();
+        return view('admin.users.index', compact('users', 'filter', 'search', 'now'));
     }
 
     /**

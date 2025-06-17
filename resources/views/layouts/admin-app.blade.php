@@ -845,6 +845,11 @@
             <!-- Sidebar -->
             <div id="sidebar" class="sidebar-container bg-white">
                 @include('layouts.sidebar')
+                <li>
+                    <a href="{{ route('profile.show') }}" class="sidebar-link">
+                        <i class="fas fa-user-cog"></i> Profile Settings
+                    </a>
+                </li>
             </div>
             
             <!-- Main Content -->

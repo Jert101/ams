@@ -75,6 +75,10 @@
                                 <div class="flex items-center">
                                     <div class="user-avatar relative h-10 w-10 mr-2">
                                         <img src="{{ $user->profile_photo_url ?? asset('img/kofa.png') }}" alt="{{ $user->name }}" class="h-10 w-10 rounded-full object-cover border-2 border-gray-200 profile-user-img">
+                                        @php
+                                            $isOnline = $user->last_seen_at && \Carbon\Carbon::parse($user->last_seen_at)->gt($now->subMinutes(5));
+                                        @endphp
+                                        <span style="position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;border:2px solid #fff;{{ $isOnline ? 'background:#22c55e;' : 'background:#a3a3a3;' }}" title="{{ $isOnline ? 'Online' : 'Offline' }}"></span>
                                     </div>
                                     <div class="ml-2">
                                         <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
