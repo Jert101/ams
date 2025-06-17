@@ -51,7 +51,7 @@
                 <div class="p-6 flex flex-col items-center">
                     <!-- Profile Photo -->
                     <div class="mb-4 relative">
-                        <div class="h-32 w-32 rounded-full border-4 border-red-200 overflow-hidden">
+                        <div class="h-32 w-32 rounded-full border-4 border-red-200 overflow-hidden cursor-pointer" id="profile-photo-thumb">
                             @php
                                 $photoPath = Auth::user()->profile_photo_path;
                                 $defaultImage = asset('img/kofa.png');
@@ -62,6 +62,34 @@
                             <img src="{{ $photoUrl }}" alt="{{ Auth::user()->name }}'s profile photo" class="h-32 w-32 object-cover rounded-full border-4 border-red-200" onerror="this.src='{{ $defaultImage }}';">
                         </div>
                     </div>
+                    <!-- Profile Photo Modal -->
+                    <div id="profile-photo-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 hidden">
+                        <div class="relative bg-white rounded-lg shadow-lg p-4 max-w-xs sm:max-w-md">
+                            <button id="close-profile-photo-modal" class="absolute top-2 right-2 text-gray-700 hover:text-red-600 text-2xl font-bold">&times;</button>
+                            <img src="{{ $photoUrl }}" alt="Full Profile Photo" class="w-full h-auto rounded-lg mb-4">
+                            <a href="{{ $photoUrl }}" download class="block w-full text-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out">Download Photo</a>
+                        </div>
+                    </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var thumb = document.getElementById('profile-photo-thumb');
+                            var modal = document.getElementById('profile-photo-modal');
+                            var closeBtn = document.getElementById('close-profile-photo-modal');
+                            if (thumb && modal && closeBtn) {
+                                thumb.addEventListener('click', function() {
+                                    modal.classList.remove('hidden');
+                                });
+                                closeBtn.addEventListener('click', function() {
+                                    modal.classList.add('hidden');
+                                });
+                                modal.addEventListener('click', function(e) {
+                                    if (e.target === modal) {
+                                        modal.classList.add('hidden');
+                                    }
+                                });
+                            }
+                        });
+                    </script>
                     
                     <!-- User Info -->
                     <h3 class="text-xl font-bold text-gray-800 mb-1">{{ Auth::user()->name }}</h3>

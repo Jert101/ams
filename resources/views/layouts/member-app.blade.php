@@ -233,49 +233,31 @@
         <!-- Sidebar Toggle Script -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                const sidebarToggle = document.getElementById('sidebar-toggle');
                 const sidebar = document.getElementById('sidebar');
                 const contentArea = document.getElementById('content-area');
-                const sidebarToggle = document.getElementById('sidebar-toggle');
-                
-                // Function to check if we're on mobile
-                const isMobile = () => window.innerWidth <= 768;
-                
-                // Function to update sidebar state
-                const updateSidebarState = () => {
-                    if (isMobile()) {
-                        sidebar.classList.remove('sidebar-collapsed');
-                        sidebar.classList.toggle('sidebar-expanded', sidebar.dataset.expanded === 'true');
-                        contentArea.classList.remove('content-area-expanded');
-                    } else {
-                        sidebar.classList.toggle('sidebar-collapsed', sidebar.dataset.expanded === 'false');
-                        sidebar.classList.remove('sidebar-expanded');
-                        contentArea.classList.toggle('content-area-expanded', sidebar.dataset.expanded === 'false');
-                    }
-                };
-                
-                // Initialize sidebar state
-                sidebar.dataset.expanded = localStorage.getItem('sidebarExpanded') || 'true';
-                updateSidebarState();
-                
-                // Toggle sidebar on button click
-                if (sidebarToggle) {
-                    sidebarToggle.addEventListener('click', function() {
-                        sidebar.dataset.expanded = sidebar.dataset.expanded === 'true' ? 'false' : 'true';
-                        localStorage.setItem('sidebarExpanded', sidebar.dataset.expanded);
-                        updateSidebarState();
-                    });
+                let sidebarOpen = false;
+                function openSidebar() {
+                    sidebar.classList.add('sidebar-expanded');
+                    sidebarOpen = true;
                 }
-                
-                // Update sidebar state on window resize
-                window.addEventListener('resize', updateSidebarState);
-                
-                // Dropdown toggles
-                const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-                dropdownToggles.forEach(function(toggle) {
-                    toggle.addEventListener('click', function() {
-                        const dropdown = this.nextElementSibling;
-                        dropdown.classList.toggle('show');
-                    });
+                function closeSidebar() {
+                    sidebar.classList.remove('sidebar-expanded');
+                    sidebarOpen = false;
+                }
+                sidebarToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (sidebarOpen) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
+                });
+                // Close sidebar when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (sidebarOpen && !sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+                        closeSidebar();
+                    }
                 });
             });
         </script>
