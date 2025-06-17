@@ -234,15 +234,126 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Get references to the buttons
+    // QR Scanner logic
+    let html5QrCode = null;
+    let isScanning = false;
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    const reader = document.getElementById('reader');
+    const eventSelect = document.getElementById('event_id');
+    const eventError = document.getElementById('event-error');
+    const processManualBtn = document.getElementById('processManualBtn');
+    const qrCodeInput = document.getElementById('qr_code');
+    const debugInfo = document.getElementById('debug-info');
+    const resultsList = document.getElementById('results-list');
+    const noResults = document.getElementById('no-results');
+
+    function showResult(result, success = true) {
+        noResults.classList.add('hidden');
+        resultsList.classList.remove('hidden');
+        const div = document.createElement('div');
+        div.className = 'p-2';
+        div.innerHTML = `<span class='${success ? 'text-green-700' : 'text-red-700'} font-bold'>${result}</span>`;
+        resultsList.prepend(div);
+        // Play sound
+        try {
+            document.getElementById(success ? 'success-sound' : 'error-sound').play();
+        } catch (e) {}
+    }
+
+    function processUserId(userId) {
+        if (!eventSelect.value) {
+            eventError.classList.remove('hidden');
+            showResult('Please select an event before scanning.', false);
+            return;
+        }
+        eventError.classList.add('hidden');
+        // AJAX to backend (adjust URL as needed)
+        fetch('/officer/scan/process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                event_id: eventSelect.value
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showResult(data.message || 'Attendance recorded!', true);
+            } else {
+                showResult(data.message || 'Error processing attendance.', false);
+            }
+        })
+        .catch(() => showResult('Server error.', false));
+    }
+
+    // Start Scanner
+    startButton.addEventListener('click', function() {
+        if (!eventSelect.value) {
+            eventError.classList.remove('hidden');
+            showResult('Please select an event before scanning.', false);
+            return;
+        }
+        eventError.classList.add('hidden');
+        if (!html5QrCode) {
+            html5QrCode = new Html5Qrcode('reader');
+        }
+        startButton.classList.add('hidden');
+        stopButton.classList.remove('hidden');
+        html5QrCode.start(
+            { facingMode: 'environment' },
+            { fps: 10, qrbox: 250 },
+            (decodedText, decodedResult) => {
+                if (isScanning) return; // Prevent double scan
+                isScanning = true;
+                html5QrCode.stop().then(() => {
+                    startButton.classList.remove('hidden');
+                    stopButton.classList.add('hidden');
+                    isScanning = false;
+                });
+                processUserId(decodedText);
+            },
+            (errorMessage) => {
+                // Optionally show scan errors
+            }
+        ).catch(err => {
+            showResult('Camera error: ' + err, false);
+            startButton.classList.remove('hidden');
+            stopButton.classList.add('hidden');
+        });
+    });
+
+    // Stop Scanner
+    stopButton.addEventListener('click', function() {
+        if (html5QrCode) {
+            html5QrCode.stop().then(() => {
+                startButton.classList.remove('hidden');
+                stopButton.classList.add('hidden');
+            });
+        }
+    });
+
+    // Manual Input
+    processManualBtn.addEventListener('click', function() {
+        const userId = qrCodeInput.value.trim();
+        if (!userId) {
+            debugInfo.textContent = 'Please enter a user ID.';
+            return;
+        }
+        debugInfo.textContent = '';
+        processUserId(userId);
+    });
+
+    // Show QR scanner section when QR button is clicked (already present)
     const scanTypeQR = document.getElementById('scanTypeQR');
     const qrScannerSection = document.getElementById('qrScannerSection');
-    
-    // Add click event to QR button
     scanTypeQR.addEventListener('click', function() {
-        // Show QR scanner, hide face scanner
         qrScannerSection.classList.remove('hidden');
     });
-    });
+});
 </script>
 @endsection
