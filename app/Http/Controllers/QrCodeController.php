@@ -108,13 +108,25 @@ class QrCodeController extends Controller
     /**
      * Display page to manage all users' QR codes (admin only).
      */
-    public function manageQrCodes()
+    public function manageQrCodes(Request $request)
     {
-        // Get all users with their QR codes
-        $users = User::with('qrCode', 'role')
-                    ->orderBy('name')
-                    ->paginate(20);
-        
+        $search = $request->query('search');
+        $query = User::with('qrCode', 'role')
+            ->where('approval_status', '!=', 'rejected');
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('user_id', 'like', "%{$search}%")
+                  ->orWhere('mobile_number', 'like', "%{$search}%");
+            });
+        }
+        $users = $query->orderBy('name')->paginate(20);
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.qrcode.partials.user-list', compact('users'))->render()
+            ]);
+        }
         return view('admin.qrcode.manage', compact('users'));
     }
     

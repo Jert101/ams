@@ -56,6 +56,11 @@ class UserController extends Controller
         $users->appends(['search' => $search, 'filter' => $filter]);
         
         $now = now();
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.users.partials.user-list', ['users' => $users, 'now' => $now])->render()
+            ]);
+        }
         return view('admin.users.index', compact('users', 'filter', 'search', 'now'));
     }
 

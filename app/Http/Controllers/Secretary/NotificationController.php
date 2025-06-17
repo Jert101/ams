@@ -15,12 +15,32 @@ class NotificationController extends Controller
     /**
      * Display a listing of all notifications.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $notifications = Notification::with('user')
-            ->latest()
-            ->paginate(15);
-            
+        $query = Notification::with('user');
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('message', 'like', "%{$search}%")
+                  ->orWhere('type', 'like', "%{$search}%");
+            });
+        }
+        if ($request->filled('type')) {
+            $query->where('type', $request->input('type'));
+        }
+        if ($request->filled('status')) {
+            if ($request->input('status') === 'sent') {
+                $query->where('is_sent', true);
+            } elseif ($request->input('status') === 'not_sent') {
+                $query->where('is_sent', false);
+            }
+        }
+        $notifications = $query->latest()->paginate(15);
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('secretary.notifications.partials.notification-list', ['notifications' => $notifications])->render()
+            ]);
+        }
         return view('secretary.notifications.index', compact('notifications'));
     }
     

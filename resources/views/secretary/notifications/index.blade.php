@@ -24,10 +24,10 @@
     <!-- Filter Section -->
     <div class="bg-white rounded-lg shadow-md p-4 mb-6">
         <h2 class="text-lg font-semibold text-indigo-700 mb-4">Filter Notifications</h2>
-        <form action="{{ route('secretary.notifications.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <form id="notification-search-form" action="{{ route('secretary.notifications.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                <input type="text" id="search" name="search" placeholder="Search by title or content" class="form-input rounded-md shadow-sm w-full" value="{{ request('search') }}">
+                <input type="text" id="search" name="search" placeholder="Search by title or content" class="form-input rounded-md shadow-sm w-full" value="{{ request('search') }}" autocomplete="off">
             </div>
             <div>
                 <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
@@ -47,12 +47,39 @@
                 </select>
             </div>
             <div class="md:col-span-3 flex justify-end">
-                <button type="submit" class="btn-primary">
-                    <i class="bi bi-funnel mr-1"></i> Apply Filters
-                </button>
+                <button type="button" class="btn-primary" onclick="document.getElementById('search').value=''; document.getElementById('search').dispatchEvent(new Event('input'));">Clear</button>
             </div>
         </form>
     </div>
+    <div id="notification-list">
+        @include('secretary.notifications.partials.notification-list', ['notifications' => $notifications])
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('notification-search-form');
+            const searchInput = document.getElementById('search');
+            const typeSelect = document.getElementById('type');
+            const statusSelect = document.getElementById('status');
+            const notificationList = document.getElementById('notification-list');
+            let timeout = null;
+            function fetchNotifications() {
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    const params = new URLSearchParams(new FormData(form)).toString();
+                    fetch(`{{ route('secretary.notifications.index') }}?${params}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        notificationList.innerHTML = data.html;
+                    });
+                }, 300);
+            }
+            searchInput.addEventListener('input', fetchNotifications);
+            typeSelect.addEventListener('change', fetchNotifications);
+            statusSelect.addEventListener('change', fetchNotifications);
+        });
+    </script>
     
     <!-- Mobile Card View -->
     <div class="block md:hidden space-y-4">
