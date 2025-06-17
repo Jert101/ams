@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
@@ -18,41 +19,59 @@ class DashboardController extends Controller
     public function index()
     {
         // Get counts for dashboard stats
-        $totalUsers = User::count();
-        $totalEvents = Event::count();
-        $totalAttendances = Attendance::count();
-        $totalNotifications = Notification::count();
-        $pendingRegistrations = User::where('approval_status', 'pending')->count();
+        $totalUsers = Cache::remember('dashboard_total_users', 300, function() {
+            return User::count();
+        });
+        $totalEvents = Cache::remember('dashboard_total_events', 300, function() {
+            return Event::count();
+        });
+        $totalAttendances = Cache::remember('dashboard_total_attendances', 300, function() {
+            return Attendance::count();
+        });
+        $totalNotifications = Cache::remember('dashboard_total_notifications', 300, function() {
+            return Notification::count();
+        });
+        $pendingRegistrations = Cache::remember('dashboard_pending_registrations', 300, function() {
+            return User::where('approval_status', 'pending')->count();
+        });
         
         // Get recent users with eager loading to avoid N+1 queries
-        $recentUsers = User::with(['role'])
-            ->latest()
-            ->take(5)
-            ->get()
-            ->map(function($user) {
-                // Add profile_photo_url to the array
-                $userData = $user->toArray();
-                return $userData;
-            });
+        $recentUsers = Cache::remember('dashboard_recent_users', 300, function() {
+            return User::with(['role'])
+                ->latest()
+                ->take(5)
+                ->get()
+                ->map(function($user) {
+                    // Add profile_photo_url to the array
+                    $userData = $user->toArray();
+                    return $userData;
+                });
+        });
             
         // Get upcoming events
-        $upcomingEvents = Event::where('date', '>=', now()->format('Y-m-d'))
-            ->orderBy('date')
-            ->orderBy('time')
-            ->take(5)
-            ->get();
+        $upcomingEvents = Cache::remember('dashboard_upcoming_events', 300, function() {
+            return Event::where('date', '>=', now()->format('Y-m-d'))
+                ->orderBy('date')
+                ->orderBy('time')
+                ->take(5)
+                ->get();
+        });
             
         // Get recent attendances
-        $recentAttendances = Attendance::with(['user', 'event'])
-            ->latest()
-            ->take(10)
-            ->get();
+        $recentAttendances = Cache::remember('dashboard_recent_attendances', 300, function() {
+            return Attendance::with(['user', 'event'])
+                ->latest()
+                ->take(10)
+                ->get();
+        });
             
         // Get attendance statistics by status
-        $attendanceByStatus = Attendance::select('status', DB::raw('count(*) as count'))
-            ->groupBy('status')
-            ->pluck('count', 'status')
-            ->toArray();
+        $attendanceByStatus = Cache::remember('dashboard_attendance_by_status', 300, function() {
+            return Attendance::select('status', DB::raw('count(*) as count'))
+                ->groupBy('status')
+                ->pluck('count', 'status')
+                ->toArray();
+        });
             
         // Get user statistics by role
         $usersByRole = User::select('roles.name', DB::raw('count(*) as count'))

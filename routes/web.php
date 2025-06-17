@@ -60,12 +60,7 @@ Route::post('/check-user-exists', [\App\Http\Controllers\Auth\VerificationContro
     ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 
 Route::get('/', function () {
-    // Log auth state for debugging
-    \Log::info('Auth check: ' . (Auth::check() ? 'true' : 'false'));
-    \Log::info('Session: ' . json_encode(session()->all()));
-    
-    // Return the index view
-    return view('index');
+    return redirect()->route('login');
 });
 
 // Main dashboard route - redirects to appropriate dashboard based on user role
@@ -506,5 +501,11 @@ Route::get('/pwa-instructions', function () {
 Route::get('/mobile-app', function () {
     return view('mobile-app-download');
 })->name('mobile.app.download');
+
+// Add a global rate limiting group for all web routes
+Route::middleware(['throttle:60,1'])->group(function () {
+    // Place all existing route definitions here
+    require __DIR__.'/web_core.php';
+});
 
 require __DIR__.'/auth.php';
