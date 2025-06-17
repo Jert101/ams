@@ -203,11 +203,6 @@
         <!-- Sidebar -->
         <div id="sidebar" class="sidebar fixed top-0 left-0 h-full overflow-y-auto custom-scrollbar">
             @include('layouts.sidebar')
-            <li>
-                <a href="{{ route('profile.show') }}" class="sidebar-link">
-                    <i class="fas fa-user-cog"></i> Profile Settings
-                </a>
-            </li>
         </div>
         
         <!-- Main Content -->
