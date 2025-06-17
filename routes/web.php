@@ -502,10 +502,4 @@ Route::get('/mobile-app', function () {
     return view('mobile-app-download');
 })->name('mobile.app.download');
 
-// Add a global rate limiting group for all web routes
-Route::middleware(['throttle:60,1'])->group(function () {
-    // Place all existing route definitions here
-    require __DIR__.'/web_core.php';
-});
-
 require __DIR__.'/auth.php';
