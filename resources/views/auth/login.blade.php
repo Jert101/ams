@@ -198,7 +198,7 @@
         </a>
         
         <h2 class="page-title">Welcome Back!</h2>
-        <a href="/app-release.apk" class="btn" style="margin-bottom: 20px; background-color: #eab308; color: #991b1b; font-weight: bold;">Download App</a>
+        <a href="/download-app.php" class="btn" style="margin-bottom: 20px; background-color: #eab308; color: #991b1b; font-weight: bold;">Download KofA Network App</a>
         
         <form method="POST" action="{{ route('login') }}">
             @csrf
